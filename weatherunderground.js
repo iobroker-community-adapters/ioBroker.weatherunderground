@@ -19,6 +19,8 @@
 
 var utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 
+var request = require('request');
+
 var adapter = utils.adapter({
     name: 'weatherunderground',
 
