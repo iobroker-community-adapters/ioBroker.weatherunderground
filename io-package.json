@@ -1,0 +1,25 @@
+{
+    "common": {
+        "name":                     "Weather Underground",
+        "version":                  "0.0.1",
+        "title":                    "Node.js weather underground Adapter",
+        "desc":                     "load weather forecast for your location",
+        "platform":                 "Javascript/Node.js",
+        "mode":                     "daemon",
+        "icon":                     "wu.png",
+        "extIcon":                  "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
+        "readme":                   "https://github.com/ioBroker/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
+        "license":                  "MIT",
+        "npmLibs": [],
+        "type":                     "hardware",
+        "keywords":                 ["iobroker", "weather", "forecast", "wu", "weatherunderground"],
+        "loglevel":                 "info",
+        "enabled":                  true
+    },
+    "native": {
+        "apikey": "7208e699cc51d19e",
+        "location": "47.3845359,8.4959812"
+    },
+    "objects": [
+    ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "iobroker.weatherunderground",
+  "version": "0.0.1",
+  "description": "Node.js weather underground Adapter",
+  "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
+  "contributors": [],
+  "homepage": "",
+  "license": "MIT",
+  "keywords": ["iobroker", "weather", "forecast", "wu", "weatherunderground"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dschaedl/ioBroker.weatherunderground"
+  },
+  "dependencies": {
+    "request": "^2.65.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-replace": "^0.9.3",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-jscs": "^2.0.0",
+    "grunt-http": "^1.6.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-exec": "^0.4.6"
+  },
+  "bugs": {
+    "url": "https://github.com/dschaedl/ioBroker.weatherunderground/issues"
+  },
+  "main": "weatherunderground.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
