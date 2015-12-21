@@ -11,7 +11,7 @@
         "readme":                   "https://github.com/ioBroker/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
         "license":                  "MIT",
         "npmLibs": [],
-        "type":                     "hardware",
+        "type":                     "weather",
         "keywords":                 ["iobroker", "weather", "forecast", "wu", "weatherunderground"],
         "loglevel":                 "info",
         "enabled":                  true
