@@ -1,6 +1,6 @@
 {
     "common": {
-        "name":                     "Weather Underground",
+        "name":                     "weatherunderground",
         "version":                  "0.0.1",
         "title":                    "weatherunderground forecast",
         "desc":                     "load weatherunderground weather forecast for your location",
