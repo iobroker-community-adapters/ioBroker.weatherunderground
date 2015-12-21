@@ -107,11 +107,11 @@ function getWuForecastData() {
                         adapter.setState("forecast.24h.sum.pop", {ack: true, val: pop_max});
                         adapter.setState("forecast.24h.sum.uvi", {ack: true, val: uvi_sum/24});
                     }
-                    adapter.log.info("all forecasts values set");
                 } catch (error) {
                     adapter.log.error("Could not parse Forecast-Data: " + error);
                 }
             }
+            adapter.log.info("all forecast values set");
         } else
         {
             // ERROR

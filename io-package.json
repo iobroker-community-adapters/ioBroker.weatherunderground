@@ -21,5 +21,39 @@
         "location": "47.3845359,8.4959812"
     },
     "objects": [
+    ],
+    "instanceObjects": [
+        {
+            "_id":  "forecast",
+            "type": "channel",
+            "common": {
+                "role": "forecast",
+                "name": ""
+            },
+            "native": {}
+        },
+        {
+            "_id":  "forecast.0h",
+            "type": "state",
+            "common": {
+                "name": "time",
+                "type":  "datetime",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        },
+        {
+            "_id":  "forecast.0h",
+            "type": "state",
+            "common": {
+                "name": "temp",
+                "type":  "number",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        }
     ]
+
 }
