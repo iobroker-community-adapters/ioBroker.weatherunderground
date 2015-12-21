@@ -31,28 +31,6 @@
                 "name": ""
             },
             "native": {}
-        },
-        {
-            "_id":  "forecast.0h",
-            "type": "state",
-            "common": {
-                "name": "time",
-                "type":  "datetime",
-                "read":  true,
-                "write": false
-            },
-            "native": {}
-        },
-        {
-            "_id":  "forecast.0h",
-            "type": "state",
-            "common": {
-                "name": "temp",
-                "type":  "number",
-                "read":  true,
-                "write": false
-            },
-            "native": {}
         }
     ]
 
