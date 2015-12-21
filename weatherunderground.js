@@ -43,6 +43,7 @@ var adapter = utils.adapter({
     },
     ready: function () {
         adapter.log.info("Adapter weatherunderground got 'Ready' Signal - starting scheduler to look for forecasts");
+        checkWeatherVariables();
         getWuForecastData();
     },
     message: function (obj) {
