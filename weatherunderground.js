@@ -44,9 +44,8 @@ var adapter = utils.adapter({
     ready: function () {
         adapter.log.info("Adapter weatherunderground got 'Ready' Signal - starting scheduler to look for forecasts");
         checkWeatherVariables();
-        getWuForecastData();
-    },
-    message: function (obj) {
+
+        setInterval(getWuForecastData(), 1000*60*15);
     }
 });
 
@@ -127,28 +126,26 @@ function checkWeatherVariables() {
     ['time','temp','fctcode','sky','wspd','wdir','uvi','humidity','heatindex','feelslike','qpf','snow','pop','mslp'].map( function(v) {
         for (var i = 0; i < 24; i++) {
             var name = "forecast." + i + "h." + v;
-            //if (adapter.getState(name) === null) {
-                var obj = {
-                    type: 'state',
-                    common: {name: v, read: true, write: true, type: 'number'},
-                    native: {id: name}
-                };
-                adapter.setObjectNotExists(name, obj);
-                adapter.log.info("created object: " + name);
+            var obj = {
+                type: 'state',
+                common: {name: v, read: true, write: true, type: 'number'},
+                native: {id: name}
+            };
+            adapter.setObjectNotExists(name, obj);
+            adapter.log.debug("created object: " + name);
             //}
         }
     });
     ['forecast.6h.sum.qpf','forecast.12h.sum.qpf','forecast.24h.sum.qpf',
         'forecast.6h.sum.pop', 'forecast.12h.sum.pop', 'forecast.24h.sum.pop',
         'forecast.6h.sum.uvi','forecast.12h.sum.uvi','forecast.24h.sum.uvi'].map( function(name) {
-            //if (adapter.getState(name) === null) {
-                var obj = {
-                    type: 'state',
-                    common: {name: name, read: true, write: true, type: 'number'},
-                    native: {id: name}
-                };
-                adapter.setObjectNotExists(name, obj);
-            //}
+            var obj = {
+                type: 'state',
+                common: {name: name, read: true, write: true, type: 'number'},
+                native: {id: name}
+            };
+            adapter.setObjectNotExists(name, obj);
+            adapter.log.debug("created object: " + name);
         });
 }
 
