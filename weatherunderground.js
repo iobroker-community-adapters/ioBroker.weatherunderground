@@ -60,7 +60,7 @@ function getWuForecastData() {
             var pop_max = 0;
             var uvi_sum = 0;
 
-            for (i = 0; i < 24; i++) {
+            for (var i = 0; i < 24; i++) {
                 try {
                     //adapter.log.info("WU-Response Body: " + JSON.stringify(body.hourly_forecast[0].FCTTIME)); // Print the json response
                     //var forecast = JSON.parse(body.jsonData);
