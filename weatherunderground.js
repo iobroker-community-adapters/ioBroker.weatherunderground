@@ -134,6 +134,7 @@ function checkWeatherVariables() {
                     native: {id: name}
                 };
                 adapter.setObjectNotExists(name, obj);
+                adapter.log.info("created object: " + name);
             }
         }
     });
