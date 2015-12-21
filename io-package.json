@@ -2,8 +2,8 @@
     "common": {
         "name":                     "Weather Underground",
         "version":                  "0.0.1",
-        "title":                    "Node.js weather underground Adapter",
-        "desc":                     "load weather forecast for your location",
+        "title":                    "weatherunderground forecast",
+        "desc":                     "load weatherunderground weather forecast for your location",
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "icon":                     "wu.png",

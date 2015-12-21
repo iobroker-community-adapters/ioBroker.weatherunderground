@@ -1,7 +1,7 @@
 {
   "name": "iobroker.weatherunderground",
   "version": "0.0.1",
-  "description": "Node.js weather underground Adapter",
+  "description": "weatherunderground forecast",
   "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
   "contributors": [],
   "homepage": "",
