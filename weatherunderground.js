@@ -46,7 +46,7 @@ var adapter = utils.adapter({
         adapter.log.info("Adapter weatherunderground got 'Ready' Signal - starting scheduler to look for forecasts");
         adapter.log.info("adapter weatherunderground initializing objects");
         checkWeatherVariables();
-        //getWuForecastData();
+        getWuForecastData();
     }
 });
 
@@ -139,36 +139,124 @@ function checkWeatherVariables() {
             common: {name: 'in ' + h + 'h'},
             native: {location: adapter.config.location}
         });
+        adapter.setObjectNotExists(id + 'time', {
+            type: 'state',
+            common: {name: 'forecast for', type: 'string', read: true, write: false},
+            native: {id: id + 'time'}
+        });
         adapter.setObjectNotExists(id + 'temp', {
             type: 'state',
             common: {name: 'Temperature', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
             native: {id: id + 'temp'}
         });
+        adapter.setObjectNotExists(id + 'fctcode', {
+            type: 'state',
+            common: {name: 'forecast description code', type: 'number', read: true, write: false},
+            native: {id: id + 'fctcode'}
+        });
+        adapter.setObjectNotExists(id + 'sky', {
+            type: 'state',
+            common: {name: 'Sky (clear-covered)', type: 'number', unit: '%', read: true, write: false},
+            native: {id: id + 'sky'}
+        });
+        adapter.setObjectNotExists(id + 'wspd', {
+            type: 'state',
+            common: {name: 'Windspeed', type: 'number', role: 'value.wind', unit: 'km/h', read: true, write: false},
+            native: {id: id + 'wspd'}
+        });
+        adapter.setObjectNotExists(id + 'wdir', {
+            type: 'state',
+            common: {name: 'Wind direction', type: 'number', role: 'value.winddir', unit: '°', read: true, write: false},
+            native: {id: id + 'wdir'}
+        });
+        adapter.setObjectNotExists(id + 'uvi', {
+            type: 'state',
+            common: {name: 'UV Index (0..~10)', type: 'number', role: 'value.index', read: true, write: false},
+            native: {id: id + 'uvi'}
+        });
+        adapter.setObjectNotExists(id + 'humidity', {
+            type: 'state',
+            common: {name: 'Humidity', type: 'number', role: 'value.humidity', unit: '%', read: true, write: false},
+            native: {id: id + 'humidity'}
+        });
+        adapter.setObjectNotExists(id + 'heatindex', {
+            type: 'state',
+            common: {name: 'Heatindex', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
+            native: {id: id + 'heatindex'}
+        });
+        adapter.setObjectNotExists(id + 'feelslike', {
+            type: 'state',
+            common: {name: 'Feels like', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
+            native: {id: id + 'feelslike'}
+        });
+        adapter.setObjectNotExists(id + 'qpf', {
+            type: 'state',
+            common: {name: 'Quantitative precipitation forecast', type: 'number', role: 'value.rain', unit: 'mm', read: true, write: false},
+            native: {id: id + 'qpf'}
+        });
+        adapter.setObjectNotExists(id + 'snow', {
+            type: 'state',
+            common: {name: 'Snow precipitation', type: 'number', role: 'value.snow', unit: 'mm', read: true, write: false},
+            native: {id: id + 'snow'}
+        });
+        adapter.setObjectNotExists(id + 'pop', {
+            type: 'state',
+            common: {name: 'Percentage of precipitation', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+            native: {id: id + 'pop'}
+        });
+        adapter.setObjectNotExists(id + 'mslp', {
+            type: 'state',
+            common: {name: 'Mean sea level pressure', type: 'number', role: 'value.pressure', unit: 'hPa', read: true, write: false},
+            native: {id: id + 'mslp'}
+        });
     }
 
-
-    /*
-    ['time','temp','fctcode','sky','wspd','wdir','uvi','humidity','heatindex','feelslike','qpf','snow','pop','mslp'].map( function(v) {
-        for (var i = 0; i < 24; i++) {
-            var name = "forecast." + i + "h." + v;
-            var obj = {type: 'state', parent: 'forecast.' + i +'h', common: {name: v, read: true, write: false, type: 'number', unit: ''}, native: {id: name}};
-            adapter.setObjectNotExists(name, obj);
-            adapter.log.debug("created object: " + name);
-            //}
-        }
+    adapter.setObjectNotExists('forecast.6h.sum.qpf', {
+        type: 'state',
+        common: {name: 'sum of qpf', type: 'number', role: 'value.rain', unit: 'mm', read: true, write: false},
+        native: {id: 'forecast.6h.sum.qpf'}
+    });
+    adapter.setObjectNotExists('forecast.12h.sum.qpf', {
+        type: 'state',
+        common: {name: 'sum of qpf', type: 'number', role: 'value.rain', unit: 'mm', read: true, write: false},
+        native: {id: 'forecast.12h.sum.qpf'}
+    });
+    adapter.setObjectNotExists('forecast.24h.sum.qpf', {
+        type: 'state',
+        common: {name: 'sum of qpf', type: 'number', role: 'value.rain', unit: 'mm', read: true, write: false},
+        native: {id: 'forecast.24h.sum.qpf'}
     });
 
-    ['forecast.6h.sum.qpf','forecast.12h.sum.qpf','forecast.24h.sum.qpf',
-        'forecast.6h.sum.pop', 'forecast.12h.sum.pop', 'forecast.24h.sum.pop',
-        'forecast.6h.sum.uvi','forecast.12h.sum.uvi','forecast.24h.sum.uvi'].map( function(name) {
-            var obj = {
-                type: 'state',
-                common: {name: name, read: true, write: true, type: 'number'},
-                native: {id: name}
-            };
-            adapter.setObjectNotExists(name, obj);
-            adapter.log.debug("created object: " + name);
-        });
-        */
+    adapter.setObjectNotExists('forecast.6h.sum.pop', {
+        type: 'state',
+        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        native: {id: 'forecast.6h.sum.pop'}
+    });
+    adapter.setObjectNotExists('forecast.12h.sum.pop', {
+        type: 'state',
+        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        native: {id: 'forecast.12h.sum.pop'}
+    });
+    adapter.setObjectNotExists('forecast.24h.sum.pop', {
+        type: 'state',
+        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        native: {id: 'forecast.24h.sum.pop'}
+    });
+
+    adapter.setObjectNotExists('forecast.6h.sum.uvi', {
+        type: 'state',
+        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        native: {id: 'forecast.6h.sum.uvi'}
+    });
+    adapter.setObjectNotExists('forecast.12h.sum.uvi', {
+        type: 'state',
+        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        native: {id: 'forecast.12h.sum.uvi'}
+    });
+    adapter.setObjectNotExists('forecast.24h.sum.uvi', {
+        type: 'state',
+        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        native: {id: 'forecast.24h.sum.uvi'}
+    });
 }
 
