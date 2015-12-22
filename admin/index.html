@@ -6,18 +6,6 @@
 <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
 <script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
 
-
-<!-- optional: use jqGrid
-<link rel="stylesheet" type="text/css" href="../../lib/css/jqGrid/ui.jqgrid-4.5.4.css"/>
-<script type="text/javascript" src="../../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
-<script type="text/javascript" src="../../lib/js/jqGrid/i18n/grid.locale-all.js"></script>
--->
-
-<!-- optional: use multiselect
-<link rel="stylesheet" type="text/css" href="../../lib/css/jquery.multiselect-1.13.css"/>
-<script type="text/javascript" src="../../lib/js/jquery.multiselect-1.13.min.js"></script>
--->
-
 <!-- these two file always have to be included -->
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
@@ -29,40 +17,18 @@
 
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
-        "example adapter settings": {"de": "Beispiel", "ru": "Пример"},
-        "test1":                    {"en": "Test 1", "de": "Test 1", "ru": "Тест 1"},
-        "test2":                    {"en": "Test 2", "de": "Test 2", "ru": "Тест 2"},
-        "on save adapter restarts with new config immediately": {
-            "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
-            "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
-        }
+        "location":                    {"de": "Ort"},
+        "apikey":                    {"de": "Apikey"}
     };
 
-    // the function loadSettings has to exist ...
     function load(settings, onChange) {
-        // example: select elements with id=key and class=value and insert value
-        for (var key in settings) {
-            // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                $('#' + key + '.value').prop('checked', settings[key]).change(onChange);
-            } else {
-                $('#' + key + '.value').val(settings[key]).change(onChange).keyup(onChange);
-            }
-        }
-        // Signal to admin, that no changes yet
-        onChange(false);
+        $('#location').val(settings['location']);
+        $('#apikey').val(settings['apikey']);
     }
 
-    // ... and the function save has to exist.
-    // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
-        // example: select elements with class=value and build settings object
-        var obj = {};
-        $('.value').each(function () {
-            var $this = $(this);
-            obj[$this.attr('id')] = $this.val();
-        });
-        callback(obj);
+        callback({location: $('#location')});
+        callback({location: $('#apikey')});
     }
 </script>
 
@@ -70,16 +36,13 @@
 <div id="adapter-container">
 
     <table><tr>
-        <td><h3 class="translate">geofency adapter settings</h3></td>
+        <td><img src="wu.png"/></td>
+        <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
     </tr></table>
-    <p>
-        <span class="translate">port</span> <input class="value" id="port"/><br>
-        <span class="translate">use SSL</span> <input class="checkbox" id="ssl"/><br>
-        <span class="translate">user</span> <input class="value" id="user"/><br>
-        <span class="translate">password</span> <input class="value" id="password"/><br>
+    <p style="padding-left: 12px">
+        <label for="location" class="translate">location</label> <input class="value" type="text" id="location" size="80"/>
+        <label for="apikey" class="translate">location</label> <input class="value" type="text" id="apikey" size="80"/>
     </p>
-
-    <p class="translate">on save the adapter restarts with the new config</p>
 
 </div>
 

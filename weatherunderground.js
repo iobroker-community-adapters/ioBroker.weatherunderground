@@ -47,6 +47,13 @@ var adapter = utils.adapter({
         adapter.log.info("adapter weatherunderground initializing objects");
         checkWeatherVariables();
         getWuForecastData();
+
+        // force terminate after 1min
+        // don't know why it does not terminate by itself...
+        setTimeout(function () {
+            adapter.log.warn('force terminate');
+            process.exit(0);
+        }, 60000);
     }
 });
 
@@ -245,17 +252,17 @@ function checkWeatherVariables() {
 
     adapter.setObjectNotExists('forecast.6h.sum.uvi', {
         type: 'state',
-        common: {name: 'avg. uvi', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        common: {name: 'avg. uvi', type: 'number', role: 'value.index', read: true, write: false},
         native: {id: 'forecast.6h.sum.uvi'}
     });
     adapter.setObjectNotExists('forecast.12h.sum.uvi', {
         type: 'state',
-        common: {name: 'avg. uvi', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        common: {name: 'avg. uvi', type: 'number', role: 'value.index', read: true, write: false},
         native: {id: 'forecast.12h.sum.uvi'}
     });
     adapter.setObjectNotExists('forecast.24h.sum.uvi', {
         type: 'state',
-        common: {name: 'avg. uvi', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        common: {name: 'avg. uvi', type: 'number', role: 'value.index', read: true, write: false},
         native: {id: 'forecast.24h.sum.uvi'}
     });
 }
