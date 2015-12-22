@@ -43,8 +43,8 @@ var adapter = utils.adapter({
         adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
     },
     ready: function () {
-        adapter.log.info("Adapter weatherunderground got 'Ready' Signal - starting scheduler to look for forecasts");
-        adapter.log.info("adapter weatherunderground initializing objects");
+        adapter.log.debug("Adapter weatherunderground got 'Ready' Signal");
+        adapter.log.debug("adapter weatherunderground initializing objects");
         checkWeatherVariables();
         getWuForecastData();
 
@@ -119,7 +119,7 @@ function getWuForecastData() {
                     adapter.log.error("Could not parse Forecast-Data: " + error);
                 }
             }
-            adapter.log.info("all forecast values set");
+            adapter.log.debug("all forecast values set");
         } else
         {
             // ERROR
@@ -129,7 +129,7 @@ function getWuForecastData() {
 }
 
 function checkWeatherVariables() {
-    adapter.log.info("init forecast objects");
+    adapter.log.debug("init forecast objects");
 
     adapter.setObjectNotExists('forecast', {
         type: 'channel',
@@ -163,7 +163,7 @@ function checkWeatherVariables() {
         });
         adapter.setObjectNotExists(id + 'sky', {
             type: 'state',
-            common: {name: 'Sky (clear-covered)', type: 'number', unit: '%', read: true, write: false},
+            common: {name: 'Sky (clear..covered)', type: 'number', unit: '%', read: true, write: false},
             native: {id: id + 'sky'}
         });
         adapter.setObjectNotExists(id + 'wspd', {
