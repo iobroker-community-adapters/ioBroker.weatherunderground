@@ -18,9 +18,8 @@
         "enabled":                  true
     },
     "native": {
-        "apikey": "7208e699cc51d19e",
-        "location": "47.3845359,8.4959812",
-        "interval": 15
+        "apikey": "getYourOwn",
+        "location": "HKG"
     },
     "objects": [
     ],
@@ -32,7 +31,7 @@
                 "name": "Temperature",
                 "type": "number",
                 "role": "value.temperature",
-                "unit": "C°",
+                "unit": "°C",
                 "read": true,
                 "write": false
             },
