@@ -124,7 +124,7 @@ function getWuForecastData() {
 function checkWeatherVariables() {
     adapter.log.info("init forecast objects");
 
-    adapter.setObjectNotExists('forecast', {
+    adapter.setObject('forecast', {
         type: 'channel',
         role: 'forecast',
         common: {name: 'weatherunderground 24h forecast'},
@@ -132,7 +132,7 @@ function checkWeatherVariables() {
     });
 
     for (var h=0; h < 24; h++) {
-        adapter.setObjectNotExists('forecast.' + 'h', {
+        adapter.setObject('forecast.' + h + 'h', {
             type: 'channel',
             role: 'forecast',
             common: {name: 'in ' + h + 'h'},
