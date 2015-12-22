@@ -146,7 +146,7 @@ function checkWeatherVariables() {
         });
         adapter.setObjectNotExists(id + 'temp', {
             type: 'state',
-            common: {name: 'Temperature', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
+            common: {name: 'Temperature', type: 'number', role: 'value.temperature', unit: 'Â°C', read: true, write: false},
             native: {id: id + 'temp'}
         });
         adapter.setObjectNotExists(id + 'fctcode', {
@@ -166,7 +166,7 @@ function checkWeatherVariables() {
         });
         adapter.setObjectNotExists(id + 'wdir', {
             type: 'state',
-            common: {name: 'Wind direction', type: 'number', role: 'value.winddir', unit: '°', read: true, write: false},
+            common: {name: 'Wind direction', type: 'number', role: 'value.winddir', unit: 'Â°', read: true, write: false},
             native: {id: id + 'wdir'}
         });
         adapter.setObjectNotExists(id + 'uvi', {
@@ -181,12 +181,12 @@ function checkWeatherVariables() {
         });
         adapter.setObjectNotExists(id + 'heatindex', {
             type: 'state',
-            common: {name: 'Heatindex', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
+            common: {name: 'Heatindex', type: 'number', role: 'value.temperature', unit: 'Â°C', read: true, write: false},
             native: {id: id + 'heatindex'}
         });
         adapter.setObjectNotExists(id + 'feelslike', {
             type: 'state',
-            common: {name: 'Feels like', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
+            common: {name: 'Feels like', type: 'number', role: 'value.temperature', unit: 'Â°C', read: true, write: false},
             native: {id: id + 'feelslike'}
         });
         adapter.setObjectNotExists(id + 'qpf', {
@@ -245,17 +245,17 @@ function checkWeatherVariables() {
 
     adapter.setObjectNotExists('forecast.6h.sum.uvi', {
         type: 'state',
-        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        common: {name: 'avg. uvi', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
         native: {id: 'forecast.6h.sum.uvi'}
     });
     adapter.setObjectNotExists('forecast.12h.sum.uvi', {
         type: 'state',
-        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        common: {name: 'avg. uvi', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
         native: {id: 'forecast.12h.sum.uvi'}
     });
     adapter.setObjectNotExists('forecast.24h.sum.uvi', {
         type: 'state',
-        common: {name: 'max of pop', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
+        common: {name: 'avg. uvi', type: 'number', role: 'value.rain', unit: '%', read: true, write: false},
         native: {id: 'forecast.24h.sum.uvi'}
     });
 }
