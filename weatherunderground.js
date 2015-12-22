@@ -124,7 +124,7 @@ function getWuForecastData() {
 function checkWeatherVariables() {
     adapter.log.info("init forecast objects");
 
-    adapter.setObject('forecast', {
+    adapter.setObjectNotExists('forecast', {
         type: 'channel',
         role: 'forecast',
         common: {name: 'weatherunderground 24h forecast'},
@@ -132,12 +132,17 @@ function checkWeatherVariables() {
     });
 
     for (var h=0; h < 24; h++) {
-        adapter.setObject('forecast.' + h + 'h', {
+        var id = "forecast." + h + "h.";
+        adapter.setObjectNotExists('forecast.' + h + 'h', {
             type: 'channel',
             role: 'forecast',
             common: {name: 'in ' + h + 'h'},
-            native: {location: adapter.config.location},
-            children: ["temp"]
+            native: {location: adapter.config.location}
+        });
+        adapter.setObjectNotExists(id + 'temp', {
+            type: 'state',
+            common: {name: 'Temperature', type: 'number', role: 'value.temperature', unit: 'C°', read: true, write: false},
+            native: {id: id + 'temp'}
         });
     }
 
