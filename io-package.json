@@ -5,7 +5,8 @@
         "title":                    "weatherunderground forecast",
         "desc":                     "load weatherunderground weather forecast for your location",
         "platform":                 "Javascript/Node.js",
-        "mode":                     "daemon",
+        "mode":                     "schedule",
+        "schedule":                 "*/15 * * * *",
         "icon":                     "wu.png",
         "extIcon":                  "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
         "readme":                   "https://github.com/ioBroker/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
@@ -18,20 +19,26 @@
     },
     "native": {
         "apikey": "7208e699cc51d19e",
-        "location": "47.3845359,8.4959812"
+        "location": "47.3845359,8.4959812",
+        "interval": 15
     },
     "objects": [
     ],
     "instanceObjects": [
         {
-            "_id":  "forecast",
-            "type": "channel",
+            "_id":  "temp",
+            "type": "state",
             "common": {
-                "role": "forecast",
-                "name": ""
+                "name": "Temperature",
+                "type": "number",
+                "role": "value.temperature",
+                "unit": "C°",
+                "read": true,
+                "write": false
             },
             "native": {}
         }
+
     ]
 
 }

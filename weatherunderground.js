@@ -28,6 +28,7 @@ var adapter = utils.adapter({
         adapter.log.info("adapter weatherunderground is unloading");
     },
     discover: function (callback) {
+        adapter.log.info("adapter weatherunderground discovered");
     },
     install: function (callback) {
         adapter.log.info("adapter weatherunderground installed");
@@ -43,9 +44,9 @@ var adapter = utils.adapter({
     },
     ready: function () {
         adapter.log.info("Adapter weatherunderground got 'Ready' Signal - starting scheduler to look for forecasts");
+        adapter.log.info("adapter weatherunderground initializing objects");
         checkWeatherVariables();
-
-        setInterval(getWuForecastData(), 1000*60*15);
+        //getWuForecastData();
     }
 });
 
@@ -121,21 +122,37 @@ function getWuForecastData() {
 }
 
 function checkWeatherVariables() {
-    adapter.log.info("init forecast variables", 'info');
+    adapter.log.info("init forecast objects");
 
+    adapter.setObjectNotExists('forecast', {
+        type: 'channel',
+        role: 'forecast',
+        common: {name: 'weatherunderground 24h forecast'},
+        native: {location: adapter.config.location}
+    });
+
+    for (var h=0; h < 24; h++) {
+        adapter.setObjectNotExists('forecast.' + 'h', {
+            type: 'channel',
+            role: 'forecast',
+            common: {name: 'in ' + h + 'h'},
+            native: {location: adapter.config.location},
+            children: ["temp"]
+        });
+    }
+
+
+    /*
     ['time','temp','fctcode','sky','wspd','wdir','uvi','humidity','heatindex','feelslike','qpf','snow','pop','mslp'].map( function(v) {
         for (var i = 0; i < 24; i++) {
             var name = "forecast." + i + "h." + v;
-            var obj = {
-                type: 'state',
-                common: {name: v, read: true, write: true, type: 'number'},
-                native: {id: name}
-            };
+            var obj = {type: 'state', parent: 'forecast.' + i +'h', common: {name: v, read: true, write: false, type: 'number', unit: ''}, native: {id: name}};
             adapter.setObjectNotExists(name, obj);
             adapter.log.debug("created object: " + name);
             //}
         }
     });
+
     ['forecast.6h.sum.qpf','forecast.12h.sum.qpf','forecast.24h.sum.qpf',
         'forecast.6h.sum.pop', 'forecast.12h.sum.pop', 'forecast.24h.sum.pop',
         'forecast.6h.sum.uvi','forecast.12h.sum.uvi','forecast.24h.sum.uvi'].map( function(name) {
@@ -147,5 +164,6 @@ function checkWeatherVariables() {
             adapter.setObjectNotExists(name, obj);
             adapter.log.debug("created object: " + name);
         });
+        */
 }
 
