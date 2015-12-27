@@ -9,7 +9,7 @@
         "schedule":                 "*/15 * * * *",
         "icon":                     "wu.png",
         "extIcon":                  "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
-        "readme":                   "https://github.com/ioBroker/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
+        "readme":                   "https://github.com/dschaedl/ioBroker.weatherunderground",
         "license":                  "MIT",
         "npmLibs": [],
         "type":                     "weather",
