@@ -93,8 +93,8 @@ function getWuForecastData() {
 
                     qpf_sum += Number(body.hourly_forecast[i].qpf.metric);
                     uvi_sum += Number(body.hourly_forecast[i].uvi);
-                    if (Number(body.hourly_forecast[i].uvi) > pop_max) {
-                        pop_max = Number(body.hourly_forecast[i].uvi);
+                    if (Number(body.hourly_forecast[i].pop) > pop_max) {
+                        pop_max = Number(body.hourly_forecast[i].pop);
                     }
 
                     // 6h
