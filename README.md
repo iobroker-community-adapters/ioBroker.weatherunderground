@@ -15,6 +15,10 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 
 #changelog
 
+## 0.0.4
+checking for spaces in location
+added current conditions
+
 ## 0.0.3
 bugfix in summed pop-value.
 
