@@ -114,6 +114,7 @@ function getWuForecastData() {
                     }
                 } catch (error) {
                     adapter.log.error("Could not parse Forecast-Data: " + error);
+                    adapter.log.error("Reported WU-Error Type: " + body.response.error.type);
                 }
             }
             adapter.log.debug("all forecast values set");
@@ -165,6 +166,7 @@ function getWuConditionsData() {
                 adapter.log.debug("all current conditions values set");
             } catch (error) {
                 adapter.log.error("Could not parse Conditions-Data: " + error);
+                adapter.log.error("Reported WU-Error Type: " + body.response.error.type);
             }
         } else
         {
