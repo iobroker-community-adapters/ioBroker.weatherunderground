@@ -46,6 +46,7 @@ var adapter = utils.adapter({
         adapter.log.debug("Adapter weatherunderground got 'Ready' Signal");
         adapter.log.debug("adapter weatherunderground initializing objects");
         checkWeatherVariables();
+        getWuConditionsData();
         getWuForecastData();
 
         // force terminate after 1min
@@ -58,11 +59,7 @@ var adapter = utils.adapter({
 });
 
 function getWuForecastData() {
-
-    //debug
-
     var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/hourly/q/" + adapter.config.location + ".json";
-
 
     request({url: url, json: true}, function(error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -128,7 +125,198 @@ function getWuForecastData() {
     });
 }
 
+function getWuConditionsData() {
+    var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/q/" + adapter.config.location + ".json";
+
+    if (adapter.config.station.length > 2) {
+        url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/q/pws:" + adapter.config.station + ".json";
+    }
+    request({url: url, json: true}, function(error, response, body) {
+        if (!error && response.statusCode === 200) {
+            try {
+                adapter.setState("current.display_location.full", {ack: true, val: body.current_observation.display_location.full});
+                adapter.setState("current.display_location.latitude", {ack: true, val: body.current_observation.display_location.latitude});
+                adapter.setState("current.display_location.longitude", {ack: true, val: body.current_observation.display_location.longitude});
+                adapter.setState("current.display_location.elevation", {ack: true, val: body.current_observation.display_location.elevation});
+
+                adapter.setState("current.observation_location.full", {ack: true, val: body.current_observation.observation_location.full});
+                adapter.setState("current.observation_location.latitude", {ack: true, val: body.current_observation.observation_location.latitude});
+                adapter.setState("current.observation_location.longitude", {ack: true, val: body.current_observation.observation_location.longitude});
+                adapter.setState("current.observation_location.elevation", {ack: true, val: body.current_observation.observation_location.elevation});
+
+                adapter.setState("current.observation_location.station_id", {ack: true, val: body.current_observation.station_id});
+                adapter.setState("current.local_time_rfc822", {ack: true, val: body.current_observation.local_time_rfc822});
+                adapter.setState("current.weather", {ack: true, val: body.current_observation.weather});
+                adapter.setState("current.temp_c", {ack: true, val: body.current_observation.temp_c});
+                adapter.setState("current.relative_humidity", {ack: true, val: body.current_observation.relative_humidity});
+                adapter.setState("current.wind_degrees", {ack: true, val: body.current_observation.wind_degrees});
+                adapter.setState("current.wind_kph", {ack: true, val: body.current_observation.wind_kph});
+                adapter.setState("current.wind_gust_kph", {ack: true, val: body.current_observation.wind_gust_kph});
+                adapter.setState("current.dewpoint_c", {ack: true, val: body.current_observation.dewpoint_c});
+                adapter.setState("current.windchill_c", {ack: true, val: body.current_observation.windchill_c});
+                adapter.setState("current.feelslike_c", {ack: true, val: body.current_observation.feelslike_c});
+                adapter.setState("current.visibility_km", {ack: true, val: body.current_observation.visibility_km});
+                adapter.setState("current.solarradiation", {ack: true, val: body.current_observation.solarradiation});
+                adapter.setState("current.UV", {ack: true, val: body.current_observation.UV});
+                adapter.setState("current.precip_1hr_metric", {ack: true, val: body.current_observation.precip_1hr_metric});
+                adapter.setState("current.icon_url", {ack: true, val: body.current_observation.icon_url});
+                adapter.setState("current.forecast_url", {ack: true, val: body.current_observation.forecast_url});
+                adapter.setState("current.history_url", {ack: true, val: body.current_observation.history_url});
+                adapter.log.debug("all current conditions values set");
+            } catch (error) {
+                adapter.log.error("Could not parse Conditions-Data: " + error);
+            }
+        } else
+        {
+            // ERROR
+            adapter.log.error("Wunderground reported an error: " + error);
+        }
+    });
+}
+
 function checkWeatherVariables() {
+    adapter.log.debug("init conditions objects");
+    adapter.setObjectNotExists('current', {
+        type: 'channel',
+        role: 'weather',
+        common: {name: 'weatherunderground current conditions'},
+        native: {location: adapter.config.location}
+    });
+
+    adapter.setObjectNotExists('current.display_location.full', {
+        type: 'state',
+        common: {name: 'display location full name'},
+        native: {id: 'current.display_location.full'}
+    });
+    adapter.setObjectNotExists('current.display_location.latitude', {
+        type: 'state',
+        common: {name: 'display location latitude', role: 'value.latitude', type: 'number', unit: '°', read: true, write: false},
+        native: {id: 'current.display_location.latitude'}
+    });
+    adapter.setObjectNotExists('current.display_location.longitude', {
+        type: 'state',
+        common: {name: 'display location longitude', role: 'value.longitude', type: 'number', unit: '°', read: true, write: false},
+        native: {id: 'current.display_location.longitude'}
+    });
+    adapter.setObjectNotExists('current.display_location.elevation', {
+        type: 'state',
+        common: {name: 'display location elevation', role: 'value.elevation', type: 'number', unit: 'm', read: true, write: false},
+        native: {id: 'current.display_location.elevation'}
+    });
+
+    adapter.setObjectNotExists('current.observation_location.full', {
+        type: 'state',
+        common: {name: 'observation location full name'},
+        native: {id: 'current.observation_location.full'}
+    });
+    adapter.setObjectNotExists('current.observation_location.latitude', {
+        type: 'state',
+        common: {name: 'observation location latitude', role: 'value.latitude', type: 'number', unit: '°', read: true, write: false},
+        native: {id: 'current.observation_location.latitude'}
+    });
+    adapter.setObjectNotExists('current.observation_location.longitude', {
+        type: 'state',
+        common: {name: 'observation location longitude', role: 'value.longitude', type: 'number', unit: '°', read: true, write: false},
+        native: {id: 'current.observation_location.longitude'}
+    });
+    adapter.setObjectNotExists('current.observation_location.elevation', {
+        type: 'state',
+        common: {name: 'observation location elevation', role: 'value.elevation', type: 'number', unit: 'm', read: true, write: false},
+        native: {id: 'current.observation_location.elevation'}
+    });
+    adapter.setObjectNotExists('current.observation_location.station_id', {
+        type: 'state',
+        common: {name: 'wu station ID', role: 'id', type: 'string', read: true, write: false},
+        native: {id: 'current.observation_location.station_id'}
+    });
+
+    adapter.setObjectNotExists('current.local_time_rfc822', {
+        type: 'state',
+        common: {name: 'time (rfc822)', role: 'time', type: 'string', read: true, write: false},
+        native: {id: 'current.local_time_rfc822'}
+    });
+    adapter.setObjectNotExists('current.weather', {
+        type: 'state',
+        common: {name: 'weather (engl.)', type: 'string', read: true, write: false},
+        native: {id: 'current.weather'}
+    });
+    adapter.setObjectNotExists('current.temp_c', {
+        type: 'state',
+        common: {name: 'Temperature', role: 'value.temperature', type: 'number', unit: '°C', read: true, write: false},
+        native: {id: 'current.temp_c'}
+    });
+    adapter.setObjectNotExists('current.relative_humidity', {
+        type: 'state',
+        common: {name: 'Relative humidity', role: 'value.humidity', type: 'number', read: true, write: false},
+        native: {id: 'current.relative_humidity'}
+    });
+    adapter.setObjectNotExists('current.wind_degrees', {
+        type: 'state',
+        common: {name: 'Wind direction', role: 'value.winddir', type: 'number', unit: '°', read: true, write: false},
+        native: {id: 'current.wind_degrees'}
+    });
+    adapter.setObjectNotExists('current.wind_kph', {
+        type: 'state',
+        common: {name: 'Wind speed', role: 'value.wind', type: 'number', unit: 'km/h', read: true, write: false},
+        native: {id: 'current.wind_kph'}
+    });
+    adapter.setObjectNotExists('current.wind_gust_kph', {
+        type: 'state',
+        common: {name: 'Wind gust', role: 'value.wind', type: 'number', unit: 'km/h', read: true, write: false},
+        native: {id: 'current.wind_gust_kph'}
+    });
+    adapter.setObjectNotExists('current.dewpoint_c', {
+        type: 'state',
+        common: {name: 'Dewpoint', role: 'value.temperature', type: 'number', unit:'°C', read: true, write: false},
+        native: {id: 'current.dewpoint_c'}
+    });
+    adapter.setObjectNotExists('current.windchill_c', {
+        type: 'state',
+        common: {name: 'Windchill', role: 'value.temperature', type: 'number', unit: '°C', read: true, write: false},
+        native: {id: 'current.windchill_c'}
+    });
+    adapter.setObjectNotExists('current.feelslike_c', {
+        type: 'state',
+        common: {name: 'Temperature feels like', role: 'value.temperature', type: 'number', unit: '°C', read: true, write: false},
+        native: {id: 'current.feelslike_c'}
+    });
+    adapter.setObjectNotExists('current.visibility_km', {
+        type: 'state',
+        common: {name: 'Visibility', role: 'value.distance', type: 'number', unit: 'km', read: true, write: false},
+        native: {id: 'current.visibility_km'}
+    });
+    adapter.setObjectNotExists('current.solarradiation', {
+        type: 'state',
+        common: {name: 'Solar radiation', role: 'value.radiation', type: 'number', unit: 'w/m2', read: true, write: false},
+        native: {id: 'current.solarradiation'}
+    });
+    adapter.setObjectNotExists('current.UV', {
+        type: 'state',
+        common: {name: 'UV-Index', role: 'value.index', type: 'number', read: true, write: false},
+        native: {id: 'current.UV'}
+    });
+    adapter.setObjectNotExists('current.precip_1hr_metric', {
+        type: 'state',
+        common: {name: 'precipitation (last 1h)', role: 'value.rain', type: 'number', unit: 'mm', read: true, write: false},
+        native: {id: 'current.precip_1hr_metric'}
+    });
+    adapter.setObjectNotExists('current.icon_url', {
+        type: 'state',
+        common: {name: 'url to current weather icon', role: 'url.icon', type: 'string', read: true, write: false},
+        native: {id: 'current.icon_url'}
+    });
+    adapter.setObjectNotExists('current.forecast_url', {
+        type: 'state',
+        common: {name: 'url to wu-forecast page', role: 'url.page', type: 'string', read: true, write: false},
+        native: {id: 'current.forecast_url'}
+    });
+    adapter.setObjectNotExists('current.history_url', {
+        type: 'state',
+        common: {name: 'url to wu-history page', role: 'url.page', type: 'string', read: true, write: false},
+        native: {id: 'current.history_url'}
+    });
+
+
     adapter.log.debug("init forecast objects");
 
     adapter.setObjectNotExists('forecast', {

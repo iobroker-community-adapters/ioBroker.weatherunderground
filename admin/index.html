@@ -18,16 +18,18 @@
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
         "location":                    {"de": "Ort"},
+        "station":                    {"de": "Mess-station"},
         "apikey":                    {"de": "Apikey"}
     };
 
     function load(settings, onChange) {
         $('#location').val(settings['location']);
+        $('#station').val(settings['station']);
         $('#apikey').val(settings['apikey']);
     }
 
     function save(callback) {
-        callback({location: $('#location').val(), apikey: $('#apikey').val()});
+        callback({location: $('#location').val().replace(/\s+/g, ''), station: $('#station').val().trim(), apikey: $('#apikey').val().trim()});
     }
 </script>
 
@@ -38,9 +40,10 @@
         <td><img src="wu.png"/></td>
         <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
     </tr></table>
-    <p style="padding-left: 12px">
+    < style="padding-left: 12px">
+        <label for="apikey" class="translate">apikey</label> <input class="value" type="text" id="apikey" size="80"/><br/>
         <label for="location" class="translate">location</label> <input class="value" type="text" id="location" size="80"/><br/>
-        <label for="apikey" class="translate">apikey</label> <input class="value" type="text" id="apikey" size="80"/>
+        <label for="station" class="translate">station</label> <input class="value" type="text" id="station" size="80"/>
     </p>
     <h3>apikey</h3>
     <p>
@@ -49,7 +52,10 @@
     * get your apikey <a target="blank" href="http://www.wunderground.com/weather/api/d/pricing">here</a>. purchase a free developer key<br/>
     </p>
     <h3>location</h3>
-    <p>Select your location either by name (e.g. "Berlin"), Airport Code (e.g. "ZRH"), or coordinates (e.g. "47.3145359,8.4159812")</p>
+    <p>Select your location either by name (e.g. "Berlin"), Airport Code (e.g. "ZRH"), coordinates (e.g. "47.3145359,8.4159812") or Weatherstation-ID (e.g. "pws:IZRICHZR8")</p>
+    <h3>Station - only for current condistions data</h3>
+    <p>If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your
+        preferred station (e.g. "IAARGAUB5"). You can find these codes e.g. on the <a target="blank" href="http://www.wunderground.com/wundermap">Wundermap</a> - click a station and find it at "Station ID"</p>
 </div>
 
 </html>

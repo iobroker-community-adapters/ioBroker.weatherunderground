@@ -9,7 +9,17 @@ An api-key from WU is needed to use this adapter:
 
 As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
 
+##in ioBroker Forum (German)
+http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef89fcad1c3
+
 #changelog
+
+## 0.0.3
+bugfix in summed pop-value.
+
+## 0.0.2
+config dialog fixed
+
 ## 0.0.1
 initial release with all basics to load WU-forecast data
 
