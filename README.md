@@ -1,3 +1,4 @@
+![Logo](admin/wu.png)
 # ioBroker.weatherunderground
 ioBroker Adapter to load 24h weather forecast for your location from [Weather Underground](http://www.wunderground.com/).
 The adapter loads all 15min (default) hourly forecast data for the next 24h. Additionally it calculates sum/avg/max values of the most used data for 6, 12, 24h.
