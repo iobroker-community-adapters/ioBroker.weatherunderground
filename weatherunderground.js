@@ -60,6 +60,7 @@ var adapter = utils.adapter({
 
 function getWuForecastData() {
     var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/hourly/q/" + adapter.config.location + ".json";
+    adapter.log.debug("calling forecast: " + url);
 
     request({url: url, json: true}, function(error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -132,6 +133,7 @@ function getWuConditionsData() {
     if (adapter.config.station.length > 2) {
         url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/q/pws:" + adapter.config.station + ".json";
     }
+    adapter.log.debug("calling forecast: " + url);
     request({url: url, json: true}, function(error, response, body) {
         if (!error && response.statusCode === 200) {
             try {
