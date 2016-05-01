@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "weatherunderground",
-        "version":                  "0.0.4",
+        "version":                  "0.0.5",
         "title":                    "weatherunderground forecast",
         "desc":                     "load weatherunderground weather forecast for your location",
         "platform":                 "Javascript/Node.js",
