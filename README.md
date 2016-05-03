@@ -1,5 +1,12 @@
 ![Logo](admin/wu.png)
 # ioBroker.weatherunderground
+===============
+
+[![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
+
+[![NPM](https://nodei.co/npm/iobroker.weatherunderground.png?downloads=true)](https://nodei.co/npm/iobroker.weatherunderground/)
+
 ioBroker Adapter to load 24h weather forecast for your location from [Weather Underground](http://www.wunderground.com/).
 The adapter loads all 15min (default) hourly forecast data for the next 24h. Additionally it calculates sum/avg/max values of the most used data for 6, 12, 24h.
 
@@ -16,7 +23,6 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 # changelog
 
 ## 0.0.5
-
 corrected humidity value within current weather info (slice + unit)
 
 ## 0.0.4
@@ -40,7 +46,7 @@ TODO
 
 The MIT License (MIT)
 
-Copyright (c) 2015 dschaedl <daniel.schaedler@gmail.com>
+Copyright (c) 2015-2016 dschaedl <daniel.schaedler@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
