@@ -151,7 +151,7 @@ function getWuConditionsData() {
                 adapter.setState("current.local_time_rfc822", {ack: true, val: body.current_observation.local_time_rfc822});
                 adapter.setState("current.weather", {ack: true, val: body.current_observation.weather});
                 adapter.setState("current.temp_c", {ack: true, val: body.current_observation.temp_c});
-                adapter.setState("current.relative_humidity", {ack: true, val: body.current_observation.relative_humidity});
+                adapter.setState("current.relative_humidity", {ack: true, val: body.current_observation.relative_humidity.slice(0, -1)});
                 adapter.setState("current.wind_degrees", {ack: true, val: body.current_observation.wind_degrees});
                 adapter.setState("current.wind_kph", {ack: true, val: body.current_observation.wind_kph});
                 adapter.setState("current.wind_gust_kph", {ack: true, val: body.current_observation.wind_gust_kph});
@@ -251,7 +251,7 @@ function checkWeatherVariables() {
     });
     adapter.setObjectNotExists('current.relative_humidity', {
         type: 'state',
-        common: {name: 'Relative humidity', role: 'value.humidity', type: 'number', read: true, write: false},
+        common: {name: 'Relative humidity', role: 'value.humidity', type: 'number', unit: '%', read: true, write: false},
         native: {id: 'current.relative_humidity'}
     });
     adapter.setObjectNotExists('current.wind_degrees', {

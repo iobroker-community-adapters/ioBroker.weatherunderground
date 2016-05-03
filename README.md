@@ -13,7 +13,11 @@ As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/inde
 ##in ioBroker Forum (German)
 http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef89fcad1c3
 
-#changelog
+# changelog
+
+## 0.0.5
+
+corrected humidity value within current weather info (slice + unit)
 
 ## 0.0.4
 checking for spaces in location
