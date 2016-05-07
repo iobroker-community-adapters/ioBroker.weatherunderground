@@ -20,7 +20,14 @@ As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/inde
 ##in ioBroker Forum (German)
 http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef89fcad1c3
 
+## ToDo
+There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
+
 # changelog
+
+## 0.1.0 (2016-05-07)
+* (bluefox) convert text to floats
+* (bluefox) support languages
 
 ## 0.0.5
 corrected humidity value within current weather info (slice + unit)

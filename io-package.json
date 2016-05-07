@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "weatherunderground",
-        "version":                  "0.0.5",
+        "version":                  "0.1.0",
         "title":                    "weatherunderground forecast",
         "desc":                     "load weatherunderground weather forecast for your location",
         "platform":                 "Javascript/Node.js",
@@ -20,7 +20,8 @@
     "native": {
         "apikey": "getYourOwn",
         "location": "HKG",
-        "station": "ISANKTGA111"
+        "station": "ISANKTGA111",
+        "language": "DL"
     },
     "objects": [],
     "instanceObjects": []
