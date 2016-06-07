@@ -43,7 +43,7 @@ var adapter = utils.adapter({
 });
 
 function getWuForecastData(cb) {
-    var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/lang:" + adapter.config.language + "hourly/q/" + adapter.config.location + ".json";
+    var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/hourly/lang:" + adapter.config.language + "/q/" + adapter.config.location + ".json";
     adapter.log.debug("calling forecast: " + url);
 
     request({url: url, json: true, encoding: null}, function(error, response, body) {
