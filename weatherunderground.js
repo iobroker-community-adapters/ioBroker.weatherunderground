@@ -43,8 +43,8 @@ var adapter = utils.adapter({
 });
 
 function getWuForecastData(cb) {
-    var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/hourly/lang:" + adapter.config.language + "/q/" + adapter.config.location + ".json";
-    adapter.log.debug("calling forecast: " + url);
+    var url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
+    adapter.log.debug('calling forecast: ' + url);
 
     request({url: url, json: true, encoding: null}, function(error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -61,20 +61,20 @@ function getWuForecastData(cb) {
                         //var forecast = JSON.parse(body.jsonData);
                         //adapter.log.info("version: " + body.response.version);
                         // see http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary for infos about properties and codes
-                        adapter.setState("forecast." + i + "h.time",    {ack: true, val: body.hourly_forecast[i].FCTTIME.pretty});
-                        adapter.setState("forecast." + i + "h.temp",    {ack: true, val: body.hourly_forecast[i].temp.metric});
-                        adapter.setState("forecast." + i + "h.fctcode", {ack: true, val: body.hourly_forecast[i].fctcode}); //forecast description number -> see link above
-                        adapter.setState("forecast." + i + "h.sky",     {ack: true, val: body.hourly_forecast[i].sky}); //?
-                        adapter.setState("forecast." + i + "h.wspd",    {ack: true, val: body.hourly_forecast[i].wspd.metric}); // windspeed in kmh
-                        adapter.setState("forecast." + i + "h.wdir",    {ack: true, val: body.hourly_forecast[i].wdir.degrees}); //wind dir in degrees
-                        adapter.setState("forecast." + i + "h.uvi",     {ack: true, val: body.hourly_forecast[i].uvi}); //UV Index -> wikipedia
-                        adapter.setState("forecast." + i + "h.humidity", {ack: true, val: body.hourly_forecast[i].humidity});
-                        adapter.setState("forecast." + i + "h.heatindex", {ack: true, val: body.hourly_forecast[i].heatindex.metric}); // -> wikipedia
-                        adapter.setState("forecast." + i + "h.feelslike", {ack: true, val: body.hourly_forecast[i].feelslike.metric}); // -> wikipedia
-                        adapter.setState("forecast." + i + "h.qpf",     {ack: true, val: body.hourly_forecast[i].qpf.metric}); // Quantitative precipitation forecast
-                        adapter.setState("forecast." + i + "h.snow",    {ack: true, val: body.hourly_forecast[i].snow.metric});
-                        adapter.setState("forecast." + i + "h.pop",     {ack: true, val: body.hourly_forecast[i].pop}); // probability of Precipitation
-                        adapter.setState("forecast." + i + "h.mslp",    {ack: true, val: body.hourly_forecast[i].mslp.metric}); // mean sea level pressure
+                        adapter.setState('forecast.' + i + 'h.time',    {ack: true, val: body.hourly_forecast[i].FCTTIME.pretty});
+                        adapter.setState('forecast.' + i + 'h.temp',    {ack: true, val: body.hourly_forecast[i].temp.metric});
+                        adapter.setState('forecast.' + i + 'h.fctcode', {ack: true, val: body.hourly_forecast[i].fctcode}); //forecast description number -> see link above
+                        adapter.setState('forecast.' + i + 'h.sky',     {ack: true, val: body.hourly_forecast[i].sky}); //?
+                        adapter.setState('forecast.' + i + 'h.wspd',    {ack: true, val: body.hourly_forecast[i].wspd.metric}); // windspeed in kmh
+                        adapter.setState('forecast.' + i + 'h.wdir',    {ack: true, val: body.hourly_forecast[i].wdir.degrees}); //wind dir in degrees
+                        adapter.setState('forecast.' + i + 'h.uvi',     {ack: true, val: body.hourly_forecast[i].uvi}); //UV Index -> wikipedia
+                        adapter.setState('forecast.' + i + 'h.humidity', {ack: true, val: body.hourly_forecast[i].humidity});
+                        adapter.setState('forecast.' + i + 'h.heatindex', {ack: true, val: body.hourly_forecast[i].heatindex.metric}); // -> wikipedia
+                        adapter.setState('forecast.' + i + 'h.feelslike', {ack: true, val: body.hourly_forecast[i].feelslike.metric}); // -> wikipedia
+                        adapter.setState('forecast.' + i + 'h.qpf',     {ack: true, val: body.hourly_forecast[i].qpf.metric}); // Quantitative precipitation forecast
+                        adapter.setState('forecast.' + i + 'h.snow',    {ack: true, val: body.hourly_forecast[i].snow.metric});
+                        adapter.setState('forecast.' + i + 'h.pop',     {ack: true, val: body.hourly_forecast[i].pop}); // probability of Precipitation
+                        adapter.setState('forecast.' + i + 'h.mslp',    {ack: true, val: body.hourly_forecast[i].mslp.metric}); // mean sea level pressure
 
                         qpf_sum += Number(body.hourly_forecast[i].qpf.metric);
                         uvi_sum += Number(body.hourly_forecast[i].uvi);
@@ -84,34 +84,34 @@ function getWuForecastData(cb) {
 
                         // 6h
                         if (i == 5) {
-                            adapter.setState("forecast.6h.sum.qpf", {ack: true, val: qpf_sum});
-                            adapter.setState("forecast.6h.sum.pop", {ack: true, val: pop_max});
-                            adapter.setState("forecast.6h.sum.uvi", {ack: true, val: uvi_sum / 6});
+                            adapter.setState('forecast.6h.sum.qpf', {ack: true, val: qpf_sum});
+                            adapter.setState('forecast.6h.sum.pop', {ack: true, val: pop_max});
+                            adapter.setState('forecast.6h.sum.uvi', {ack: true, val: uvi_sum / 6});
                         }
                         // 12h
                         if (i == 11) {
-                            adapter.setState("forecast.12h.sum.qpf", {ack: true, val: qpf_sum});
-                            adapter.setState("forecast.12h.sum.pop", {ack: true, val: pop_max});
-                            adapter.setState("forecast.12h.sum.uvi", {ack: true, val: uvi_sum / 12});
+                            adapter.setState('forecast.12h.sum.qpf', {ack: true, val: qpf_sum});
+                            adapter.setState('forecast.12h.sum.pop', {ack: true, val: pop_max});
+                            adapter.setState('forecast.12h.sum.uvi', {ack: true, val: uvi_sum / 12});
                         }
                         // 24h
                         if (i == 23) {
-                            adapter.setState("forecast.24h.sum.qpf", {ack: true, val: qpf_sum});
-                            adapter.setState("forecast.24h.sum.pop", {ack: true, val: pop_max});
-                            adapter.setState("forecast.24h.sum.uvi", {ack: true, val: uvi_sum / 24});
+                            adapter.setState('forecast.24h.sum.qpf', {ack: true, val: qpf_sum});
+                            adapter.setState('forecast.24h.sum.pop', {ack: true, val: pop_max});
+                            adapter.setState('forecast.24h.sum.uvi', {ack: true, val: uvi_sum / 24});
                         }
                     } catch (error) {
-                        adapter.log.error("Could not parse Forecast-Data: " + error);
-                        adapter.log.error("Reported WU-Error Type: " + body.response.error.type);
+                        adapter.log.error('Could not parse Forecast-Data: ' + error);
+                        adapter.log.error('Reported WU-Error Type: ' + body.response.error.type);
                     }
                 }
             }
 
-            adapter.log.debug("all forecast values set");
+            adapter.log.debug('all forecast values set');
         } else
         {
             // ERROR
-            adapter.log.error("Wunderground reported an error: " + error);
+            adapter.log.error('Wunderground reported an error: ' + error);
         }
         if (cb) cb();
     });
