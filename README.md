@@ -24,6 +24,8 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # changelog
+## 0.1.1 (2016-06-07)
+* (ploebb) Fix forecast api URL
 
 ## 0.1.0 (2016-05-07)
 * (bluefox) convert text to floats

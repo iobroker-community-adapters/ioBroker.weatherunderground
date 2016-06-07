@@ -1,7 +1,14 @@
 {
     "common": {
         "name":                     "weatherunderground",
-        "version":                  "0.1.0",
+        "version":                  "0.1.1",
+		"news": {
+            "0.1.1": {
+                "en": "Fix forecast api URL",
+                "de": "Fix forecast api URL",
+                "ru": "Fix forecast api URL"
+            }
+        },
         "title":                    "weatherunderground forecast",
         "desc":                     "load weatherunderground weather forecast for your location",
         "platform":                 "Javascript/Node.js",
