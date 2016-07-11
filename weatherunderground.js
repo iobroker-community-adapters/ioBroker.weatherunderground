@@ -139,12 +139,12 @@ function getWuConditionsData() {
                     adapter.setState("current.display_location.latitude", {ack: true, val: parseFloat(body.current_observation.display_location.latitude)});
                     adapter.setState("current.display_location.longitude", {ack: true, val: parseFloat(body.current_observation.display_location.longitude)});
                     adapter.setState("current.display_location.elevation", {ack: true, val: parseFloat(body.current_observation.display_location.elevation)});
-    
+
                     adapter.setState("current.observation_location.full", {ack: true, val: body.current_observation.observation_location.full});
                     adapter.setState("current.observation_location.latitude", {ack: true, val: parseFloat(body.current_observation.observation_location.latitude)});
                     adapter.setState("current.observation_location.longitude", {ack: true, val: parseFloat(body.current_observation.observation_location.longitude)});
                     adapter.setState("current.observation_location.elevation", {ack: true, val: parseFloat(body.current_observation.observation_location.elevation)});
-    
+
                     adapter.setState("current.observation_location.station_id", {ack: true, val: body.current_observation.station_id});
                     adapter.setState("current.local_time_rfc822", {ack: true, val: body.current_observation.local_time_rfc822});
                     adapter.setState("current.weather", {ack: true, val: body.current_observation.weather});
@@ -160,6 +160,7 @@ function getWuConditionsData() {
                     adapter.setState("current.solarradiation", {ack: true, val: body.current_observation.solarradiation});
                     adapter.setState("current.UV", {ack: true, val: parseFloat(body.current_observation.UV)});
                     adapter.setState("current.precip_1hr_metric", {ack: true, val: body.current_observation.precip_1hr_metric});
+                    adapter.setState("current.precip_today_metric", {ack: true, val: body.current_observation.precip_today_metric});
                     adapter.setState("current.icon_url", {ack: true, val: body.current_observation.icon_url});
                     adapter.setState("current.forecast_url", {ack: true, val: body.current_observation.forecast_url});
                     adapter.setState("current.history_url", {ack: true, val: body.current_observation.history_url});
@@ -305,6 +306,11 @@ function checkWeatherVariables() {
         type: 'state',
         common: {name: 'precipitation (last 1h)', role: 'value.rain', type: 'number', unit: 'mm', read: true, write: false},
         native: {id: 'current.precip_1hr_metric'}
+    });
+    adapter.setObjectNotExists('current.precip_today_metric', {
+        type: 'state',
+        common: {name: 'precipitation (today)', role: 'value.rain', type: 'number', unit: 'mm', read: true, write: false},
+        native: {id: 'current.precip_today_metric'}
     });
     adapter.setObjectNotExists('current.icon_url', {
         type: 'state',
@@ -460,4 +466,3 @@ function checkWeatherVariables() {
         native: {id: 'forecast.24h.sum.uvi'}
     });
 }
-
