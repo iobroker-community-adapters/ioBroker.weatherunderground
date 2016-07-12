@@ -24,8 +24,11 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # changelog
+## 1.0.0 (2016-07-12)
+* (Apollon77) add daily rain level forecast
+
 ## 0.2.0 (2016-07-01)
-* (Apollon77 ) Add Error handling and station-usage for forcasts
+* (Apollon77) Add Error handling and station-usage for forcasts
 
 ## 0.1.1 (2016-06-07)
 * (ploebb) Fix forecast api URL
