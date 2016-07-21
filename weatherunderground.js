@@ -143,7 +143,7 @@ function getWuConditionsData() {
                     adapter.setState("current.observation_location.full", {ack: true, val: body.current_observation.observation_location.full});
                     adapter.setState("current.observation_location.latitude", {ack: true, val: parseFloat(body.current_observation.observation_location.latitude)});
                     adapter.setState("current.observation_location.longitude", {ack: true, val: parseFloat(body.current_observation.observation_location.longitude)});
-                    adapter.setState("current.observation_location.elevation", {ack: true, val: parseFloat(body.current_observation.observation_location.elevation)});
+                    adapter.setState("current.observation_location.elevation", {ack: true, val: (parseFloat(body.current_observation.observation_location.elevation) * 0.3048).toFixed(2)}); // convert ft to m
 
                     adapter.setState("current.observation_location.station_id", {ack: true, val: body.current_observation.station_id});
                     adapter.setState("current.local_time_rfc822", {ack: true, val: body.current_observation.local_time_rfc822});
