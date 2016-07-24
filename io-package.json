@@ -1,8 +1,13 @@
 {
     "common": {
         "name":                     "weatherunderground",
-        "version":                  "1.0.0",
+        "version":                  "1.0.1",
 		"news": {
+			"1.0.1": {
+                "en": "conversion from feet to meter for observation_location",
+                "de": "conversion from feet to meter for observation_location",
+                "ru": "conversion from feet to meter for observation_location"
+            },
 			"1.0.0": {
                 "en": "add daily rain level forecast",
                 "de": "add daily rain level forecast",
