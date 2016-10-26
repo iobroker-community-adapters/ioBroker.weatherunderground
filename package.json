@@ -1,6 +1,6 @@
 {
   "name": "iobroker.weatherunderground",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "weatherunderground forecast",
   "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
   "contributors": [],

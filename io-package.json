@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "weatherunderground",
-        "version":                  "1.0.1",
+        "version":                  "1.0.2",
 		"news": {
-			"1.0.1": {
+            "1.0.2": {
+                "en": "make sure precip values are always integers",
+                "de": "make sure precip values are always integers",
+                "ru": "make sure precip values are always integers"
+            },
+            "1.0.1": {
                 "en": "conversion from feet to meter for observation_location",
                 "de": "conversion from feet to meter for observation_location",
                 "ru": "conversion from feet to meter for observation_location"

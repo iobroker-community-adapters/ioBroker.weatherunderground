@@ -159,8 +159,8 @@ function getWuConditionsData() {
                     adapter.setState("current.visibility_km", {ack: true, val: parseFloat(body.current_observation.visibility_km)});
                     adapter.setState("current.solarradiation", {ack: true, val: body.current_observation.solarradiation});
                     adapter.setState("current.UV", {ack: true, val: parseFloat(body.current_observation.UV)});
-                    adapter.setState("current.precip_1hr_metric", {ack: true, val: body.current_observation.precip_1hr_metric});
-                    adapter.setState("current.precip_today_metric", {ack: true, val: body.current_observation.precip_today_metric});
+                    adapter.setState("current.precip_1hr_metric", {ack: true, val: (isNaN(parseInt(body.current_observation.precip_1hr_metric, 10)) ? null : parseInt(body.current_observation.precip_1hr_metric, 10))});
+                    adapter.setState("current.precip_today_metric", {ack: true, val: (isNaN(parseInt(body.current_observation.precip_today_metric, 10)) ? null : parseInt(body.current_observation.precip_today_metric, 10))});
                     adapter.setState("current.icon_url", {ack: true, val: body.current_observation.icon_url});
                     adapter.setState("current.forecast_url", {ack: true, val: body.current_observation.forecast_url});
                     adapter.setState("current.history_url", {ack: true, val: body.current_observation.history_url});
