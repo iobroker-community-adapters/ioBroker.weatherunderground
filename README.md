@@ -24,6 +24,9 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # changelog
+## 1.0.2 (2016-10-29)
+* (Apollon77) make sure precip values are always integers
+
 ## 1.0.1 (2016-07-21)
 * (jens-maus) conversion from feet to meter for observation_location
 
