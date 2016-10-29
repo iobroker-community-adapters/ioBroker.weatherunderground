@@ -5,8 +5,8 @@
 		"news": {
             "1.0.2": {
                 "en": "make sure precip values are always integers",
-                "de": "make sure precip values are always integers",
-                "ru": "make sure precip values are always integers"
+                "de": "Konvertiere precip-Wert immer nach Integer",
+                "ru": "Конвертация значения precip в integer"
             },
             "1.0.1": {
                 "en": "conversion from feet to meter for observation_location",
