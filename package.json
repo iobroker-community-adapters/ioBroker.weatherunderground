@@ -1,6 +1,6 @@
 {
   "name": "iobroker.weatherunderground",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "weatherunderground forecast",
   "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
   "contributors": [],
@@ -12,7 +12,7 @@
     "url": "https://github.com/dschaedl/ioBroker.weatherunderground"
   },
   "dependencies": {
-    "request": "^2.69.0",
+    "request": "^2.76.0",
     "iconv-lite": "^0.4.13"
   },
   "devDependencies": {

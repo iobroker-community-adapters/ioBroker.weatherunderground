@@ -1,8 +1,13 @@
 {
     "common": {
         "name":                     "weatherunderground",
-        "version":                  "1.0.2",
+        "version":                  "1.0.3",
 		"news": {
+            "1.0.3": {
+                "en": "Catch parse errors",
+                "de": "Bearbeite Parsefehler",
+                "ru": "Обработка ошибок парсинга"
+            },
             "1.0.2": {
                 "en": "make sure precip values are always integers",
                 "de": "Konvertiere precip-Wert immer nach Integer",

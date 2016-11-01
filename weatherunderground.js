@@ -15,7 +15,7 @@
  *
  */
 
-"use strict";
+'use strict';
 
 var utils      = require(__dirname + '/lib/utils'); // Get common adapter utils
 var request    = require('request');
@@ -45,7 +45,7 @@ var adapter = utils.adapter({
 function getWuForecastData(cb) {
     var url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
     if (adapter.config.station.length > 2) {
-        url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/hourly/lang:" + adapter.config.language + "/q/pws:" + adapter.config.station + ".json";
+        url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/hourly/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
     adapter.log.debug('calling forecast: ' + url);
 
@@ -54,7 +54,6 @@ function getWuForecastData(cb) {
             var qpf_sum = 0;
             var pop_max = 0;
             var uvi_sum = 0;
-            var ready = 0;
 
             if (body.hourly_forecast) {
                 for (var i = 0; i < 24; i++) {
@@ -123,64 +122,67 @@ function getWuForecastData(cb) {
 }
 
 function getWuConditionsData() {
-    var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/lang:" + adapter.config.language + "/q/" + adapter.config.location + ".json";
+    var url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/conditions/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
 
     if (adapter.config.station.length > 2) {
-        url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/lang:" + adapter.config.language + "/q/pws:" + adapter.config.station + ".json";
+        url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/conditions/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
-    adapter.log.debug("calling forecast: " + url);
-    request({url: url, encoding: null}, function(error, response, body) {
+    adapter.log.debug('calling forecast: ' + url);
+    request({url: url, encoding: null}, function (error, response, body) {
         body = iconv.decode(new Buffer(body), 'utf-8');
-        body = JSON.parse(body);
+        try {
+            body = JSON.parse(body);
+        } catch (e) {
+            adapter.log.error('Cannot parse answer: ' + body);
+            return;
+        }
         if (!error && response.statusCode === 200) {
             if (body.current_observation) {
                 try {
-                    adapter.setState("current.display_location.full", {ack: true, val: body.current_observation.display_location.full});
-                    adapter.setState("current.display_location.latitude", {ack: true, val: parseFloat(body.current_observation.display_location.latitude)});
-                    adapter.setState("current.display_location.longitude", {ack: true, val: parseFloat(body.current_observation.display_location.longitude)});
-                    adapter.setState("current.display_location.elevation", {ack: true, val: parseFloat(body.current_observation.display_location.elevation)});
+                    adapter.setState('current.display_location.full', {ack: true, val: body.current_observation.display_location.full});
+                    adapter.setState('current.display_location.latitude', {ack: true, val: parseFloat(body.current_observation.display_location.latitude)});
+                    adapter.setState('current.display_location.longitude', {ack: true, val: parseFloat(body.current_observation.display_location.longitude)});
+                    adapter.setState('current.display_location.elevation', {ack: true, val: parseFloat(body.current_observation.display_location.elevation)});
 
-                    adapter.setState("current.observation_location.full", {ack: true, val: body.current_observation.observation_location.full});
-                    adapter.setState("current.observation_location.latitude", {ack: true, val: parseFloat(body.current_observation.observation_location.latitude)});
-                    adapter.setState("current.observation_location.longitude", {ack: true, val: parseFloat(body.current_observation.observation_location.longitude)});
-                    adapter.setState("current.observation_location.elevation", {ack: true, val: (parseFloat(body.current_observation.observation_location.elevation) * 0.3048).toFixed(2)}); // convert ft to m
+                    adapter.setState('current.observation_location.full', {ack: true, val: body.current_observation.observation_location.full});
+                    adapter.setState('current.observation_location.latitude', {ack: true, val: parseFloat(body.current_observation.observation_location.latitude)});
+                    adapter.setState('current.observation_location.longitude', {ack: true, val: parseFloat(body.current_observation.observation_location.longitude)});
+                    adapter.setState('current.observation_location.elevation', {ack: true, val: (parseFloat(body.current_observation.observation_location.elevation) * 0.3048).toFixed(2)}); // convert ft to m
 
-                    adapter.setState("current.observation_location.station_id", {ack: true, val: body.current_observation.station_id});
-                    adapter.setState("current.local_time_rfc822", {ack: true, val: body.current_observation.local_time_rfc822});
-                    adapter.setState("current.weather", {ack: true, val: body.current_observation.weather});
-                    adapter.setState("current.temp_c", {ack: true, val: parseFloat(body.current_observation.temp_c)});
-                    adapter.setState("current.relative_humidity", {ack: true, val: parseFloat(body.current_observation.relative_humidity.replace('%', ''))});
-                    adapter.setState("current.wind_degrees", {ack: true, val: parseFloat(body.current_observation.wind_degrees)});
-                    adapter.setState("current.wind_kph", {ack: true, val: parseFloat(body.current_observation.wind_kph)});
-                    adapter.setState("current.wind_gust_kph", {ack: true, val: parseFloat(body.current_observation.wind_gust_kph)});
-                    adapter.setState("current.dewpoint_c", {ack: true, val: parseFloat(body.current_observation.dewpoint_c)});
-                    adapter.setState("current.windchill_c", {ack: true, val: parseFloat(body.current_observation.windchill_c)});
-                    adapter.setState("current.feelslike_c", {ack: true, val: parseFloat(body.current_observation.feelslike_c)});
-                    adapter.setState("current.visibility_km", {ack: true, val: parseFloat(body.current_observation.visibility_km)});
-                    adapter.setState("current.solarradiation", {ack: true, val: body.current_observation.solarradiation});
-                    adapter.setState("current.UV", {ack: true, val: parseFloat(body.current_observation.UV)});
+                    adapter.setState('current.observation_location.station_id', {ack: true, val: body.current_observation.station_id});
+                    adapter.setState('current.local_time_rfc822', {ack: true, val: body.current_observation.local_time_rfc822});
+                    adapter.setState('current.weather', {ack: true, val: body.current_observation.weather});
+                    adapter.setState('current.temp_c', {ack: true, val: parseFloat(body.current_observation.temp_c)});
+                    adapter.setState('current.relative_humidity', {ack: true, val: parseFloat(body.current_observation.relative_humidity.replace('%', ''))});
+                    adapter.setState('current.wind_degrees', {ack: true, val: parseFloat(body.current_observation.wind_degrees)});
+                    adapter.setState('current.wind_kph', {ack: true, val: parseFloat(body.current_observation.wind_kph)});
+                    adapter.setState('current.wind_gust_kph', {ack: true, val: parseFloat(body.current_observation.wind_gust_kph)});
+                    adapter.setState('current.dewpoint_c', {ack: true, val: parseFloat(body.current_observation.dewpoint_c)});
+                    adapter.setState('current.windchill_c', {ack: true, val: parseFloat(body.current_observation.windchill_c)});
+                    adapter.setState('current.feelslike_c', {ack: true, val: parseFloat(body.current_observation.feelslike_c)});
+                    adapter.setState('current.visibility_km', {ack: true, val: parseFloat(body.current_observation.visibility_km)});
+                    adapter.setState('current.solarradiation', {ack: true, val: body.current_observation.solarradiation});
+                    adapter.setState('current.UV', {ack: true, val: parseFloat(body.current_observation.UV)});
                     if (!isNaN(parseInt(body.current_observation.precip_1hr_metric, 10))) {
-                        adapter.setState("current.precip_1hr_metric", {ack: true, val: parseInt(body.current_observation.precip_1hr_metric, 10)});
+                        adapter.setState('current.precip_1hr_metric', {ack: true, val: parseInt(body.current_observation.precip_1hr_metric, 10)});
                     }
                     if (!isNaN(parseInt(body.current_observation.precip_today_metric, 10))) {
-                        adapter.setState("current.precip_today_metric", {ack: true, val: parseInt(body.current_observation.precip_today_metric, 10)});
+                        adapter.setState('current.precip_today_metric', {ack: true, val: parseInt(body.current_observation.precip_today_metric, 10)});
                     }
-                    adapter.setState("current.icon_url", {ack: true, val: body.current_observation.icon_url});
-                    adapter.setState("current.forecast_url", {ack: true, val: body.current_observation.forecast_url});
-                    adapter.setState("current.history_url", {ack: true, val: body.current_observation.history_url});
-                    adapter.log.debug("all current conditions values set");
+                    adapter.setState('current.icon_url', {ack: true, val: body.current_observation.icon_url});
+                    adapter.setState('current.forecast_url', {ack: true, val: body.current_observation.forecast_url});
+                    adapter.setState('current.history_url', {ack: true, val: body.current_observation.history_url});
+                    adapter.log.debug('all current conditions values set');
                 } catch (error) {
-                    adapter.log.error("Could not parse Conditions-Data: " + error);
-                    adapter.log.error("Reported WU-Error Type: " + body.response.error.type);
+                    adapter.log.error('Could not parse Conditions-Data: ' + error);
+                    adapter.log.error('Reported WU-Error Type: ' + body.response.error.type);
                 }
-            }
-            else {
+            } else {
             	adapter.log.error('No current observation data found in response');
             }
-        } else
-        {
+        } else {
             // ERROR
-            adapter.log.error("Wunderground reported an error: " + error);
+            adapter.log.error('Wunderground reported an error: ' + error);
         }
     });
 }

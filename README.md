@@ -17,13 +17,16 @@ An api-key from WU is needed to use this adapter:
 
 As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
 
-##in ioBroker Forum (German)
+## in ioBroker Forum (German)
 http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef89fcad1c3
 
 ## ToDo
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
-# changelog
+# Сhangelog
+## 1.0.3 (2016-11-01)
+* (bluefox) Catch parse errors
+
 ## 1.0.2 (2016-10-29)
 * (Apollon77) make sure precip values are always integers
 
