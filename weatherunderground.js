@@ -123,15 +123,20 @@ function getWuForecastData(cb) {
 }
 
 function getWuConditionsData() {
-    var url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/lang:" + adapter.config.language + "/q/" + adapter.config.location + ".json";
+    var url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/conditions/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
 
     if (adapter.config.station.length > 2) {
-        url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/conditions/lang:" + adapter.config.language + "/q/pws:" + adapter.config.station + ".json";
+        url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/conditions/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
-    adapter.log.debug("calling forecast: " + url);
+    adapter.log.debug('calling forecast: ' + url);
     request({url: url, encoding: null}, function(error, response, body) {
         body = iconv.decode(new Buffer(body), 'utf-8');
-        body = JSON.parse(body);
+        try {
+            body = JSON.parse(body);
+        } catch (e) {
+            adapter.log.error('Cannot parse answer: ' + body);
+            return;
+        }
         if (!error && response.statusCode === 200) {
             if (body.current_observation) {
                 try {
@@ -173,14 +178,12 @@ function getWuConditionsData() {
                     adapter.log.error("Could not parse Conditions-Data: " + error);
                     adapter.log.error("Reported WU-Error Type: " + body.response.error.type);
                 }
-            }
-            else {
+            } else {
             	adapter.log.error('No current observation data found in response');
             }
-        } else
-        {
+        } else {
             // ERROR
-            adapter.log.error("Wunderground reported an error: " + error);
+            adapter.log.error('Wunderground reported an error: ' + error);
         }
     });
 }
