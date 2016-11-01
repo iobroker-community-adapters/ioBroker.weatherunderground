@@ -45,7 +45,7 @@ var adapter = utils.adapter({
 function getWuForecastData(cb) {
     var url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
     if (adapter.config.station.length > 2) {
-        url = "http://api.wunderground.com/api/" + adapter.config.apikey + "/hourly/lang:" + adapter.config.language + "/q/pws:" + adapter.config.station + ".json";
+        url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/hourly/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
     adapter.log.debug('calling forecast: ' + url);
 
@@ -54,7 +54,6 @@ function getWuForecastData(cb) {
             var qpf_sum = 0;
             var pop_max = 0;
             var uvi_sum = 0;
-            var ready = 0;
 
             if (body.hourly_forecast) {
                 for (var i = 0; i < 24; i++) {
@@ -129,7 +128,7 @@ function getWuConditionsData() {
         url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/conditions/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
     adapter.log.debug('calling forecast: ' + url);
-    request({url: url, encoding: null}, function(error, response, body) {
+    request({url: url, encoding: null}, function (error, response, body) {
         body = iconv.decode(new Buffer(body), 'utf-8');
         try {
             body = JSON.parse(body);
