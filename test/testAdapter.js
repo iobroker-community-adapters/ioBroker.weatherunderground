@@ -9,6 +9,8 @@ var onStateChanged = null;
 var onObjectChanged = null;
 var sendToID = 1;
 
+var adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
+
 function checkConnectionOfAdapter(cb, counter) {
     counter = counter || 0;
     console.log('Try check #' + counter);
@@ -17,7 +19,7 @@ function checkConnectionOfAdapter(cb, counter) {
         return;
     }
 
-    states.getState('system.adapter.nut.0.alive', function (err, state) {
+    states.getState('system.adapter.' + adapterName + '.0.alive', function (err, state) {
         if (err) console.error(err);
         if (state && state.val) {
             if (cb) cb();
@@ -71,8 +73,8 @@ function sendTo(target, command, message, callback) {
     });
 }
 
-describe('Test NUT adapter', function() {
-    before('Test NUT adapter: Start js-controller', function (_done) {
+describe('Test ' + adapterShortName + ' adapter', function() {
+    before('Test ' + adapterShortName + ' adapter: Start js-controller', function (_done) {
         this.timeout(600000); // because of first install from npm
 
         setup.setupController(function () {
@@ -98,8 +100,8 @@ describe('Test NUT adapter', function() {
 
 /*
     ENABLE THIS WHEN ADAPTER RUNS IN DEAMON MODE TO CHECK THAT IT HAS STARTED SUCCESSFULLY
-
-    it('Test NUT adapter: Check if adapter started', function (done) {
+*/
+    it('Test ' + adapterShortName + ' adapter: Check if adapter started', function (done) {
         this.timeout(60000);
         checkConnectionOfAdapter(function (res) {
             if (res) console.log(res);
@@ -116,7 +118,7 @@ describe('Test NUT adapter', function() {
                 });
         });
     });
-*/
+/**/
 
 /*
     PUT YOUR OWN TESTS HERE USING
@@ -127,7 +129,7 @@ describe('Test NUT adapter', function() {
     You can also use "sendTo" method to send messages to the started adapter
 */
 
-    after('Test NUT adapter: Stop js-controller', function (done) {
+    after('Test ' + adapterShortName + ' adapter: Stop js-controller', function (done) {
         this.timeout(10000);
 
         setup.stopController(function (normalTerminated) {
