@@ -129,14 +129,14 @@ function getWuConditionsData() {
     }
     adapter.log.debug('calling forecast: ' + url);
     request({url: url, encoding: null}, function (error, response, body) {
-        body = iconv.decode(new Buffer(body), 'utf-8');
-        try {
-            body = JSON.parse(body);
-        } catch (e) {
-            adapter.log.error('Cannot parse answer: ' + body);
-            return;
-        }
         if (!error && response.statusCode === 200) {
+            body = iconv.decode(new Buffer(body), 'utf-8');
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                adapter.log.error('Cannot parse answer: ' + body);
+                return;
+            }
             if (body.current_observation) {
                 try {
                     adapter.setState('current.display_location.full', {ack: true, val: body.current_observation.display_location.full});
