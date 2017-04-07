@@ -19,7 +19,11 @@
     systemDictionary = {
         "location":                    {"de": "Ort"},
         "station":                    {"de": "Mess-station"},
-        "apikey":                    {"de": "Apikey"}
+        "apikey": { "de": "Apikey" },
+        "forecast_periods_txt": { "de": "Forecast Text" },
+        "forecast_periods": { "de": "Forecast" },
+        "forecast_hourly": { "de": "Forecast Stunden" },
+        "current": { "de": "Aktuell" }
     };
 
     function load(settings, onChange) {
@@ -36,31 +40,99 @@
 <!-- you have to put your config page in a div with id adapter-container -->
 <div id="adapter-container">
 
-    <table><tr>
-        <td><img src="wu.png"/></td>
-        <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
-    </tr></table>
+    <table>
+        <tr>
+            <td><img src="wu.png" /></td>
+            <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
+        </tr>
+    </table>
     <p style="padding-left: 12px">
-        <label for="apikey" class="translate">apikey</label> <input class="value" type="text" id="apikey" size="80"/><br/>
-        <label for="location" class="translate">location</label> <input class="value" type="text" id="location" size="80"/><br/>
-        <label for="station" class="translate">station</label> <input class="value" type="text" id="station" size="80"/>
-        <label for="language" class="translate">language</label> <select class="value" id="language" >
-            <option value="DL">de</option>
-            <option value="EN">en</option>
-            <option value="RU">ru</option>
-        </select>
+        <table>
+            <tr>
+                <td>
+                    <label for="apikey" class="translate">apikey</label>
+                </td>
+                <td>
+                    <input class="value" type="text" id="apikey" size="80" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="location" class="translate">location</label>
+                </td>
+                <td>
+                    <input class="value" type="text" id="location" size="80" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="station" class="translate">station</label>
+                </td>
+                <td>
+                    <input class="value" type="text" id="station" size="80" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="language" class="translate">language</label>
+                </td>
+                <td>
+                    <select class="value" id="language">
+                        <option value="DL">de</option>
+                        <option value="EN">en</option>
+                        <option value="RU">ru</option>
+                    </select>
+                </td>
+            </tr>
+            
+                       <tr>
+                           <td>
+                               <label for="language" class="translate">forecast_periods_txt</label>
+                           </td>
+                           <td>
+                               <input  type="checkbox" id="forecast_periods_txt" />
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="language" class="translate">forecast_periods</label>
+                           </td>
+                           <td>
+                               <input type="checkbox" id="forecast_periods" />
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="language" class="translate">forecast_hourly</label>
+                           </td>
+                           <td>
+                               <input type="checkbox" id="forecast_hourly" />
+                           </td>
+                       </tr>
+                       <tr>
+                           <td>
+                               <label for="language" class="translate">current</label>
+                           </td>
+                           <td>
+                               <input type="checkbox" id="current" />
+                           </td>
+                       </tr> 
+        </table>
     </p>
     <h3>apikey</h3>
     <p>
-    You will need your own apikey from Weatherunderground to call weatherforcasts in an automated manner:<br/>
-    * Register/Login at <a target="blank" href="http://www.wunderground.com/weather/api/d/login.html">Weatherunderground Register</a><br/>
-    * get your apikey <a target="blank" href="http://www.wunderground.com/weather/api/d/pricing">here</a>. purchase a free developer key<br/>
+        You will need your own apikey from Weatherunderground to call weatherforcasts in an automated manner:<br />
+        * Register/Login at <a target="blank" href="http://www.wunderground.com/weather/api/d/login.html">Weatherunderground Register</a><br />
+        * get your apikey <a target="blank" href="http://www.wunderground.com/weather/api/d/pricing">here</a>. purchase a free developer key<br />
     </p>
     <h3>location</h3>
     <p>Select your location either by name (e.g. "Berlin"), Airport Code (e.g. "ZRH"), coordinates (e.g. "47.3145359,8.4159812") or Weatherstation-ID (e.g. "pws:IZRICHZR8")</p>
     <h3>Station - only for current conditions data</h3>
-    <p>If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your
-        preferred station (e.g. "IAARGAUB5"). You can find these codes e.g. on the <a target="blank" href="http://www.wunderground.com/wundermap">Wundermap</a> - click a station and look for the "Station ID"</p>
+    <p>
+        If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your
+        preferred station (e.g. "IAARGAUB5"). You can find these codes e.g. on the <a target="blank" href="http://www.wunderground.com/wundermap">Wundermap</a> - click a station and look for the "Station ID"
+    </p>
+ 
 </div>
 
 </html>
