@@ -26,14 +26,68 @@
         "current": { "de": "Aktuell" }
     };
 
-    function load(settings, onChange) {
-        $('#location').val(settings['location']);
-        $('#station').val(settings['station']);
-        $('#apikey').val(settings['apikey']);
+    var onChange = null;
+
+    function setValue(id, value) {
+        // example: select elements with id=key and class=value and insert value
+        if ($('#' + id + '.value').attr('type') == 'checkbox') {
+            $('#' + id + '.value').prop('checked', value).change(function () {
+                onChange();
+            });
+        } else {
+            $('#' + id + '.value').val(value).change(function () {
+
+                onChange();
+            }).keyup(function () {
+                // Check that only numbers entered
+                if ($(this).hasClass('number')) {
+                    var val = $(this).val();
+                    if (val) {
+                        var newVal = '';
+                        for (var i = 0; i < val.length; i++) {
+                            if (val[i] >= '0' && val[i] <= '9') {
+                                newVal += val[i];
+                            }
+                        }
+
+                        if (val != newVal) $(this).val(newVal);
+                    }
+                }
+                $(this).trigger('change');
+            });
+        }
+    }
+
+    function load(settings, _onChange) {
+        //$('#location').val(settings['location']);
+        //$('#station').val(settings['station']);
+        //$('#apikey').val(settings['apikey']);
+        onChange = _onChange;
+        for (var key in settings) {
+            setValue(key, settings[key]);
+        }
+
+        onChange(false);
+    }
+
+    function getSettings() {
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            var id = $this.attr('id');
+
+            if ($this.attr('type') == 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+        return obj;
     }
 
     function save(callback) {
-        callback({location: $('#location').val().replace(/\s+/g, ''), station: $('#station').val().trim(), apikey: $('#apikey').val().trim()});
+        // callback({location: $('#location').val().replace(/\s+/g, ''), station: $('#station').val().trim(), apikey: $('#apikey').val().trim()}); -->
+        callback(getSettings());
     }
 </script>
 
