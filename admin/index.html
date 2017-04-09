@@ -30,11 +30,17 @@
     function setValue(id, value, onChange) {
         // example: select elements with id=key and class=value and insert value
         if ($('#' + id + '.value').attr('type') === 'checkbox') {
+
+            document.getElementById("log").innerHTML = id;
+
             $('#' + id + '.value').prop('checked', value).change(function () {
                 onChange();
             });
         } else {
             $('#' + id + '.value').val(value).change(function () {
+
+                document.getElementById("log").innerHTML = id;
+
                 onChange();
             }).keyup(function () {
                 // Check that only numbers entered
@@ -99,6 +105,9 @@
             <td><img src="wu.png" /></td>
             <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
         </tr>
+       
+            
+        
     </table>
     <p style="padding-left: 12px">
         <table>
@@ -144,7 +153,7 @@
                                <label for="language" class="translate">forecast_periods_txt</label>
                            </td>
                            <td>
-                               <input  type="checkbox" id="forecast_periods_txt" />
+                               <input  type="checkbox" id="forecast_periods_txt" value="true" class="value">
                            </td>
                        </tr>
                        <tr>
@@ -152,7 +161,7 @@
                                <label for="language" class="translate">forecast_periods</label>
                            </td>
                            <td>
-                               <input type="checkbox" id="forecast_periods" />
+                               <input type="checkbox" id="forecast_periods" value="true" class="value">
                            </td>
                        </tr>
                        <tr>
@@ -160,7 +169,7 @@
                                <label for="language" class="translate">forecast_hourly</label>
                            </td>
                            <td>
-                               <input type="checkbox" id="forecast_hourly" />
+                               <input type="checkbox" id="forecast_hourly" value="true" class="value">
                            </td>
                        </tr>
                        <tr>
@@ -168,11 +177,14 @@
                                <label for="language" class="translate">current</label>
                            </td>
                            <td>
-                               <input type="checkbox" id="current" />
+                               <input type="checkbox" id="current" value="true" class="value">
                            </td>
                        </tr> 
         </table>
     </p>
+
+    <p id="log"></p>
+
     <h3>apikey</h3>
     <p>
         You will need your own apikey from Weatherunderground to call weatherforcasts in an automated manner:<br />

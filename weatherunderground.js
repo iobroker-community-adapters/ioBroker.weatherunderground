@@ -26,19 +26,25 @@ var adapter = utils.adapter('weatherunderground');
 // is called if a subscribed object changes
 adapter.on('objectChange', function (id, obj) {
     // Warning, obj can be null if it was deleted
-    adapter.log.debug('objectChange ' + id + ' ' + JSON.stringify(obj));
+    adapter.log.debug('objectChange 123 ' + id + ' ' + JSON.stringify(obj));
 
     //feuert auch, wenn adapter im admin angehalten oder gestartet wird...
+    adapter.log.debug('on objectChange : ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
 
 });
 
 adapter.on('ready', function () {
+    adapter.log.debug('on ready 111 : ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
+
     adapter.config.language = adapter.config.language || 'DL';
     adapter.config.forecast_periods_txt = adapter.config.forecast_periods_txt || true;
     adapter.config.forecast_periods = adapter.config.forecast_periods || true;
     adapter.config.current = adapter.config.current || true;
     adapter.config.forecast_hourly = adapter.config.forecast_hourly || true;
+
+
+    adapter.log.debug('on ready 222 : ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
     checkWeatherVariables();
 
