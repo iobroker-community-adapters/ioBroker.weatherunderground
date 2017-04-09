@@ -24,6 +24,15 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # Сhangelog
+
+## 1.0.4 (2017-04-09)
+* (Rene) parse much more data
+   + today's 24 h
+   + next 4 days / nights as text
+   + next 4 days 
+   + current values
+   each can be enabled or disabled
+
 ## 1.0.3 (2016-11-01)
 * (bluefox) Catch parse errors
 

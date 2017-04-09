@@ -43,7 +43,7 @@
     "desc": "load weatherunderground weather forecast for your location",
     "platform": "Javascript/Node.js",
     "mode": "schedule",
-    "schedule": "*/15 * * * *",
+    "schedule": "12 * * * *",
     "icon": "wu.png",
     "extIcon": "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
     "readme": "https://github.com/dschaedl/ioBroker.weatherunderground",
@@ -51,7 +51,7 @@
     "npmLibs": [ ],
     "type": "weather",
     "keywords": [ "iobroker", "weather", "forecast", "wu", "weatherunderground" ],
-    "loglevel": "info",
+    "loglevel": "debug",
     "enabled": true
   },
   "native": {
