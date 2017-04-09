@@ -26,24 +26,45 @@
         "current": { "de": "Aktuelle Daten" }
     };
 
-    // the function loadSettings has to exist ...
-    function load(settings, onChange) {
+
+    function setValue(id, value, onChange) {
         // example: select elements with id=key and class=value and insert value
-        for (var key in settings) {
-            // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                $('#' + key + '.value').prop('checked', settings[key]).change(function () {
-                    onChange();
-                });
-            } else {
-                $('#' + key + '.value').val(settings[key]).change(function () {
-                    onChange();
-                }).keyup(function () {
-                    $(this).trigger('change');
-                });
-            }
+        if ($('#' + id + '.value').attr('type') === 'checkbox') {
+            $('#' + id + '.value').prop('checked', value).change(function () {
+                onChange();
+            });
+        } else {
+            $('#' + id + '.value').val(value).change(function () {
+                onChange();
+            }).keyup(function () {
+                // Check that only numbers entered
+                if ($(this).hasClass('number')) {
+                    var val = $(this).val();
+                    if (val) {
+                        var newVal = '';
+                        for (var i = 0; i < val.length; i++) {
+                            if ((val[i] >= '0' && val[i] <= '9') || val[i] === '-' || val[i] === '+' || val[i] === '.' || val[i] === ',') {
+                                if (val[i] === '.' && convertComma === true) val[i] === ',';
+                                if (val[i] === ',' && convertComma === false) val[i] === '.';
+                                newVal += val[i];
+                            }
+                        }
+
+                        if (val != newVal) $(this).val(newVal);
+                    }
+                }
+                $(this).trigger('change');
+            });
         }
-        // Signal to admin, that no changes yet
+    }
+
+    function load(settings, onChange) {
+
+        for (var key in settings) {
+            setValue(key, settings[key], onChange);
+        }
+
+
         onChange(false);
     }
 
@@ -51,19 +72,20 @@
     // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
         // example: select elements with class=value and build settings object
-        var obj = {};
+        var settings = {};
         $('.value').each(function () {
             var $this = $(this);
-            //obj[$this.attr('id')] = $this.val();
             var id = $this.attr('id');
 
             if ($this.attr('type') == 'checkbox') {
-                obj[$this.attr('id')] = $this.prop('checked');
+                settings[id] = $this.prop('checked');
             } else {
-                obj[$this.attr('id')] = $this.val();
+                settings[id] = $this.val();
             }
         });
-        callback(obj);
+
+
+        callback(settings);
     }
 
     
