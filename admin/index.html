@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 
 <!-- these 4 files always have to be included -->
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
@@ -18,62 +18,43 @@
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
         "location":                    {"de": "Ort"},
-        "station":                    {"de": "Mess-station"},
+        "station":                    {"de": "Messstation"},
         "apikey": { "de": "Apikey" },
         "forecast_periods_txt": { "de": "Forecast Text" },
         "forecast_periods": { "de": "Forecast" },
-        "forecast_hourly": { "de": "Forecast Stunden" },
-        "current": { "de": "Aktuell" }
+        "forecast_hourly": { "de": "Vorschau stündlich" },
+        "current": { "de": "Aktuelle Daten" }
     };
 
-    var onChange = null;
-
-    function setValue(id, value) {
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
         // example: select elements with id=key and class=value and insert value
-        if ($('#' + id + '.value').attr('type') == 'checkbox') {
-            $('#' + id + '.value').prop('checked', value).change(function () {
-                onChange();
-            });
-        } else {
-            $('#' + id + '.value').val(value).change(function () {
-
-                onChange();
-            }).keyup(function () {
-                // Check that only numbers entered
-                if ($(this).hasClass('number')) {
-                    var val = $(this).val();
-                    if (val) {
-                        var newVal = '';
-                        for (var i = 0; i < val.length; i++) {
-                            if (val[i] >= '0' && val[i] <= '9') {
-                                newVal += val[i];
-                            }
-                        }
-
-                        if (val != newVal) $(this).val(newVal);
-                    }
-                }
-                $(this).trigger('change');
-            });
-        }
-    }
-
-    function load(settings, _onChange) {
-        //$('#location').val(settings['location']);
-        //$('#station').val(settings['station']);
-        //$('#apikey').val(settings['apikey']);
-        onChange = _onChange;
         for (var key in settings) {
-            setValue(key, settings[key]);
+            // example: select elements with id=key and class=value and insert value
+            if ($('#' + key + '.value').attr('type') == 'checkbox') {
+                $('#' + key + '.value').prop('checked', settings[key]).change(function () {
+                    onChange();
+                });
+            } else {
+                $('#' + key + '.value').val(settings[key]).change(function () {
+                    onChange();
+                }).keyup(function () {
+                    $(this).trigger('change');
+                });
+            }
         }
-
+        // Signal to admin, that no changes yet
         onChange(false);
     }
 
-    function getSettings() {
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        // example: select elements with class=value and build settings object
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);
+            //obj[$this.attr('id')] = $this.val();
             var id = $this.attr('id');
 
             if ($this.attr('type') == 'checkbox') {
@@ -82,13 +63,10 @@
                 obj[$this.attr('id')] = $this.val();
             }
         });
-        return obj;
+        callback(obj);
     }
 
-    function save(callback) {
-        // callback({location: $('#location').val().replace(/\s+/g, ''), station: $('#station').val().trim(), apikey: $('#apikey').val().trim()}); -->
-        callback(getSettings());
-    }
+    
 </script>
 
 <!-- you have to put your config page in a div with id adapter-container -->
