@@ -17,13 +17,13 @@
 
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
-        "location":                    {"de": "Ort"},
-        "station":                    {"de": "Messstation"},
+        "location": { "de": "Ort" },
+        "station": { "de": "Messstation" },
         "apikey": { "de": "Apikey" },
-        "forecast_periods_txt": { "de": "Forecast Text" },
-        "forecast_periods": { "de": "Forecast" },
-        "forecast_hourly": { "de": "Vorschau stündlich" },
-        "current": { "de": "Aktuelle Daten" }
+        "forecast_periods_txt": { "en": "Forecast as Text for next 8 days", "de": "Vorschau als Text für nächsten 8 Tage" },
+        "forecast_periods": { "en": "Forecast for next 4 days", "de": "Vorschau für nächsten 4 Tage" },
+        "forecast_hourly": { "en": "forecast hourly today", "de": "Vorschau heute stündlich" },
+        "current": { "en": "current data", "de": "Aktuelle Daten" }
     };
 
 
@@ -31,7 +31,7 @@
         // example: select elements with id=key and class=value and insert value
         if ($('#' + id + '.value').attr('type') === 'checkbox') {
 
-            document.getElementById("log").innerHTML = id;
+            //document.getElementById("log").innerHTML = id;
 
             $('#' + id + '.value').prop('checked', value).change(function () {
                 onChange();
@@ -39,7 +39,7 @@
         } else {
             $('#' + id + '.value').val(value).change(function () {
 
-                document.getElementById("log").innerHTML = id;
+                //document.getElementById("log").innerHTML = id;
 
                 onChange();
             }).keyup(function () {
@@ -183,7 +183,8 @@
         </table>
     </p>
 
-    <p id="log"></p>
+      <!-- just for debugging -->
+    <!-- <p id="log"></p> -->
 
     <h3>apikey</h3>
     <p>
@@ -193,6 +194,7 @@
     </p>
     <h3>location</h3>
     <p>Select your location either by name (e.g. "Berlin"), Airport Code (e.g. "ZRH"), coordinates (e.g. "47.3145359,8.4159812") or Weatherstation-ID (e.g. "pws:IZRICHZR8")</p>
+    <p>recommended is Weatherstation-ID, otherwise you might get wrong data at the moment</p>
     <h3>Station - only for current conditions data</h3>
     <p>
         If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your
