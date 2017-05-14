@@ -175,7 +175,7 @@ function getWuForecastData(cb) {
 
                 // next 24 hours
                 if (body.hourly_forecast) {
-                    for (var i = 0; i < 24; i++) {
+                    for (var i = 0; i < 35; i++) {
                         //adapter.log.debug('999');
                         if (!body.hourly_forecast[i]) continue;
                         //adapter.log.debug('AAA');
@@ -656,7 +656,7 @@ function checkWeatherVariables() {
             native: { location: adapter.config.location }
         });
 
-        for (var h = 0; h < 24; h++) {
+        for (var h = 0; h < 35; h++) {
             var id = "forecast." + h + "h.";
             adapter.setObjectNotExists('forecast.' + h + 'h', {
                 type: 'channel',

@@ -1,8 +1,13 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "news": {
+      "1.0.5": {
+        "en": "hourly forecast extend to 36h",
+        "de": "stündliche Vorhersage auf 36 h erweitert",
+        "ru": ""
+      },
       "1.0.4": {
         "en": "some more forecast data",
         "de": "noch mehr Vorhersage-Daten",

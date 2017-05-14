@@ -25,6 +25,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 # Сhangelog
 
+## 1.0.5 (2017-05-14)
+* (Rene) hourly forecast extend to 36h
+
 ## 1.0.4 (2017-04-09)
 * (Rene) parse much more data
    + today's 24 h
