@@ -31,16 +31,11 @@
         // example: select elements with id=key and class=value and insert value
         if ($('#' + id + '.value').attr('type') === 'checkbox') {
 
-            document.getElementById("log").innerHTML = id;
-
             $('#' + id + '.value').prop('checked', value).change(function () {
                 onChange();
             });
         } else {
             $('#' + id + '.value').val(value).change(function () {
-
-                document.getElementById("log").innerHTML = id;
-
                 onChange();
             }).keyup(function () {
                 // Check that only numbers entered
@@ -66,7 +61,6 @@
 
     function load(settings, onChange) {
         for (var key in settings) {
-            document.getElementById("log").innerHTML = key;
             // example: select elements with id=key and class=value and insert value
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
                 $('#' + key + '.value').prop('checked', settings[key]).change(function () {
