@@ -66,7 +66,7 @@
 
     function load(settings, onChange) {
         for (var key in settings) {
-            document.getElementById("load log").innerHTML = key;
+            document.getElementById("log").innerHTML = key;
             // example: select elements with id=key and class=value and insert value
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
                 $('#' + key + '.value').prop('checked', settings[key]).change(function () {
