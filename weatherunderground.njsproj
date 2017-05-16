@@ -33,6 +33,7 @@
     <Compile Include="test\testAdapter.js" />
     <Compile Include="test\testPackageFiles.js" />
     <Compile Include="weatherunderground.js" />
+    <Content Include="to do.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="admin" />

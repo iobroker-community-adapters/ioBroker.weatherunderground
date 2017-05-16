@@ -3,6 +3,11 @@
     "name": "weatherunderground",
     "version": "1.0.5",
     "news": {
+      "1.0.6": {
+        "en": "bug fixing",
+        "de": "Fehlerbehebung",
+        "ru": ""
+      },
       "1.0.5": {
         "en": "hourly forecast extend to 36h",
         "de": "stündliche Vorhersage auf 36 h erweitert",
@@ -67,7 +72,7 @@
     "forecast_periods_txt": true,
     "forecast_periods": true,
     "forecast_hourly": true,
-    "current": false
+    "current": true
   },
   "objects": [ ],
   "instanceObjects": [ ]
