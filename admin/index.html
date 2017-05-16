@@ -65,12 +65,12 @@
         for (var key in settings) {
             // example: select elements with id=key and class=value and insert value
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                console.log("load checkbox " + id);
+                console.log("load checkbox " + key);
                 $('#' + key + '.value').prop('checked', settings[key]).change(function () {
                     onChange();
                 });
             } else {
-                console.log("load " + id);
+                console.log("load " + key);
                 $('#' + key + '.value').val(settings[key]).change(function () {
                     onChange();
                 }).keyup(function () {
