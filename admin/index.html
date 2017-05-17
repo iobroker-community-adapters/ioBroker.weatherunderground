@@ -63,7 +63,7 @@
 
    
 
-    function CheckSettings(settings) {
+    function CheckSettings(settings, onChange) {
         console.log("start checksettings");
         //just to be compatible with older versions...
         if (typeof settings['forecast_periods_txt'] == 'undefined'
@@ -109,7 +109,7 @@
         // Signal to admin, that no changes yet
         onChange(false);
 
-        CheckSettings(settings);
+        CheckSettings(settings, onChange);
     }
 
     // ... and the function save has to exist.
