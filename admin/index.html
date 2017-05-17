@@ -61,13 +61,15 @@
         }
     }
 
+    if (typeof myVar != 'undefined')
+
     function CheckSettings(settings) {
         console.log("start checksettings");
         //just to be compatible with older versions...
-        if (settings['forecast_periods_txt']==false
-            && settings['forecast_periods']==false
-            && settings['forecast_hourly']==false
-            && settings['current']==false
+        if (typeof settings['forecast_periods_txt'] == 'undefined'
+            && typeof settings['forecast_periods'] == 'undefined'
+            && typeof settings['forecast_hourly'] == 'undefined'
+            && typeof settings['current'] == 'undefined'
             ) {
             console.log("all new values false ");
             
