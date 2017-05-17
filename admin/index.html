@@ -78,19 +78,8 @@
             $("#forecast_hourly").attr("checked", true);
             $("#current").attr("checked", true);
 
-            $('#forecast_periods_txt.value').prop('checked', settings['forecast_periods_txt']).change(function () {
-                onChange();
-            });
-            $('#forecast_periods.value').prop('checked', settings['forecast_periods']).change(function () {
-                onChange();
-            });
-            $('#forecast_hourly.value').prop('checked', settings['forecast_hourly']).change(function () {
-                onChange();
-            });
-            $('#current.value').prop('checked', settings['current']).change(function () {
-                onChange();
-            });
 
+            onChange(true);  //force to save
         }
         else {
             console.log("everything fine");
