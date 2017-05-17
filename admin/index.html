@@ -61,6 +61,37 @@
         }
     }
 
+    function CheckSettings(settings) {
+
+        //just to be comptatible with older versions...
+        if (settings['forecast_periods_txt']==false
+            && settings['forecast_periods']==false
+            && settings['forecast_hourly']==false
+            && settings['current']==false
+            ) {
+            console.log("all new values false ");
+            
+            $("#forecast_periods_txt").attr("checked", true);
+            $("#forecast_periods").attr("checked", true);
+            $("#forecast_hourly").attr("checked", true);
+            $("#current").attr("checked", true);
+
+            $('#forecast_periods_txt.value').prop('checked', settings['forecast_periods_txt']).change(function () {
+                onChange();
+            });
+            $('#forecast_periods.value').prop('checked', settings['forecast_periods']).change(function () {
+                onChange();
+            });
+            $('#forecast_hourly.value').prop('checked', settings['forecast_hourly']).change(function () {
+                onChange();
+            });
+            $('#current.value').prop('checked', settings['current']).change(function () {
+                onChange();
+            });
+            onChange(true);
+        }
+    }
+
     function load(settings, onChange) {
         for (var key in settings) {
             // example: select elements with id=key and class=value and insert value
@@ -78,6 +109,8 @@
                 });
             }
         }
+
+        CheckSettings(settings);
         // Signal to admin, that no changes yet
         onChange(false);
     }
