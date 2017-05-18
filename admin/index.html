@@ -66,25 +66,36 @@
     function CheckSettings(settings, onChange) {
         console.log("start checksettings");
         //just to be compatible with older versions...
-        if (typeof settings['forecast_periods_txt'] == 'undefined'
-            && typeof settings['forecast_periods'] == 'undefined'
-            && typeof settings['forecast_hourly'] == 'undefined'
-            && typeof settings['current'] == 'undefined'
-            ) {
-            console.log("all new values false ");
-            
+        if (typeof settings['forecast_periods_txt'] == 'undefined') {
+            onChange(true);
             $("#forecast_periods_txt").attr("checked", true);
+            $('#forecast_periods_txt.value').prop('checked', settings['forecast_periods_txt']).change(function () {
+                onChange();
+            });
+        }
+
+        if (typeof settings['forecast_periods'] == 'undefined') {
+            onChange(true);
             $("#forecast_periods").attr("checked", true);
+            $('#forecast_periods.value').prop('checked', settings['forecast_periods']).change(function () {
+                onChange();
+            });
+
+        }
+        if (typeof settings['forecast_hourly'] == 'undefined') {
+            onChange(true);
             $("#forecast_hourly").attr("checked", true);
+            $('#forecast_hourly.value').prop('checked', settings['forecast_hourly']).change(function () {
+                onChange();
+            });
+        }
+        if (typeof settings['current'] == 'undefined') {
+            onChange(true);
             $("#current").attr("checked", true);
-
-
-            onChange(true);  //force to save
+            $('#current.value').prop('checked', settings['current']).change(function () {
+                onChange();
+            });
         }
-        else {
-            console.log("everything fine");
-        }
-
     }
 
     function load(settings, onChange) {
@@ -92,7 +103,7 @@
         for (var key in settings) {
             // example: select elements with id=key and class=value and insert value
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                console.log("load checkbox " + key );
+                console.log("load checkbox " + key);
                 $('#' + key + '.value').prop('checked', settings[key]).change(function () {
                     onChange();
                 });
@@ -105,7 +116,7 @@
                 });
             }
         }
-        
+
         // Signal to admin, that no changes yet
         onChange(false);
 
