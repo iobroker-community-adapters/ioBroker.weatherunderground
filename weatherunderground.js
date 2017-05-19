@@ -36,15 +36,24 @@ adapter.on('objectChange', function (id, obj) {
 
 adapter.on('ready', function () {
 
-    //adapter.log.debug('on ready 111 : ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
-
     adapter.config.language = adapter.config.language || 'DL';
-    //adapter.config.forecast_periods_txt = adapter.config.forecast_periods_txt || true;
-    //adapter.config.forecast_periods = adapter.config.forecast_periods || true;
-    //adapter.config.current = adapter.config.current || true;
-    //adapter.config.forecast_hourly = adapter.config.forecast_hourly || true;
 
-
+    if (typeof adapter.config.forecast_periods_txt == 'undefined') {
+        adapter.log.info("forecast_periods_txt not defined. now enabled. check settings and save");
+        adapter.config.forecast_periods_txt = true;
+    }
+    if (typeof adapter.config.forecast_periods == 'undefined') {
+        adapter.log.info("forecast_periods not defined. now enabled. check settings and save");
+        adapter.config.forecast_periods = true;
+    }
+    if (typeof adapter.config.forecast_hourly == 'undefined') {
+        adapter.log.info("forecast_hourly not defined. now enabled. check settings and save");
+        adapter.config.forecast_hourly = true;
+    }
+    if (typeof adapter.config.current == 'undefined') {
+        adapter.log.info("current not defined. now enabled. check settings and save");
+        adapter.config.current = true;
+    }
     adapter.log.debug('on ready 222 : ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
     checkWeatherVariables();
