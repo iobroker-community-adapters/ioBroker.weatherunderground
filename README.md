@@ -25,6 +25,11 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 # Сhangelog
 
+## 1.0.6 (2017-05-16)
+* (Rene) bug fixing
+	+ all 4 sets are enabled as default
+	+ change of checkbox enables saves button
+
 ## 1.0.5 (2017-05-14)
 * (Rene) hourly forecast extend to 36h
 

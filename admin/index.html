@@ -31,16 +31,13 @@
         // example: select elements with id=key and class=value and insert value
         if ($('#' + id + '.value').attr('type') === 'checkbox') {
 
-            //document.getElementById("log").innerHTML = id;
+            console.log("setvalue" + id);
 
             $('#' + id + '.value').prop('checked', value).change(function () {
                 onChange();
             });
         } else {
             $('#' + id + '.value').val(value).change(function () {
-
-                //document.getElementById("log").innerHTML = id;
-
                 onChange();
             }).keyup(function () {
                 // Check that only numbers entered
@@ -64,14 +61,66 @@
         }
     }
 
-    function load(settings, onChange) {
+   
 
-        for (var key in settings) {
-            setValue(key, settings[key], onChange);
+    function CheckSettings(settings, onChange) {
+        console.log("start checksettings");
+        //just to be compatible with older versions...
+        if (typeof settings['forecast_periods_txt'] == 'undefined') {
+            onChange(true);
+            $("#forecast_periods_txt").attr("checked", true);
+            $('#forecast_periods_txt.value').prop('checked', settings['forecast_periods_txt']).change(function () {
+                onChange();
+            });
         }
 
+        if (typeof settings['forecast_periods'] == 'undefined') {
+            onChange(true);
+            $("#forecast_periods").attr("checked", true);
+            $('#forecast_periods.value').prop('checked', settings['forecast_periods']).change(function () {
+                onChange();
+            });
 
+        }
+        if (typeof settings['forecast_hourly'] == 'undefined') {
+            onChange(true);
+            $("#forecast_hourly").attr("checked", true);
+            $('#forecast_hourly.value').prop('checked', settings['forecast_hourly']).change(function () {
+                onChange();
+            });
+        }
+        if (typeof settings['current'] == 'undefined') {
+            onChange(true);
+            $("#current").attr("checked", true);
+            $('#current.value').prop('checked', settings['current']).change(function () {
+                onChange();
+            });
+        }
+    }
+
+    function load(settings, onChange) {
+        console.log("start load ");
+        for (var key in settings) {
+            // example: select elements with id=key and class=value and insert value
+            if ($('#' + key + '.value').attr('type') == 'checkbox') {
+                console.log("load checkbox " + key);
+                $('#' + key + '.value').prop('checked', settings[key]).change(function () {
+                    onChange();
+                });
+            } else {
+                console.log("load " + key);
+                $('#' + key + '.value').val(settings[key]).change(function () {
+                    onChange();
+                }).keyup(function () {
+                    $(this).trigger('change');
+                });
+            }
+        }
+
+        // Signal to admin, that no changes yet
         onChange(false);
+
+        CheckSettings(settings, onChange);
     }
 
     // ... and the function save has to exist.
