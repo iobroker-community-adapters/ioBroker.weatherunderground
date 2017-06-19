@@ -25,6 +25,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 # Сhangelog
 
+## 1.0.7 (2017-06-19)
+* (Dutchman) add Dutch language suppport
+
 ## 1.0.6 (2017-05-16)
 * (Rene) bug fixing
 	+ all 4 sets are enabled as default
