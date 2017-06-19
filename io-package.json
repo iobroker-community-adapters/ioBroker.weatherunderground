@@ -3,7 +3,12 @@
     "name": "weatherunderground",
     "version": "1.0.6",
     "news": {
-      "1.0.6": {
+      "1.0.7": {
+        "en": "add dutch language support",
+        "de": "Hollaendische sprache hinzugefuegt",
+        "ru": ""
+      },
+		"1.0.6": {
         "en": "bug fixing",
         "de": "Fehlerbehebung",
         "ru": ""
