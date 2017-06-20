@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "weatherunderground forecast",
   "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
-  "contributors": [Dutchman],
+  "contributors": ["Dutchman","Apollon77 <ingo@fischer-ka.de>"],
   "homepage": "",
   "license": "MIT",
   "keywords": ["iobroker", "weather", "forecast", "wu", "weatherunderground"],
