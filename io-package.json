@@ -1,8 +1,13 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "news": {
+      "1.0.8": {
+        "en": "Add 2 current observation values, fixes of some datapoint caps.",
+        "de": "Zwei aktuelle Messwerte ergaenzt, Grossschreibung einiger Datenpunkte angepasst.",
+        "ru": ""
+      },
       "1.0.7": {
         "en": "add dutch language support",
         "de": "Hollaendische sprache hinzugefuegt",
