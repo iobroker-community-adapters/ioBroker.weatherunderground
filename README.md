@@ -25,6 +25,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 # Сhangelog
 
+## 1.0.8 (2017-07-12)
+* (DeepCoreSystem) add 2 current observation values, fixes of some datapoint caps.
+
 ## 1.0.7 (2017-06-19)
 * (Dutchman) add Dutch language suppport
 
@@ -40,7 +43,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 * (Rene) parse much more data
    + today's 24 h
    + next 4 days / nights as text
-   + next 4 days 
+   + next 4 days
    + current values
    each can be enabled or disabled
 
