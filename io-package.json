@@ -1,89 +1,98 @@
 {
-  "common": {
-    "name": "weatherunderground",
-    "version": "1.0.8",
-    "news": {
-      "1.0.8": {
-        "en": "Add 2 current observation values, fixes of some datapoint caps.",
-        "de": "Zwei aktuelle Messwerte ergaenzt, Grossschreibung einiger Datenpunkte angepasst.",
-        "ru": ""
-      },
-      "1.0.7": {
-        "en": "add dutch language support",
-        "de": "Hollaendische sprache hinzugefuegt",
-        "ru": ""
-      },
-		"1.0.6": {
-        "en": "bug fixing",
-        "de": "Fehlerbehebung",
-        "ru": ""
-      },
-      "1.0.5": {
-        "en": "hourly forecast extend to 36h",
-        "de": "stündliche Vorhersage auf 36 h erweitert",
-        "ru": ""
-      },
-      "1.0.4": {
-        "en": "some more forecast data",
-        "de": "noch mehr Vorhersage-Daten",
-        "ru": ""
-      },
-      "1.0.3": {
-        "en": "Catch parse errors",
-        "de": "Bearbeite Parsefehler",
-        "ru": "Обработка ошибок парсинга"
-      },
-      "1.0.2": {
-        "en": "make sure precip values are always integers",
-        "de": "Konvertiere precip-Wert immer nach Integer",
-        "ru": "Конвертация значения precip в integer"
-      },
-      "1.0.1": {
-        "en": "conversion from feet to meter for observation_location",
-        "de": "conversion from feet to meter for observation_location",
-        "ru": "conversion from feet to meter for observation_location"
-      },
-      "1.0.0": {
-        "en": "add daily rain level forecast",
-        "de": "add daily rain level forecast",
-        "ru": "add daily rain level forecast"
-      },
-      "0.2.0": {
-        "en": "Add Error handling and station-usage for forcasts",
-        "de": "Add Error handling and station-usage for forcasts",
-        "ru": "Add Error handling and station-usage for forcasts"
-      },
-      "0.1.1": {
-        "en": "Fix forecast api URL",
-        "de": "Fix forecast api URL",
-        "ru": "Fix forecast api URL"
-      }
+    "common": {
+        "name": "weatherunderground",
+        "version": "1.0.8",
+        "news": {
+            "1.0.8": {
+                "en": "Add 2 current observation values, fixes of some datapoint caps.",
+                "de": "Zwei aktuelle Messwerte ergaenzt, Grossschreibung einiger Datenpunkte angepasst.",
+                "ru": ""
+            },
+            "1.0.7": {
+                "en": "add dutch language support",
+                "de": "Hollaendische sprache hinzugefuegt",
+                "ru": ""
+            },
+            "1.0.6": {
+                "en": "bug fixing",
+                "de": "Fehlerbehebung",
+                "ru": ""
+            },
+            "1.0.5": {
+                "en": "hourly forecast extend to 36h",
+                "de": "stündliche Vorhersage auf 36 h erweitert",
+                "ru": ""
+            },
+            "1.0.4": {
+                "en": "some more forecast data",
+                "de": "noch mehr Vorhersage-Daten",
+                "ru": ""
+            },
+            "1.0.3": {
+                "en": "Catch parse errors",
+                "de": "Bearbeite Parsefehler",
+                "ru": "Обработка ошибок парсинга"
+            },
+            "1.0.2": {
+                "en": "make sure precip values are always integers",
+                "de": "Konvertiere precip-Wert immer nach Integer",
+                "ru": "Конвертация значения precip в integer"
+            },
+            "1.0.1": {
+                "en": "conversion from feet to meter for observation_location",
+                "de": "conversion from feet to meter for observation_location",
+                "ru": "conversion from feet to meter for observation_location"
+            },
+            "1.0.0": {
+                "en": "add daily rain level forecast",
+                "de": "add daily rain level forecast",
+                "ru": "add daily rain level forecast"
+            },
+            "0.2.0": {
+                "en": "Add Error handling and station-usage for forcasts",
+                "de": "Add Error handling and station-usage for forcasts",
+                "ru": "Add Error handling and station-usage for forcasts"
+            },
+            "0.1.1": {
+                "en": "Fix forecast api URL",
+                "de": "Fix forecast api URL",
+                "ru": "Fix forecast api URL"
+            }
+        },
+        "title": "weatherunderground forecast",
+        "desc": "load weatherunderground weather forecast for your location",
+        "platform": "Javascript/Node.js",
+        "mode": "schedule",
+        "schedule": "12 * * * *",
+        "icon": "wu.png",
+        "extIcon": "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
+        "readme": "https://github.com/dschaedl/ioBroker.weatherunderground",
+        "license": "MIT",
+        "npmLibs": [],
+        "type": "weather",
+        "keywords": [
+            "iobroker",
+            "weather",
+            "forecast",
+            "wu",
+            "weatherunderground"
+        ],
+        "loglevel": "debug",
+        "enabled": true,
+        "authors": [
+            "Daniel Schaedler <daniel.schaedler@gmail.com>"
+        ]
     },
-    "title": "weatherunderground forecast",
-    "desc": "load weatherunderground weather forecast for your location",
-    "platform": "Javascript/Node.js",
-    "mode": "schedule",
-    "schedule": "12 * * * *",
-    "icon": "wu.png",
-    "extIcon": "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
-    "readme": "https://github.com/dschaedl/ioBroker.weatherunderground",
-    "license": "MIT",
-    "npmLibs": [ ],
-    "type": "weather",
-    "keywords": [ "iobroker", "weather", "forecast", "wu", "weatherunderground" ],
-    "loglevel": "debug",
-    "enabled": true
-  },
-  "native": {
-    "apikey": "getYourOwn",
-    "location": "HKG",
-    "station": "ISANKTGA111",
-    "language": "DL",
-    "forecast_periods_txt": true,
-    "forecast_periods": true,
-    "forecast_hourly": true,
-    "current": true
-  },
-  "objects": [ ],
-  "instanceObjects": [ ]
+    "native": {
+        "apikey": "getYourOwn",
+        "location": "HKG",
+        "station": "ISANKTGA111",
+        "language": "DL",
+        "forecast_periods_txt": true,
+        "forecast_periods": true,
+        "forecast_hourly": true,
+        "current": true
+    },
+    "objects": [],
+    "instanceObjects": []
 }
