@@ -88,7 +88,7 @@ adapter.on('ready', function () {
 
 function handleIconUrl(original) {
     if (adapter.config.custom_icon_base_url !== "") {
-        original = adapter.config.custom_icon_base_url + original.sustring(original.lastIndexOf('/')+1);
+        original = adapter.config.custom_icon_base_url + original.substring(original.lastIndexOf('/')+1);
     }
     return original;
 }
