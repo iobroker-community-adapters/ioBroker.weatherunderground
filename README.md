@@ -17,6 +17,23 @@ An api-key from WU is needed to use this adapter:
 
 As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
 
+## Usage of different Icon Set
+In Adapter settings change "Custom Icon-Base-URL" to one of the available Icon Set on Weatherunderground:
+
+|    Icon Set   |     		URL	 	   |       Example		|
+| ------------- | -------------------------------- | ---------------------	|
+|	1	|  https://icons.wxug.com/i/c/a/   |		![alt text](https://icons.wxug.com/i/c/a/partlycloudy.gif) 	|
+|	2	|  https://icons.wxug.com/i/c/b/   |		![alt text](https://icons.wxug.com/i/c/b/partlycloudy.gif)	|
+|	3	|  https://icons.wxug.com/i/c/c/   |		![alt text](https://icons.wxug.com/i/c/c/partlycloudy.gif)	|
+|	4	|  https://icons.wxug.com/i/c/d/   |		![alt text](https://icons.wxug.com/i/c/d/partlycloudy.gif)	|
+|	5	|  https://icons.wxug.com/i/c/e/   |		![alt text](https://icons.wxug.com/i/c/e/partlycloudy.gif)	|
+|	6	|  https://icons.wxug.com/i/c/f/   |		![alt text](https://icons.wxug.com/i/c/f/partlycloudy.gif)	|
+|	7	|  https://icons.wxug.com/i/c/g/   |		![alt text](https://icons.wxug.com/i/c/g/partlycloudy.gif)	|
+|	8	|  https://icons.wxug.com/i/c/h/   |		![alt text](https://icons.wxug.com/i/c/h/partlycloudy.gif)	|
+|	9	|  https://icons.wxug.com/i/c/i/   |		![alt text](https://icons.wxug.com/i/c/i/partlycloudy.gif)	|
+|	10	|  https://icons.wxug.com/i/c/j/   |		![alt text](https://icons.wxug.com/i/c/j/partlycloudy.gif)	|
+|	11	|  https://icons.wxug.com/i/c/k/   |		![alt text](https://icons.wxug.com/i/c/k/partlycloudy.gif)	|
+
 ## in ioBroker Forum (German)
 http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef89fcad1c3
 
