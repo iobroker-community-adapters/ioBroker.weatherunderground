@@ -63,7 +63,7 @@ adapter.on('ready', function () {
     }
     else {
         adapter.config.custom_icon_base_url = adapter.config.custom_icon_base_url.trim();
-        if (adapter.config.custom_icon_base_url[adapter.config.custom_icon_base_url.length-1] !== "/") {
+        if (adapter.config.custom_icon_base_url !== "" && adapter.config.custom_icon_base_url[adapter.config.custom_icon_base_url.length-1] !== "/") {
             adapter.config.custom_icon_base_url += "/";
         }
     }
