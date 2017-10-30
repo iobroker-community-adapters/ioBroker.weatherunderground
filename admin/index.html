@@ -23,7 +23,8 @@
         "forecast_periods_txt": { "en": "Forecast as Text for next 4 days and nights", "de": "Vorschau als Text für nächsten 4 Tage und Nächte", "nl": "Verwachting als de tekst voor de komende 4 dagen en nachten" },
         "forecast_periods": { "en": "Forecast for next 4 days", "de": "Vorschau für nächsten 4 Tage", "nl": "Verwachting voor de komende 4 dagen" },
         "forecast_hourly": { "en": "forecast hourly today", "de": "Vorschau heute stündlich", "nl": "Verwachting vandaag per uur" },
-        "current": { "en": "current data", "de": "Aktuelle Daten", "nl": "Huidige gegevens" }
+        "current": { "en": "current data", "de": "Aktuelle Daten", "nl": "Huidige gegevens" },
+        "custom_icon_base_url": { "en": "Custom Icon-Base-URL", "de": "EIgene Icon-Basis-URL" }
     };
 
 
@@ -61,7 +62,7 @@
         }
     }
 
-   
+
 
     function CheckSettings(settings, onChange) {
         console.log("start checksettings");
@@ -93,6 +94,13 @@
             onChange(true);
             $("#current").attr("checked", true);
             $('#current.value').prop('checked', settings['current']).change(function () {
+                onChange();
+            });
+        }
+        if (typeof settings['custom_icon_base_url'] == 'undefined') {
+            onChange(true);
+            $("#custom_icon_base_url").attr("checked", true);
+            $('#custom_icon_base_url.value').prop('checked', settings['current']).change(function () {
                 onChange();
             });
         }
@@ -143,7 +151,7 @@
         callback(settings);
     }
 
-    
+
 </script>
 
 <!-- you have to put your config page in a div with id adapter-container -->
@@ -154,9 +162,9 @@
             <td><img src="wu.png" /></td>
             <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
         </tr>
-       
-            
-        
+
+
+
     </table>
     <p style="padding-left: 12px">
         <table>
@@ -197,39 +205,47 @@
                     </select>
                 </td>
             </tr>
-            
-                       <tr>
-                           <td>
-                               <label for="language" class="translate">forecast_periods_txt</label>
-                           </td>
-                           <td>
-                               <input  type="checkbox" id="forecast_periods_txt" value="true" class="value">
-                           </td>
-                       </tr>
-                       <tr>
-                           <td>
-                               <label for="language" class="translate">forecast_periods</label>
-                           </td>
-                           <td>
-                               <input type="checkbox" id="forecast_periods" value="true" class="value">
-                           </td>
-                       </tr>
-                       <tr>
-                           <td>
-                               <label for="language" class="translate">forecast_hourly</label>
-                           </td>
-                           <td>
-                               <input type="checkbox" id="forecast_hourly" value="true" class="value">
-                           </td>
-                       </tr>
-                       <tr>
-                           <td>
-                               <label for="language" class="translate">current</label>
-                           </td>
-                           <td>
-                               <input type="checkbox" id="current" value="true" class="value">
-                           </td>
-                       </tr> 
+
+           <tr>
+               <td>
+                   <label for="language" class="translate">forecast_periods_txt</label>
+               </td>
+               <td>
+                   <input  type="checkbox" id="forecast_periods_txt" value="true" class="value">
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="language" class="translate">forecast_periods</label>
+               </td>
+               <td>
+                   <input type="checkbox" id="forecast_periods" value="true" class="value">
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="language" class="translate">forecast_hourly</label>
+               </td>
+               <td>
+                   <input type="checkbox" id="forecast_hourly" value="true" class="value">
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="language" class="translate">current</label>
+               </td>
+               <td>
+                   <input type="checkbox" id="current" value="true" class="value">
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="language" class="translate">custom_icon_base_url</label>
+               </td>
+               <td>
+                   <input type="text" id="custom_icon_base_url" value="" class="value" size="80">
+               </td>
+           </tr>
         </table>
     </p>
 
@@ -250,7 +266,7 @@
         If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your
         preferred station (e.g. "IAARGAUB5"). You can find these codes e.g. on the <a target="blank" href="http://www.wunderground.com/wundermap">Wundermap</a> - click a station and look for the "Station ID"
     </p>
- 
+
 </div>
 
 </html>

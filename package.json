@@ -1,12 +1,22 @@
 {
   "name": "iobroker.weatherunderground",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "weatherunderground forecast",
   "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
-  "contributors": [Dutchman],
+  "contributors": [
+    "Dutchman",
+    "Apollon77 <ingo@fischer-ka.de>",
+    "DeepCore <devap@deepcore.eu>"
+  ],
   "homepage": "",
   "license": "MIT",
-  "keywords": ["iobroker", "weather", "forecast", "wu", "weatherunderground"],
+  "keywords": [
+    "iobroker",
+    "weather",
+    "forecast",
+    "wu",
+    "weatherunderground"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/dschaedl/ioBroker.weatherunderground"
@@ -16,13 +26,13 @@
     "iconv-lite": "^0.4.13"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-replace": "^0.9.3",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-jscs": "^2.0.0",
-    "grunt-http": "^1.6.0",
-    "mocha": "^2.3.4",
-    "chai": "^3.4.1"
+    "grunt": "^1.0.1",
+    "grunt-replace": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-jscs": "^3.0.1",
+    "grunt-http": "^2.2.0",
+    "mocha": "^3.5.3",
+    "chai": "^4.1.2"
   },
   "bugs": {
     "url": "https://github.com/dschaedl/ioBroker.weatherunderground/issues"
