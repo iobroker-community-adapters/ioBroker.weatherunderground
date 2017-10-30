@@ -89,7 +89,6 @@ adapter.on('ready', function () {
 
 function handleIconUrl(original) {
     if (adapter.config.custom_icon_base_url !== "") {
-        adapter.log.info('Found Custom Icon URL: ' + adapter.config.custom_icon_base_url);
         original = adapter.config.custom_icon_base_url + original.substring(original.lastIndexOf('/')+1);
     }
     return original;
