@@ -1,3 +1,7 @@
+/* jshint -W097 */
+// jshint strict:false
+/*jslint node: true */
+
 /**
  *
  * weatherunderground adapter
@@ -54,6 +58,14 @@ adapter.on('ready', function () {
         adapter.log.info("current not defined. now enabled. check settings and save");
         adapter.config.current = true;
     }
+    if (typeof adapter.config.custom_icon_base_url == 'undefined') {
+        adapter.config.custom_icon_base_url = "";
+    }
+    else {
+        if (adapter.config.custom_icon_base_url[adapter.config.custom_icon_base_url.length-1] !== "/") {
+            adapter.config.custom_icon_base_url += "/";
+        }
+    }
     adapter.log.debug('on ready 222 : ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
     checkWeatherVariables();
@@ -73,6 +85,13 @@ adapter.on('ready', function () {
         process.exit(0);
     }, 60000);
 });
+
+function handleIconUrl(original) {
+    if (adapter.config.custom_icon_base_url !== "") {
+        original = adapter.config.custom_icon_base_url + original.sustring(original.lastIndexOf('/')+1);
+    }
+    return original;
+}
 
 function getWuForecastData(cb) {
     /*
@@ -123,7 +142,7 @@ function getWuForecastData(cb) {
                         try {
                             adapter.setState('forecast_period.' + i + 'p.period', { ack: true, val: body.forecast.txt_forecast.forecastday[i].period });
                             adapter.setState('forecast_period.' + i + 'p.icon', { ack: true, val: body.forecast.txt_forecast.forecastday[i].icon });
-                            adapter.setState('forecast_period.' + i + 'p.icon_URL', { ack: true, val: body.forecast.txt_forecast.forecastday[i].icon_url });
+                            adapter.setState('forecast_period.' + i + 'p.icon_URL', { ack: true, val: handleIconUrl(body.forecast.txt_forecast.forecastday[i].icon_url) });
                             adapter.setState('forecast_period.' + i + 'p.title', { ack: true, val: body.forecast.txt_forecast.forecastday[i].title });
                             adapter.setState('forecast_period.' + i + 'p.fcttext', { ack: true, val: body.forecast.txt_forecast.forecastday[i].fcttext });
                             adapter.setState('forecast_period.' + i + 'p.fcttext_metric', { ack: true, val: body.forecast.txt_forecast.forecastday[i].fcttext_metric });
@@ -150,7 +169,7 @@ function getWuForecastData(cb) {
                             adapter.setState('forecast_day.' + i + 'd.temp.high', { ack: true, val: body.forecast.simpleforecast.forecastday[i].high.celsius });
                             adapter.setState('forecast_day.' + i + 'd.temp.low', { ack: true, val: body.forecast.simpleforecast.forecastday[i].low.celsius });
                             adapter.setState('forecast_day.' + i + 'd.icon', { ack: true, val: body.forecast.simpleforecast.forecastday[i].icon });
-                            adapter.setState('forecast_day.' + i + 'd.icon_url', { ack: true, val: body.forecast.simpleforecast.forecastday[i].icon_url });
+                            adapter.setState('forecast_day.' + i + 'd.icon_url', { ack: true, val: handleIconUrl(body.forecast.simpleforecast.forecastday[i].icon_url) });
                             adapter.setState('forecast_day.' + i + 'd.pop', { ack: true, val: body.forecast.simpleforecast.forecastday[i].pop });
                             adapter.setState('forecast_day.' + i + 'd.qpf.allday', { ack: true, val: body.forecast.simpleforecast.forecastday[i].qpf_allday.mm });
                             adapter.setState('forecast_day.' + i + 'd.qpf.day', { ack: true, val: body.forecast.simpleforecast.forecastday[i].qpf_day.mm });
@@ -294,7 +313,7 @@ function getWuConditionsData() {
                         adapter.setState('current.wind_degrees', { ack: true, val: parseFloat(body.current_observation.wind_degrees) });
                         adapter.setState('current.wind_kph', { ack: true, val: parseFloat(body.current_observation.wind_kph) });
                         adapter.setState('current.wind_gust_kph', { ack: true, val: parseFloat(body.current_observation.wind_gust_kph) });
-                        
+
                         adapter.setState('current.pressure_mb', { ack: true, val: parseFloat(body.current_observation.pressure_mb) }); //PDE
                         adapter.setState('current.dewpoint_c', { ack: true, val: parseFloat(body.current_observation.dewpoint_c) });
                         adapter.setState('current.windchill_c', { ack: true, val: parseFloat(body.current_observation.windchill_c) });
@@ -308,7 +327,7 @@ function getWuConditionsData() {
                         if (!isNaN(parseInt(body.current_observation.precip_today_metric, 10))) {
                             adapter.setState('current.precip_today_metric', { ack: true, val: parseInt(body.current_observation.precip_today_metric, 10) });
                         }
-                        adapter.setState('current.icon_url', { ack: true, val: body.current_observation.icon_url });
+                        adapter.setState('current.icon_url', { ack: true, val: handleIconUrl(body.current_observation.icon_url) });
                         adapter.setState('current.forecast_url', { ack: true, val: body.current_observation.forecast_url });
                         adapter.setState('current.history_url', { ack: true, val: body.current_observation.history_url });
                         adapter.log.debug('all current conditions values set');
