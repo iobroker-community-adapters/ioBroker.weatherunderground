@@ -19,6 +19,7 @@ As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/inde
 
 ## Icon Sets
 In Adapter settings change "Custom Icon-Base-URL" to one of the available Icon Set on Weatherunderground:
+(source: https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets )
 
 |    Icon Set   |     		URL	 	   |       Example	 	|
 | ------------- | -------------------------------- | --------------------- 	|
