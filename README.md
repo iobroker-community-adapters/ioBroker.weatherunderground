@@ -17,6 +17,52 @@ An api-key from WU is needed to use this adapter:
 
 As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
 
+## Icon Sets
+In Adapter settings change "Custom Icon-Base-URL" to one of the available Icon Set on Weatherunderground:
+(source: https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets )
+
+|    Icon Set   |     		URL	 	   |       Example	 	|
+| ------------- | -------------------------------- | --------------------- 	|
+|	1	|  https://icons.wxug.com/i/c/a/   |		![alt text](https://icons.wxug.com/i/c/a/partlycloudy.gif) 	|
+|	2	|  https://icons.wxug.com/i/c/b/   |		![alt text](https://icons.wxug.com/i/c/b/partlycloudy.gif)	|
+|	3	|  https://icons.wxug.com/i/c/c/   |		![alt text](https://icons.wxug.com/i/c/c/partlycloudy.gif)	|
+|	4	|  https://icons.wxug.com/i/c/d/   |		![alt text](https://icons.wxug.com/i/c/d/partlycloudy.gif)	|
+|	5	|  https://icons.wxug.com/i/c/e/   |		![alt text](https://icons.wxug.com/i/c/e/partlycloudy.gif)	|
+|	6	|  https://icons.wxug.com/i/c/f/   |		![alt text](https://icons.wxug.com/i/c/f/partlycloudy.gif)	|
+|	7	|  https://icons.wxug.com/i/c/g/   |		![alt text](https://icons.wxug.com/i/c/g/partlycloudy.gif)	|
+|	8	|  https://icons.wxug.com/i/c/h/   |		![alt text](https://icons.wxug.com/i/c/h/partlycloudy.gif)	|
+|	9	|  https://icons.wxug.com/i/c/i/   |		![alt text](https://icons.wxug.com/i/c/i/partlycloudy.gif)	|
+|	10	|  https://icons.wxug.com/i/c/j/   |		![alt text](https://icons.wxug.com/i/c/j/partlycloudy.gif)	|
+|	11	|  https://icons.wxug.com/i/c/k/   |		![alt text](https://icons.wxug.com/i/c/k/partlycloudy.gif)	|
+
+Or you can aso use your own "custom" icons, for this purpose the following gif-files must be provided within an Base-URL directory  :
+
+|	Icon for Day		|	Icon for night		|
+| -----------------------------	| ----------------------------- |
+|	chanceflurries.gif	|	nt_chanceflurries.gif	|
+|	chancerain.gif		|	nt_chancerain.gif	|
+|	chancesleet.gif		|	nt_chancesleet.gif	|
+|	chancesleet.gif		|	nt_chancesleet.gif	|
+|	chancesnow.gif		|	nt_chancesnow.gif	|
+|	chancetstorms.gif	|	nt_chancetstorms.gif	|
+|	chancetstorms.gif	|	nt_chancetstorms.gif	|
+|	clear.gif		|	nt_clear.gif		|
+|	cloudy.gif		|	nt_cloudy.gif		|
+|	flurries.gif		|	nt_flurries.gif		|
+|	fog.gif			|	nt_fog.gif		|
+|	hazy.gif		|	nt_hazy.gif		|
+|	mostlycloudy.gif	|	nt_mostlycloudy.gif	|
+|	mostlysunny.gif		|	nt_mostlysunny.gif	|
+|	partlycloudy.gif	|	nt_partlycloudy.gif	|
+|	partlysunny.gif		|	nt_partlysunny.gif	|
+|	sleet.gif		|	nt_sleet.gif		|
+|	rain.gif		|	nt_rain.gif		|
+|	sleet.gif		|	nt_sleet.gif		|
+|	partlycloudy.gif	|	nt_partlycloudy.gif	|
+|	sunny.gif		|	nt_sunny.gif		|
+|	tstorms.gif		|	nt_tstorms.gif		|
+|	cloudy.gif 		|	nt_cloudy.gif 		|
+
 ## in ioBroker Forum (German)
 http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef89fcad1c3
 
