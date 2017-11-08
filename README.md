@@ -71,6 +71,12 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 # Сhangelog
 
+## 1.1.1 (2017-11-08)
+* (Apollon77) Optimize API usage by getting all data with one call instead of two
+
+## 1.1.0 (2017-10-30)
+* (Apollon77) Add option to overwrite Icon Base URL
+
 ## 1.0.8 (2017-07-12)
 * (DeepCoreSystem) add 2 current observation values, fixes of some datapoint caps.
 

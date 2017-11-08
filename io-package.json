@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "news": {
+            "1.1.1": {
+                "en": "Optimize API usage by getting all data with one call instead of two",
+                "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden",
+                "ru": "Optimize API usage by getting all data with one call instead of two"
+            },
             "1.1.0": {
                 "en": "Add option to overwrite Icon Base URL",
                 "de": "Option hinzugefügt um Icon-Basis-URL zu überschreiben",
