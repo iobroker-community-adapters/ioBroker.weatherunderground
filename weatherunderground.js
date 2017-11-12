@@ -71,10 +71,12 @@ adapter.on('ready', function () {
 
     checkWeatherVariables();
 
-    getWuData(function () {
-        setTimeout(function () {
-            adapter.stop();
-        }, 2000);
+    getApiKey(function(apikey) {
+        getWuData(apikey, function () {
+            setTimeout(function () {
+                adapter.stop();
+            }, 2000);
+        });
     });
 
     // force terminate after 1min
@@ -92,14 +94,38 @@ function handleIconUrl(original) {
     return original;
 }
 
-function getWuData(cb) {
+function getApiKey(cb) {
+    var apikey;
+    if (adapter.config.apikey.indexOf(',') !== -1) {
+        adapter.setObjectNotExists('last_used_key', {
+            type: 'state',
+            common: { name: 'Last used API key' },
+            native: { id: 'last_used_key' },
+            def: 0
+        }, function() {
+            var key = adapter.getState('last_used_key').val;
+            var keyArr = adapter.config.apikey.split(',');
+            key += 1;
+            if (key > keyArr.length-1) key = 0;
+            apikey = keyArr[key].trim();
+            cb(apikey);
+        });
+    }
+    else {
+        apikey = adapter.config.apikey;
+        cb(apikey);
+    }
+}
+
+function getWuData(apikey, cb) {
     /*
         var url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/forecast/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
     if (adapter.config.station.length > 2) {
         url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/forecast/hourly/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
 */
-    var url = 'http://api.wunderground.com/api/' + adapter.config.apikey;
+    adapter.log.info('User API Key ' + apikey);
+    var url = 'http://api.wunderground.com/api/' + apikey;
 
     if (adapter.config.forecast_periods_txt == true || adapter.config.forecast_periods == true) {
         url += '/forecast';
@@ -327,6 +353,7 @@ function getWuData(cb) {
 }
 
 function checkWeatherVariables() {
+    var id;
     if (adapter.config.current == true) {
         adapter.log.debug("init conditions objects");
         adapter.setObjectNotExists('current', {
@@ -497,7 +524,7 @@ function checkWeatherVariables() {
 
 
         for (var d = 0; d < 8; d++) {
-            var id = "forecast_period." + d + "p.";
+            id = "forecast_period." + d + "p.";
             adapter.setObjectNotExists('forecast_period.' + d + 'p', {
                 type: 'channel',
                 role: 'forecast',
@@ -551,7 +578,7 @@ function checkWeatherVariables() {
         });
 
         for (var p = 0; p < 4; p++) {
-            var id = "forecast_day." + p + "d.";
+            id = "forecast_day." + p + "d.";
             adapter.setObjectNotExists('forecast_day.' + p + 'd', {
                 type: 'channel',
                 role: 'forecast',
@@ -679,7 +706,7 @@ function checkWeatherVariables() {
         });
 
         for (var h = 0; h < 36; h++) {
-            var id = "forecast." + h + "h.";
+            id = "forecast." + h + "h.";
             adapter.setObjectNotExists('forecast.' + h + 'h', {
                 type: 'channel',
                 role: 'forecast',
