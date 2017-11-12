@@ -99,16 +99,24 @@ function getApiKey(cb) {
     if (adapter.config.apikey.indexOf(',') !== -1) {
         adapter.setObjectNotExists('last_used_key', {
             type: 'state',
-            common: { name: 'Last used API key' },
-            native: { id: 'last_used_key' },
-            def: 0
+            common: { type: 'number', name: 'Last used API key', def: 0 },
+            native: { id: 'last_used_key' }
         }, function() {
-            var key = adapter.getState('last_used_key').val;
-            var keyArr = adapter.config.apikey.split(',');
-            key += 1;
-            if (key > keyArr.length-1) key = 0;
-            apikey = keyArr[key].trim();
-            cb(apikey);
+            adapter.getState('last_used_key', function(err, obj) {
+                var key = 0;
+                if (err) {
+                    adapter.log.error('Error: ' +err);
+                }
+                else {
+                    key = obj.val;
+                }
+                if (key === undefined || key === null) key = 0;
+                var keyArr = adapter.config.apikey.split(',');
+                key += 1;
+                if (key > keyArr.length-1) key = 0;
+                apikey = keyArr[key].trim();
+                cb(apikey);
+            });
         });
     }
     else {
