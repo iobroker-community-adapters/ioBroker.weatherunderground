@@ -13,7 +13,8 @@ The adapter loads all 15min (default) hourly forecast data for the next 24h. Add
 ## Notes
 An api-key from WU is needed to use this adapter:
 * Register/Login at http://www.wunderground.com/weather/api/d/login.html
-* get your apikey at http://www.wunderground.com/weather/api/d/pricing . purchase a free developer key.
+* get your apikey at http://www.wunderground.com/weather/api/d/pricing . purchase a free developer key. Be aware of the request limits!
+* Basically the adapter supports to enter multiple keys deparated by a comma
 
 As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
 
@@ -73,6 +74,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## 1.1.1 (2017-11-08)
 * (Apollon77) Optimize API usage by getting all data with one call instead of two
+* (Apollon77) Add support for multiple API-Keys
 
 ## 1.1.0 (2017-10-30)
 * (Apollon77) Add option to overwrite Icon Base URL

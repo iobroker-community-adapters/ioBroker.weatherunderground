@@ -4,9 +4,9 @@
         "version": "1.1.1",
         "news": {
             "1.1.1": {
-                "en": "Optimize API usage by getting all data with one call instead of two",
-                "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden",
-                "ru": "Optimize API usage by getting all data with one call instead of two"
+                "en": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys",
+                "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden, Unterstützung für mehrere Keys hinzugefügt",
+                "ru": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys"
             },
             "1.1.0": {
                 "en": "Add option to overwrite Icon Base URL",

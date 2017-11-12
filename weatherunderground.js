@@ -136,7 +136,7 @@ function getWuData(apikey, cb) {
         url = 'http://api.wunderground.com/api/' + adapter.config.apikey + '/forecast/hourly/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
 */
-    adapter.log.info('User API Key ' + apikey);
+    adapter.log.info('Use API Key ' + apikey);
     var url = 'http://api.wunderground.com/api/' + apikey;
 
     if (adapter.config.forecast_periods_txt == true || adapter.config.forecast_periods == true) {
