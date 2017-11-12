@@ -105,10 +105,13 @@ function getApiKey(cb) {
             adapter.getState('last_used_key', function(err, obj) {
                 var key = 0;
                 if (err) {
-                    adapter.log.error('Error: ' +err);
+                    adapter.log.error('Error: ' + err);
+                }
+                else if (obj) {
+                    key = obj.val;
                 }
                 else {
-                    key = obj.val;
+                    key = 0;
                 }
                 if (key === undefined || key === null) key = 0;
                 var keyArr = adapter.config.apikey.split(',');
@@ -116,6 +119,7 @@ function getApiKey(cb) {
                 if (key > keyArr.length-1) key = 0;
                 apikey = keyArr[key].trim();
                 cb(apikey);
+                adapter.setState('last_used_key', {val: key, ack: true})
             });
         });
     }
