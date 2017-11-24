@@ -67,6 +67,9 @@ adapter.on('ready', function () {
             adapter.config.custom_icon_base_url += "/";
         }
     }
+    if (typeof adapter.config.custom_icon_format == 'undefined') {
+        adapter.config.custom_icon_format = "gif";
+    }
     adapter.log.debug('on ready: ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
     checkWeatherVariables();
@@ -90,6 +93,9 @@ adapter.on('ready', function () {
 function handleIconUrl(original) {
     if (adapter.config.custom_icon_base_url !== "") {
         original = adapter.config.custom_icon_base_url + original.substring(original.lastIndexOf('/')+1);
+        if (original.substring(original.lastIndexOf('.')+1) !== adapter.config.custom_icon_format) {
+            original = original.substring(original.lastIndexOf('.') + 1) + adapter.config.custom_icon_format;
+        }
     }
     return original;
 }

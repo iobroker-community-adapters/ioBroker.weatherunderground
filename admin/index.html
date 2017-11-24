@@ -24,7 +24,8 @@
         "forecast_periods": { "en": "Forecast for next 4 days", "de": "Vorschau für nächsten 4 Tage", "nl": "Verwachting voor de komende 4 dagen" },
         "forecast_hourly": { "en": "forecast hourly today", "de": "Vorschau heute stündlich", "nl": "Verwachting vandaag per uur" },
         "current": { "en": "current data", "de": "Aktuelle Daten", "nl": "Huidige gegevens" },
-        "custom_icon_base_url": { "en": "Custom Icon-Base-URL", "de": "EIgene Icon-Basis-URL" }
+        "custom_icon_base_url": { "en": "Custom Icon-Base-URL", "de": "Eigene Icon-Basis-URL" },
+        "custom_icon_format": { "en": "Custom Icon-Format", "de": "Eigene Icon-Format" }
     };
 
 
@@ -99,9 +100,18 @@
         }
         if (typeof settings['custom_icon_base_url'] == 'undefined') {
             onChange(true);
-            $("#custom_icon_base_url").attr("checked", true);
-            $('#custom_icon_base_url.value').prop('checked', settings['current']).change(function () {
+            $('#custom_icon_base_url.value').val(settings['custom_icon_base_url']).change(function () {
                 onChange();
+            }).keyup(function () {
+                $(this).trigger('change');
+            });
+        }
+        if (typeof settings['custom_icon_format'] == 'undefined') {
+            onChange(true);
+            $('#custom_icon_format.value').val(settings['custom_icon_format']).change(function () {
+                onChange();
+            }).keyup(function () {
+                $(this).trigger('change');
             });
         }
     }
@@ -162,9 +172,6 @@
             <td><img src="wu.png" /></td>
             <td><h3 class="translate">Weatherunderground Adapter Settings</h3></td>
         </tr>
-
-
-
     </table>
     <p style="padding-left: 12px">
         <table>
@@ -244,6 +251,19 @@
                </td>
                <td>
                    <input type="text" id="custom_icon_base_url" value="" class="value" size="80">
+               </td>
+           </tr>
+           <tr>
+               <td>
+                   <label for="language" class="translate">custom_icon_format</label>
+               </td>
+               <td>
+                   <select class="value" id="custom_icon_format">
+                       <option value="gif">gif</option>
+                       <option value="png">png</option>
+                       <option value="svg">svg</option>
+                       <option value="jpg">jpg</option>
+                   </select>
                </td>
            </tr>
         </table>

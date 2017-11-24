@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "1.1.1",
+        "version": "1.1.2",
         "news": {
+            "1.1.2": {
+                "en": "Add option to specify image format for custom image urls",
+                "de": "Möglichkeit hinzugefügt das Bildformat für eigene URLs anzugeben",
+                "ru": "Add option to specify image format for custom image urls"
+            },
             "1.1.1": {
                 "en": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys",
                 "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden, Unterstützung für mehrere Keys hinzugefügt",
