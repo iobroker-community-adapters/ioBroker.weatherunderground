@@ -72,6 +72,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 # Сhangelog
 
+## 1.1.2 (2017-11-24)
+* (Apollon77) Add option to specify image format for custom image urls
+
 ## 1.1.1 (2017-11-08)
 * (Apollon77) Optimize API usage by getting all data with one call instead of two
 * (Apollon77) Add support for multiple API-Keys
