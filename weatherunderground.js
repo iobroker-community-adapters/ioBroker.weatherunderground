@@ -94,7 +94,7 @@ function handleIconUrl(original) {
     if (adapter.config.custom_icon_base_url !== "") {
         original = adapter.config.custom_icon_base_url + original.substring(original.lastIndexOf('/')+1);
         if (original.substring(original.lastIndexOf('.')+1) !== adapter.config.custom_icon_format) {
-            original = original.substring(original.lastIndexOf('.') + 1) + adapter.config.custom_icon_format;
+            original = original.substring(0, original.lastIndexOf('.') + 1) + adapter.config.custom_icon_format;
         }
     }
     return original;
