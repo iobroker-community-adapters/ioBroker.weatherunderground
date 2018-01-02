@@ -25,7 +25,7 @@ var utils      = require(__dirname + '/lib/utils'); // Get common adapter utils
 var request    = require('request');
 var iconv      = require('iconv-lite');
 
-var adapter = utils.adapter('weatherunderground');
+var adapter = utils.Adapter('weatherunderground');
 
 // is called if a subscribed object changes
 adapter.on('objectChange', function (id, obj) {
