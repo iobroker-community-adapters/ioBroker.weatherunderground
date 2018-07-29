@@ -85,6 +85,7 @@
         "license": "MIT",
         "npmLibs": [],
         "type": "weather",
+        "materialize": true,
         "keywords": [
             "iobroker",
             "weather",
@@ -107,6 +108,7 @@
         "forecast_periods": true,
         "forecast_hourly": true,
         "current": true,
+        "nonMetric": false,
         "custom_icon_base_url": ""
     },
     "objects": [],

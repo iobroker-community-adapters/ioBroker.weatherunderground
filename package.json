@@ -22,22 +22,17 @@
     "url": "https://github.com/dschaedl/ioBroker.weatherunderground"
   },
   "dependencies": {
-    "request": "^2.76.0",
-    "iconv-lite": "^0.4.13"
+    "request": "^2.87.0"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-replace": "^1.0.1",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-jscs": "^3.0.1",
-    "grunt-http": "^2.2.0",
-    "mocha": "^4.1.0",
+    "gulp": "^3.9.1",
+    "mocha": "^5.2.0",
     "chai": "^4.1.2"
   },
   "bugs": {
     "url": "https://github.com/dschaedl/ioBroker.weatherunderground/issues"
   },
-  "main": "weatherunderground.js",
+  "main": "main.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit"
   }
