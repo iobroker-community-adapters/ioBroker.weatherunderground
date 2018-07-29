@@ -669,18 +669,27 @@ function checkWeatherVariables() {
         adapter.setObjectNotExists('forecast', {
             type: 'device',
             role: 'forecast',
-            common: {name: 'Forecast for next 4 days days and current conditions'},
+            common: {
+                name: 'Forecast for next 4 days days and current conditions'
+            },
             native: {location: adapter.config.location}
         });
         adapter.setObjectNotExists('forecast.current', {
             type: 'channel',
-            common: {name: 'Current conditions', role: 'weather'},
+            common: {
+                name: 'Current conditions',
+                role: 'weather'
+            },
             native: {location: adapter.config.location}
         });
 
         adapter.setObjectNotExists('forecast.current.displayLocationFull', {
             type: 'state',
-            common: {name: 'Display location full name', role: 'value.location'},
+            common: {
+                name: 'Display location full name',
+                role: 'location',
+                type: 'string'
+            },
             native: {id: 'current_observation.display_location.full'}
         });
         adapter.setObjectNotExists('forecast.current.displayLocationLatitude', {
@@ -722,7 +731,11 @@ function checkWeatherVariables() {
 
         adapter.setObjectNotExists('forecast.current.observationLocationFull', {
             type: 'state',
-            common: {name: 'Observation location full name', role: 'value.location'},
+            common: {
+                name: 'Observation location full name',
+                role: 'location',
+                type: 'string'
+            },
             native: {id: 'current_observation.observation_location.full'}
         });
         adapter.setObjectNotExists('forecast.current.observationLocationLatitude', {
