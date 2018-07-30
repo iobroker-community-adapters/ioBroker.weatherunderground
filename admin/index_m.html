@@ -70,14 +70,14 @@
             showIconSet(settings.iconSet);
             showHideSettings();
             if (!settings.location) {
-                socket.emit('getObject', 'system.config', function (err, obj) {
+                socket.emit('getObject', 'system.config', function (err, config) {
                     if (config && config.common) {
                         if (config.common.tempUnit.indexOf('F') !== -1) {
                             $('#nonMetric').prop('checked', true).trigger('change');
                         }
                     }
-                    if (obj && obj.common && obj.common.latitude && obj.common.longitude) {
-                        $('#location').val(obj.common.latitude + ',' + obj.common.longitude).trigger('change');
+                    if (config && config.common && config.common.latitude && config.common.longitude) {
+                        $('#location').val(obj.common.latitude + ',' + config.common.longitude).trigger('change');
                         M.updateTextFields();
                     }
                 });
