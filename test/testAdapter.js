@@ -1,15 +1,15 @@
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
-var expect = require('chai').expect;
-var setup  = require(__dirname + '/lib/setup');
+const expect = require('chai').expect;
+const setup  = require(__dirname + '/lib/setup');
 
-var objects = null;
-var states  = null;
-var onStateChanged = null;
-var onObjectChanged = null;
-var sendToID = 1;
+let objects = null;
+let states  = null;
+let onStateChanged = null;
+let onObjectChanged = null;
+let sendToID = 1;
 
-var adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
+const adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
 
 function checkConnectionOfAdapter(cb, counter) {
     counter = counter || 0;
@@ -78,12 +78,12 @@ describe('Test ' + adapterShortName + ' adapter', function() {
         this.timeout(600000); // because of first install from npm
 
         setup.setupController(function () {
-            var config = setup.getAdapterConfig();
+            const config = setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
-
-            //config.native.dbtype   = 'sqlite';
+            config.native.location = 'file://' + __dirname.replace(/\\/g, '/') + '/lib/forecast.json';
+            config.native.language = 'GE';
 
             setup.setAdapterConfig(config.common, config.native);
 
@@ -120,14 +120,33 @@ describe('Test ' + adapterShortName + ' adapter', function() {
     });
 /**/
 
-/*
-    PUT YOUR OWN TESTS HERE USING
-    it('Testname', function ( done) {
-        ...
-    });
+    it('Test ' + adapterShortName + ': check states', function (done) {
+        this.timeout(5000);
 
-    You can also use "sendTo" method to send messages to the started adapter
-*/
+        setTimeout(function () {
+            states.getState('weatherunderground.0.forecast.current.temp', function (err, state) {
+                expect(err).to.be.not.ok;
+                expect(state).to.be.ok;
+                expect(state.val).to.be.not.undefined;
+                expect(state.val).to.be.a('number');
+
+                states.getState('weatherunderground.0.forecast.current.windDegrees', function (err, state) {
+                    expect(err).to.be.not.ok;
+                    expect(state).to.be.ok;
+                    expect(state.val).to.be.not.undefined;
+                    expect(state.val).to.be.a('number');
+
+                    states.getState('weatherunderground.0.forecast.current.feelsLike', function (err, state) {
+                        expect(err).to.be.not.ok;
+                        expect(state).to.be.ok;
+                        expect(state.val).to.be.not.undefined;
+                        expect(state.val).to.be.a('number');
+                        done();
+                    });
+                });
+            });
+        }, 100);
+    });
 
     after('Test ' + adapterShortName + ' adapter: Stop js-controller', function (done) {
         this.timeout(10000);
