@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "1.1.2",
+        "version": "2.0.0",
         "news": {
+            "2.0.0": {
+                "en": "Warning! Breaking changes!\nRefactoring of states and roles",
+                "de": "Warnung! Breaking Änderungen!\nRefactoring von Zuständen und Rollen",
+                "ru": "Предупреждение! Нарушение изменений!\nРефакторинг состояний и ролей",
+                "pt": "Atenção! Quebrando mudanças!\nRefatoração de estados e papéis",
+                "nl": "Waarschuwing! Veranderingen doorbreken!\nRefactoring van staten en rollen",
+                "fr": "Attention! Briser les changements!\nRefactorisation des états et des rôles",
+                "it": "Avvertimento! Ultime modifiche!\nRefactoring di stati e ruoli",
+                "es": "¡Advertencia! ¡Rompiendo cambios!\nRefactorización de estados y roles",
+                "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról"
+            },
             "1.1.2": {
                 "en": "Add option to specify image format for custom image urls",
                 "de": "Möglichkeit hinzugefügt das Bildformat für eigene URLs anzugeben",
@@ -75,7 +86,28 @@
             }
         },
         "title": "weatherunderground forecast",
-        "desc": "load weatherunderground weather forecast for your location",
+        "titleLang": {
+            "en": "Weatherunderground forecast",
+            "de": "Vorhersage Weatherunderground",
+            "ru": "Weatherunderground прогноз",
+            "pt": "Previsão do Weatherunderground",
+            "nl": "Weatherunderground voorspelling",
+            "fr": "Météo Weatherunderground",
+            "it": "Previsioni Weatherunderground",
+            "es": "Previsión Weatherunderground",
+            "pl": "Prognoza Weatherunderground"
+        },
+        "desc": {
+            "en": "Loads Weatherunderground weather forecast for your location",
+            "de": "Lädt Wetterwetterprognose für Ihren Standort",
+            "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
+            "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
+            "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
+            "fr": "Charge Weatherunder météo Prévisions pour votre localité",
+            "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
+            "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
+            "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji"
+        },
         "platform": "Javascript/Node.js",
         "mode": "schedule",
         "schedule": "12 * * * *",

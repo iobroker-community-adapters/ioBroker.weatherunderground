@@ -71,6 +71,9 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # Сhangelog
+### 2.0.0 (2018-07-30)
+* (bluefox) Warning! Breaking changes! States are renamed.
+* (bluefox) Refactoring of states and roles
 
 ## 1.1.2 (2017-11-24)
 * (Apollon77) Add option to specify image format for custom image urls
