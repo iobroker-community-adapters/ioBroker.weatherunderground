@@ -1,5 +1,5 @@
 ﻿<html>
-
+<head>
 <!-- these 4 files always have to be included -->
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
 <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
@@ -16,106 +16,82 @@
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
     function setValue(id, value, onChange) {
-        // example: select elements with id=key and class=value and insert value
-        if ($('#' + id + '.value').attr('type') === 'checkbox') {
-
-            console.log("setvalue" + id);
-
-            $('#' + id + '.value').prop('checked', value).change(function () {
+        var $value = $('#' + id + '.value');
+        if ($value.attr('type') === 'checkbox') {
+            $value.prop('checked', value).on('change', function () {
                 onChange();
             });
         } else {
-            $('#' + id + '.value').val(value).change(function () {
+            $value.val(value).on('change', function () {
                 onChange();
-            }).keyup(function () {
-                // Check that only numbers entered
-                if ($(this).hasClass('number')) {
-                    var val = $(this).val();
-                    if (val) {
-                        var newVal = '';
-                        for (var i = 0; i < val.length; i++) {
-                            if ((val[i] >= '0' && val[i] <= '9') || val[i] === '-' || val[i] === '+' || val[i] === '.' || val[i] === ',') {
-                                if (val[i] === '.' && convertComma === true) val[i] === ',';
-                                if (val[i] === ',' && convertComma === false) val[i] === '.';
-                                newVal += val[i];
-                            }
-                        }
-
-                        if (val != newVal) $(this).val(newVal);
-                    }
-                }
+            }).on('keyup', function () {
                 $(this).trigger('change');
             });
         }
     }
 
-
-
-    function CheckSettings(settings, onChange) {
-        console.log("start checksettings");
-        //just to be compatible with older versions...
-        if (typeof settings['forecast_periods_txt'] == 'undefined') {
-            onChange(true);
-            $("#forecast_periods_txt").attr("checked", true);
-            $('#forecast_periods_txt.value').prop('checked', settings['forecast_periods_txt']).change(function () {
+    function checkSettings(settings, onChange) {
+        // just to be compatible with older versions...
+        if (typeof settings['forecast_periods_txt'] === 'undefined') {
+            onChange();
+            $('#forecast_periods_txt').attr('checked', true);
+            $('#forecast_periods_txt.value').prop('checked', settings['forecast_periods_txt']).on('change', function () {
                 onChange();
             });
         }
 
-        if (typeof settings['forecast_periods'] == 'undefined') {
-            onChange(true);
-            $("#forecast_periods").attr("checked", true);
-            $('#forecast_periods.value').prop('checked', settings['forecast_periods']).change(function () {
+        if (typeof settings['forecast_periods'] === 'undefined') {
+            onChange();
+            $('#forecast_periods').attr('checked', true);
+            $('#forecast_periods.value').prop('checked', settings['forecast_periods']).on('change', function () {
                 onChange();
             });
 
         }
-        if (typeof settings['forecast_hourly'] == 'undefined') {
-            onChange(true);
-            $("#forecast_hourly").attr("checked", true);
-            $('#forecast_hourly.value').prop('checked', settings['forecast_hourly']).change(function () {
+        if (typeof settings['forecast_hourly'] === 'undefined') {
+            onChange();
+            $('#forecast_hourly').attr('checked', true);
+            $('#forecast_hourly.value').prop('checked', settings['forecast_hourly']).on('change', function () {
                 onChange();
             });
         }
-        if (typeof settings['current'] == 'undefined') {
-            onChange(true);
-            $("#current").attr("checked", true);
-            $('#current.value').prop('checked', settings['current']).change(function () {
+        if (typeof settings['current'] === 'undefined') {
+            onChange();
+            $('#current').attr('checked', true);
+            $('#current.value').prop('checked', settings['current']).on('change', function () {
                 onChange();
             });
         }
-        if (typeof settings['custom_icon_base_url'] == 'undefined') {
+        if (typeof settings['custom_icon_base_url'] === 'undefined') {
             onChange(true);
-            $('#custom_icon_base_url.value').val(settings['custom_icon_base_url']).change(function () {
+            $('#custom_icon_base_url.value').val(settings['custom_icon_base_url']).on('change', function () {
                 onChange();
-            }).keyup(function () {
+            }).on('keyup', function () {
                 $(this).trigger('change');
             });
         }
-        if (typeof settings['custom_icon_format'] == 'undefined') {
+        if (typeof settings['custom_icon_format'] === 'undefined') {
             onChange(true);
-            $('#custom_icon_format.value').val(settings['custom_icon_format']).change(function () {
+            $('#custom_icon_format.value').val(settings['custom_icon_format']).on('change', function () {
                 onChange();
-            }).keyup(function () {
+            }).on('keyup', function () {
                 $(this).trigger('change');
             });
         }
     }
 
     function load(settings, onChange) {
-        console.log("start load ");
         for (var key in settings) {
-            // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                console.log("load checkbox " + key);
-                $('#' + key + '.value').prop('checked', settings[key]).change(function () {
+            if (!settings.hasOwnProperty(key)) continue;
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).on('change', function () {
                     onChange();
                 });
             } else {
-                console.log("load " + key);
-                $('#' + key + '.value').val(settings[key]).change(function () {
+                $value.val(settings[key]).on('change', function () {
                     onChange();
-                }).keyup(function () {
+                }).on('keyup', function () {
                     $(this).trigger('change');
                 });
             }
@@ -124,19 +100,16 @@
         // Signal to admin, that no changes yet
         onChange(false);
 
-        CheckSettings(settings, onChange);
+        checkSettings(settings, onChange);
     }
 
-    // ... and the function save has to exist.
-    // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
-        // example: select elements with class=value and build settings object
         var settings = {};
         $('.value').each(function () {
             var $this = $(this);
             var id = $this.attr('id');
 
-            if ($this.attr('type') == 'checkbox') {
+            if ($this.attr('type') === 'checkbox') {
                 settings[id] = $this.prop('checked');
             } else {
                 settings[id] = $this.val();
@@ -149,7 +122,8 @@
 
 
 </script>
-
+</head>
+<body>
 <!-- you have to put your config page in a div with id adapter-container -->
 <div id="adapter-container">
 
@@ -274,5 +248,5 @@
     </p>
 
 </div>
-
+</body>
 </html>

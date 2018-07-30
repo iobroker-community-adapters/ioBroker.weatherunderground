@@ -1,0 +1,257 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- Materialze style -->
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+    <script type="text/javascript" src="words.js"></script>
+
+    <!-- you have to define 2 functions in the global scope: -->
+    <script type="text/javascript">
+        var icons = [
+            'chanceflurries',
+            'chancerain',
+            'chancesleet',
+            'chancesnow',
+            'chancetstorms',
+            'clear',
+            'cloudy',
+            'flurries',
+            'fog',
+            'hazy',
+            'mostlycloudy',
+            'mostlysunny',
+            'partlycloudy',
+            'partlysunny',
+            'sleet',
+            'rain',
+            'sleet',
+            'snow',
+            'sunny',
+            'tstorms',
+            'cloudy',
+            'partlycloudy'
+        ];
+
+        function load(settings, onChange) {
+            if (settings.iconSet === undefined) {
+                settings.iconSet = 'i';
+            }
+
+            for (var key in settings) {
+                if (!settings.hasOwnProperty(key)) continue;
+                var $value = $('#' + key + '.value');
+                if ($value.attr('type') === 'checkbox') {
+                    $value.prop('checked', settings[key]).on('change', function () {
+                        showHideSettings($(this).attr('id'));
+                        onChange();
+                    });
+                } else {
+                    $value.val(settings[key]).on('change', function () {
+                        showHideSettings($(this).attr('id'));
+
+                        onChange();
+                    }).on('keyup', function () {
+                        $(this).trigger('change');
+                    });
+                }
+            }
+
+            // Signal to admin, that no changes yet
+            onChange(false);
+
+            showIconSet(settings.iconSet);
+            showHideSettings();
+            if (!settings.location) {
+                socket.emit('getObject', 'system.config', function (err, obj) {
+                    if (config && config.common) {
+                        if (config.common.tempUnit.indexOf('F') !== -1) {
+                            $('#nonMetric').prop('checked', true).trigger('change');
+                        }
+                    }
+                    if (obj && obj.common && obj.common.latitude && obj.common.longitude) {
+                        $('#location').val(obj.common.latitude + ',' + obj.common.longitude).trigger('change');
+                        M.updateTextFields();
+                    }
+                });
+            }
+        }
+
+        function showHideSettings(id) {
+            if ($('#iconSet').val()) {
+                $('.custom-icons').hide();
+            } else {
+                $('.custom-icons').show();
+            }
+            if ($('#current').prop('checked')) {
+                $('.current').show();
+            } else {
+                $('.current').hide();
+            }
+            if (id === 'iconSet' || id === 'custom_icon_format' || id === 'custom_icon_base_url') {
+                showIconSet();
+            }
+        }
+
+        function showIconSet() {
+            var text = [];
+            var url = '';
+            var name = $('#iconSet').val();
+            if (name) {
+                url = 'https://icons.wxug.com/i/c/' + name + '/';
+                for (var i = 0; i < icons.length; i++) {
+                    text.push('<img src="' + url + icons[i] + '.gif" width="50" alt="' + icons[i] + '"/>');
+                }
+            } else {
+                url = $('#custom_icon_base_url').val();
+                if (url && url[url.length - 1] !== '/') url += '/';
+                var ext = $('#custom_icon_format').val();
+                for (var j = 0; i < icons.length; j++) {
+                    text.push('<img src="' + url + icons[j] + ext + '" width="50" alt="' + icons[j] + '"/>');
+                }
+            }
+
+            $('.icons-show').html(text.join(' '));
+        }
+
+        function save(callback) {
+            var settings = {};
+            $('.value').each(function () {
+                var $this = $(this);
+                var id = $this.attr('id');
+
+                if ($this.attr('type') === 'checkbox') {
+                    settings[id] = $this.prop('checked');
+                } else {
+                    settings[id] = $this.val();
+                }
+            });
+
+            callback(settings);
+        }
+    </script>
+</head>
+<body>
+    <div class="m adapter-container">
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s4"><a href="#tab-main" class="translate active">Main settings</a></li>
+                    <li class="tab col s4"><a href="#tab-icons" class="translate">Icons</a></li>
+                </ul>
+            </div>
+            <div id="tab-main" class="col s12 page">
+                <div class="row">
+                    <div class="col s12 m4 l2">
+                        <img src="wu.png" class="logo">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input class="value autocomplete" id="apikey" type="text"/>
+                        <label for="apikey" class="translate">apikey</label>
+                        <span class="translate">apikey_info</span>
+                        <span class="translate">apikey_info_1</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <input type="checkbox" id="forecast_periods_txt" class="value">
+                        <span for="forecast_periods_txt" class="translate">forecast_periods_txt</span>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <input type="checkbox" id="forecast_periods" class="value">
+                        <span for="forecast_periods" class="translate">forecast_periods</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <input type="checkbox" id="forecast_hourly" class="value">
+                        <label for="forecast_hourly" class="translate">forecast_hourly</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <input type="checkbox" id="current" class="value">
+                        <label for="current" class="translate">current</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <input class="value" type="text" id="location"/>
+                        <label for="location" class="translate">location</label>
+                        <span class="translate">location_info</span>
+                        <span class="translate">location_info_1</span>
+                    </div>
+                    <div class="input-field col s12 m6 current">
+                        <input class="value" type="text" id="station"/>
+                        <label for="station" class="translate">station</label>
+                        <span class="translate">Station - only for current conditions data</span>
+                        <span class="translate">station_info</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <select class="value" id="language">
+                            <option value="DL">deutsch</option>
+                            <option value="EN">english</option>
+                            <option value="RU">русский</option>
+                            <option value="NL">Nederlands</option>
+                        </select>
+                        <label for="language" class="translate">language</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <input type="checkbox" id="nonMetric" class="value">
+                        <span for="nonMetric" class="translate">Use english metric system</span>
+                    </div>
+                </div>
+            </div>
+            <div id="tab-icons" class="col s12 page">
+                <div class="row">
+                    <div class="input-field col s12 m4">
+                        <select id="iconSet" class="value">
+                            <option value="a">A</option>
+                            <option value="b">B</option>
+                            <option value="c">C</option>
+                            <option value="d">D</option>
+                            <option value="e">E</option>
+                            <option value="f">F</option>
+                            <option value="g">G</option>
+                            <option value="h">H</option>
+                            <option value="i">I</option>
+                            <option value="j">J</option>
+                            <option value="k">K</option>
+                            <option value="" class="translate">custom</option>
+                        </select>
+                        <label for="iconSet" class="translate">Icon set</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="icons-show col s12">
+                    </div>
+                </div>
+                <div class="row custom-icons">
+                    <div class="input-field col s12 m4">
+                        <input type="text" id="custom_icon_base_url" class="value">
+                        <label for="custom_icon_base_url" class="translate">custom_icon_base_url</label>
+                    </div>
+                    <div class="input-field col s12 m4">
+                        <select class="value" id="custom_icon_format">
+                            <option value="gif">gif</option>
+                            <option value="png">png</option>
+                            <option value="svg">svg</option>
+                            <option value="jpg">jpg</option>
+                        </select>
+                        <label for="custom_icon_format" class="translate">custom_icon_format</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
