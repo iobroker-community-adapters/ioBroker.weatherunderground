@@ -77,7 +77,7 @@
                         }
                     }
                     if (config && config.common && config.common.latitude && config.common.longitude) {
-                        $('#location').val(obj.common.latitude + ',' + config.common.longitude).trigger('change');
+                        $('#location').val(config.common.latitude + ',' + config.common.longitude).trigger('change');
                         M.updateTextFields();
                     }
                 });

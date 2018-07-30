@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "2.0.2",
+        "version": "2.0.3",
         "news": {
-            "2.0.2": {
+            "2.0.3": {
                 "en": "Warning! Breaking changes!\nRefactoring of states and roles",
                 "de": "Warnung! Breaking Änderungen!\nRefactoring von Zuständen und Rollen",
                 "ru": "Предупреждение! Нарушение изменений!\nРефакторинг состояний и ролей",
