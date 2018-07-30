@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "2.0.0",
+        "version": "2.0.1",
         "news": {
-            "2.0.0": {
+            "2.0.1": {
                 "en": "Warning! Breaking changes!\nRefactoring of states and roles",
                 "de": "Warnung! Breaking Änderungen!\nRefactoring von Zuständen und Rollen",
                 "ru": "Предупреждение! Нарушение изменений!\nРефакторинг состояний и ролей",
@@ -133,8 +133,8 @@
     },
     "native": {
         "apikey": "getYourOwn",
-        "location": "HKG",
-        "station": "ISANKTGA111",
+        "location": "",
+        "station": "",
         "language": "DL",
         "forecast_periods_txt": true,
         "forecast_periods": true,
