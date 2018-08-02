@@ -1637,7 +1637,7 @@ function checkWeatherVariables() {
             });
             adapter.setObjectNotExists(id + 'sky', {
                 type: 'state',
-                common: {name: 'Sky (clear..covered)', type: 'number', unit: '%', read: true, write: false},
+                common: {name: 'Sky (clear..covered)', type: 'number', unit: '%', role: 'value.clouds', read: true, write: false},
                 native: {id: id + 'sky'}
             });
             adapter.setObjectNotExists(id + 'windSpeed', {
