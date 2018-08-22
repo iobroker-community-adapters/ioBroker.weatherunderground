@@ -512,7 +512,7 @@ function parseResult(body, cb) {
         }
     }
 
-    // next 24 hours
+    // next 36 hours
     if (adapter.config.forecast_hourly) {
         if (body.hourly_forecast) {
             const type = nonMetric ? 'english' : 'metric';
@@ -1599,9 +1599,9 @@ function checkWeatherVariables() {
 
     if (adapter.config.forecast_hourly) {
         adapter.setObjectNotExists('forecastHourly', {
-            type: 'channel',
+            type: 'device',
             role: 'forecast',
-            common: {name: 'next 24h forecast'},
+            common: {name: 'next 36h forecast'},
             native: {location: adapter.config.location}
         });
 
