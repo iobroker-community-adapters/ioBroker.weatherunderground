@@ -1,0 +1,5 @@
+﻿What about backward compatibility? Should in settings the last two checkboxes be active by default ?! Or do you have "if undefined" handling in there?
+I see that in io-package it is set to true, but admin did not showed it (i upgraded from npm version to github version using admin). Thank you for checking it
+
+And when chaning only checkboxes the "save" buttons in Admin do not get activated. Can you please check that too?!
+

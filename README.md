@@ -8,7 +8,7 @@
 [![NPM](https://nodei.co/npm/iobroker.weatherunderground.png?downloads=true)](https://nodei.co/npm/iobroker.weatherunderground/)
 
 ioBroker Adapter to load 24h weather forecast for your location from [Weather Underground](http://www.wunderground.com/).
-The adapter loads all 15min (default) hourly forecast data for the next 24h. Additionally it calculates sum/avg/max values of the most used data for 6, 12, 24h.
+The adapter loads all 15min (default) hourly forecast data for the next 36h. Additionally it calculates sum/avg/max values of the most used data for 6, 12, 24h.
 
 ## Notes
 An api-key from WU is needed to use this adapter:
@@ -71,6 +71,9 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # Сhangelog
+### 2.0.4 (2018-08-19)
+* (René) some typos
+
 ### 2.0.3 (2018-07-30)
 * (bluefox) Warning! Breaking changes! States are renamed.
 * (bluefox) Refactoring of states and roles
