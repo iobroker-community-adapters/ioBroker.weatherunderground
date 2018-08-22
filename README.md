@@ -73,6 +73,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 # Сhangelog
 ### 2.0.4 (2018-08-19)
 * (René) some typos
+* (bluefox) Write only numbers and not strings
 
 ### 2.0.3 (2018-07-30)
 * (bluefox) Warning! Breaking changes! States are renamed.

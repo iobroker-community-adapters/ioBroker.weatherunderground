@@ -44,6 +44,9 @@
             if (settings.iconSet === undefined) {
                 settings.iconSet = 'i';
             }
+            if (settings.nonMetric === undefined) {
+                settings.nonMetric = false;
+            }
 
             for (var key in settings) {
                 if (!settings.hasOwnProperty(key)) continue;
