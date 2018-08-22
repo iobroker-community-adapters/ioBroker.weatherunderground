@@ -419,11 +419,11 @@ function parseResult(body, cb) {
                     });
                     adapter.setState('forecast.' + i + 'd.tempMax', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].high.fahrenheit : body.forecast.simpleforecast.forecastday[i].high.celsius
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].high.fahrenheit) : parseFloat(body.forecast.simpleforecast.forecastday[i].high.celsius)
                     });
                     adapter.setState('forecast.' + i + 'd.tempMin', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].low.fahrenheit : body.forecast.simpleforecast.forecastday[i].low.celsius
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].low.fahrenheit) : parseFloat(body.forecast.simpleforecast.forecastday[i].low.celsius)
                     });
                     adapter.setState('forecast.' + i + 'd.icon', {
                         ack: true,
@@ -443,32 +443,32 @@ function parseResult(body, cb) {
                     });
                     adapter.setState('forecast.' + i + 'd.precipitationAllDay', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].qpf_allday.in : body.forecast.simpleforecast.forecastday[i].qpf_allday.mm
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_allday.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_allday.mm)
                     });
                     adapter.setState('forecast.' + i + 'd.precipitationDay', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].qpf_day.in : body.forecast.simpleforecast.forecastday[i].qpf_day.mm
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_day.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_day.mm)
                     });
                     adapter.setState('forecast.' + i + 'd.precipitationNight', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].qpf_night.in : body.forecast.simpleforecast.forecastday[i].qpf_night.mm
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_night.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_night.mm)
                     });
                     adapter.setState('forecast.' + i + 'd.snowAllDay', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].snow_allday.in : body.forecast.simpleforecast.forecastday[i].snow_allday.cm
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_allday.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_allday.cm)
                     });
                     adapter.setState('forecast.' + i + 'd.snowDay', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].snow_day.in : body.forecast.simpleforecast.forecastday[i].snow_day.cm
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_day.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_day.cm)
                     });
                     adapter.setState('forecast.' + i + 'd.snowNight', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].snow_night.cm : body.forecast.simpleforecast.forecastday[i].snow_night.cm
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_night.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_night.cm)
                     });
 
                     adapter.setState('forecast.' + i + 'd.windSpeedMax', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].maxwind.mph : body.forecast.simpleforecast.forecastday[i].maxwind.kph
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.mph) : parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.kph)
                     });
                     adapter.setState('forecast.' + i + 'd.windDirectionMax', {
                         ack: true,
@@ -476,12 +476,12 @@ function parseResult(body, cb) {
                     });
                     adapter.setState('forecast.' + i + 'd.windDegreesMax', {
                         ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].maxwind.degrees
+                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.degrees)
                     });
 
                     adapter.setState('forecast.' + i + 'd.windSpeed', {
                         ack: true,
-                        val: nonMetric ? body.forecast.simpleforecast.forecastday[i].avewind.mph : body.forecast.simpleforecast.forecastday[i].avewind.kph
+                        val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.mph) : parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.kph)
                     });
                     adapter.setState('forecast.' + i + 'd.windDirection', {
                         ack: true,
@@ -489,20 +489,20 @@ function parseResult(body, cb) {
                     });
                     adapter.setState('forecast.' + i + 'd.windDegrees', {
                         ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].avewind.degrees
+                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.degrees)
                     });
 
                     adapter.setState('forecast.' + i + 'd.humidity', {
                         ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].avehumidity
+                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].avehumidity)
                     });
                     adapter.setState('forecast.' + i + 'd.humidityMax', {
                         ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].maxhumidity
+                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].maxhumidity)
                     });
                     adapter.setState('forecast.' + i + 'd.humidityMin', {
                         ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].minhumidity
+                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].minhumidity)
                     });
                 }
                 catch (error) {
@@ -526,7 +526,7 @@ function parseResult(body, cb) {
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
-                        val: body.hourly_forecast[i].temp[type]
+                        val: parseFloat(body.hourly_forecast[i].temp[type])
                     });
                     adapter.setState('forecastHourly.' + i + 'h.fctcode', {
                         ack: true,
@@ -535,40 +535,40 @@ function parseResult(body, cb) {
                     adapter.setState('forecastHourly.' + i + 'h.sky', {ack: true, val: body.hourly_forecast[i].sky}); //?
                     adapter.setState('forecastHourly.' + i + 'h.windSpeed', {
                         ack: true,
-                        val: body.hourly_forecast[i].wspd[type]
+                        val: parseFloat(body.hourly_forecast[i].wspd[type])
                     }); // windspeed in kmh
                     adapter.setState('forecastHourly.' + i + 'h.windDirection', {
                         ack: true,
-                        val: body.hourly_forecast[i].wdir.degrees
+                        val: parseFloat(body.hourly_forecast[i].wdir.degrees)
                     }); //wind dir in degrees
-                    adapter.setState('forecastHourly.' + i + 'h.uv', {ack: true, val: body.hourly_forecast[i].uvi}); //UV Index -> wikipedia
+                    adapter.setState('forecastHourly.' + i + 'h.uv', {ack: true, val: parseFloat(body.hourly_forecast[i].uvi)}); //UV Index -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.humidity', {
                         ack: true,
-                        val: body.hourly_forecast[i].humidity
+                        val: parseFloat(body.hourly_forecast[i].humidity)
                     });
                     adapter.setState('forecastHourly.' + i + 'h.heatIndex', {
                         ack: true,
-                        val: body.hourly_forecast[i].heatindex[type]
+                        val: parseFloat(body.hourly_forecast[i].heatindex[type])
                     }); // -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.feelsLike', {
                         ack: true,
-                        val: body.hourly_forecast[i].feelslike[type]
+                        val: parseFloat(body.hourly_forecast[i].feelslike[type])
                     }); // -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.precipitation', {
                         ack: true,
-                        val: body.hourly_forecast[i].qpf[type]
+                        val: parseFloat(body.hourly_forecast[i].qpf[type])
                     }); // Quantitative precipitation forecast
                     adapter.setState('forecastHourly.' + i + 'h.snow', {
                         ack: true,
-                        val: body.hourly_forecast[i].snow[type]
+                        val: parseFloat(body.hourly_forecast[i].snow[type])
                     });
                     adapter.setState('forecastHourly.' + i + 'h.precipitationChance', {
                         ack: true,
-                        val: body.hourly_forecast[i].pop
+                        val: parseFloat(body.hourly_forecast[i].pop)
                     }); // probability of Precipitation
                     adapter.setState('forecastHourly.' + i + 'h.mslp', {
                         ack: true,
-                        val: body.hourly_forecast[i].mslp[type]
+                        val: parseFloat(body.hourly_forecast[i].mslp[type])
                     }); // mean sea level pressure
 
                     qpfMax += Number(body.hourly_forecast[i].qpf[type]);
@@ -1637,7 +1637,7 @@ function checkWeatherVariables() {
             });
             adapter.setObjectNotExists(id + 'sky', {
                 type: 'state',
-                common: {name: 'Sky (clear..covered)', type: 'number', unit: '%', read: true, write: false},
+                common: {name: 'Sky (clear..covered)', type: 'number', unit: '%', role: 'value.clouds', read: true, write: false},
                 native: {id: id + 'sky'}
             });
             adapter.setObjectNotExists(id + 'windSpeed', {
