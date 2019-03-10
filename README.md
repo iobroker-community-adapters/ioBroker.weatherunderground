@@ -2,7 +2,7 @@
 # ioBroker.weatherunderground
 ===============
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
+![Number of Installations](http://iobroker.live/badges/weatherunderground-installed.svg) ![Number of Installations](http://iobroker.live/badges/weatherunderground-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
 [![NPM](https://nodei.co/npm/iobroker.weatherunderground.png?downloads=true)](https://nodei.co/npm/iobroker.weatherunderground/)
