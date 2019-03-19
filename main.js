@@ -21,13 +21,19 @@
 
 'use strict';
 
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const utils = require(__dirname + '/lib/utils'); // Get common adapter utils
 const request = require('request');
 //const iconv      = require('iconv-lite');
 
 const adapter = utils.Adapter('weatherunderground');
 const dictionary = require('./lib/words');
 let lang = 'en';
+let nonMetric = false;
+
+let officialApiKey;
+let pwsStationKey;
+let newWebKey;
+let errorCounter = 0;
 
 function _(text) {
     if (!text) return '';
@@ -65,6 +71,13 @@ adapter.on('ready', () => {
             break;
     }
 
+    if (!adapter.config.country) {
+        adapter.config.country = 'DE';
+    }
+
+    if (adapter.config.useLegacyApi === undefined) {
+        adapter.config.useLegacyApi = true;
+    }
 
     if (typeof adapter.config.forecast_periods_txt === 'undefined') {
         adapter.log.info('forecast_periods_txt not defined. now enabled. check settings and save');
@@ -97,13 +110,28 @@ adapter.on('ready', () => {
 
     nonMetric = !!adapter.config.nonMetric;
 
+    officialApiKey = adapter.config.apikey;
+
     checkWeatherVariables();
 
-    getApiKey(apikey => {
-        getWuData(apikey, () => {
-            setTimeout(() => adapter.stop(), 2000);
+    adapter.getState('currentStationKey', (err, state) => {
+        if (!err && state && state.val) {
+            pwsStationKey = state.val;
+            adapter.log.info('initialize PWS Station Key: ' + pwsStationKey);
+        }
+        adapter.getState('currentWebKey', (err, state) => {
+            if (!err && state && state.val) {
+                newWebKey = state.val;
+                adapter.log.info('initialize Web Key: ' + newWebKey);
+            }
+
+            getKeysAndData(() => {
+                setTimeout(() => adapter.stop(), 2000);
+            });
         });
     });
+
+
 
     // force terminate after 1min
     // don't know why it does not terminate by itself...
@@ -113,7 +141,20 @@ adapter.on('ready', () => {
     }, 60000);
 });
 
-let nonMetric = false;
+
+function getKeysAndData(cb) {
+    if (errorCounter > 2) {
+        cb();
+    }
+    else {
+        getApiKey(() => {
+            if (adapter.config.useLegacyApi) {
+                getLegacyWuData(cb);
+            }
+        });
+    }
+}
+
 
 function handleIconUrl(original) {
     if (adapter.config.iconSet) {
@@ -133,41 +174,99 @@ function handleIconUrl(original) {
 }
 
 function getApiKey(cb) {
-    let apiKey;
-    if (adapter.config.apikey.indexOf(',') !== -1) {
-        adapter.setObjectNotExists('last_used_key', {
-            type: 'state',
-            common: {type: 'number', name: 'Last used API key', def: 0},
-            native: {id: 'last_used_key'}
-        }, () => {
-            adapter.getState('last_used_key', (err, obj) => {
-                let key = 0;
-                if (err) {
-                    adapter.log.error('Error: ' + err);
-                }
-                else if (obj) {
-                    key = obj.val;
-                }
-                else {
-                    key = 0;
-                }
-                if (key === undefined || key === null) key = 0;
-                const keyArr = adapter.config.apikey.split(',');
-                key += 1;
-                if (key > keyArr.length - 1) key = 0;
-                apiKey = keyArr[key].trim();
-                cb(apiKey);
-                adapter.setState('last_used_key', {val: key, ack: true})
-            });
-        });
+    if (officialApiKey.length !== 32) {
+        adapter.log.warn('API key invalid, please enter the new PWS owner API key or remove the key, ignoring it!');
+        officialApiKey = '';
     }
-    else {
-        apiKey = adapter.config.apikey;
-        cb(apiKey);
-    }
+
+    getStationKey(() => getWebsiteKey( () => cb()));
 }
 
-function parseResult(body, cb) {
+function getStationKey(cb) {
+    let url = 'https://www.wunderground.com/personal-weather-station/dashboard';
+
+    if (adapter.config.station) {
+        url += '?ID=' + adapter.config.station;
+    }
+
+    adapter.log.debug('get PWS dashboard page: ' + url);
+
+    request({url: url, encoding: 'utf-8'}, (error, response, body) => {
+        if (!error && response.statusCode === 200 && body) {
+            const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
+            if (!scriptFile || !scriptFile[1]) {
+                return cb && cb();
+            }
+            if (scriptFile[1].startsWith('//')) scriptFile[1] = 'https:' + scriptFile[1];
+
+            adapter.log.debug('get PWS dashboard script: ' + scriptFile[1]);
+
+            request({url: scriptFile[1], encoding: 'utf-8'}, (error, response, body) => {
+                if (!error && response.statusCode === 200 && body) {
+
+// "https://api.wunderground.com/api/606f3f6977348613/conditions/forecast10day/hourly10day/astronomy10day/pwsidentity/units:" + units + "/v:2.0/q/pws:" + stationid + ".json?ID=" + stationid + "&callback=?"
+                    const pwsApiKey = body.match(/https:\/\/api.wunderground.com\/api\/([^\/]+)\/conditions\//);
+                    if (!pwsApiKey || !pwsApiKey[1]) {
+                        return cb && cb();
+                    }
+                    pwsStationKey = pwsApiKey[1];
+                    adapter.log.info('fetched new stationKey from WU webpage: ' + pwsStationKey);
+                    adapter.setObjectNotExists('currentStationKey', {
+                        type: 'state',
+                        common: {type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: ''},
+                        native: {id: 'currentStationKey'}
+                    }, () => {
+                        adapter.setState('currentStationKey', {val: pwsStationKey, ack: true});
+                    });
+
+                    return cb && cb();
+                } else {
+                    // ERROR
+                    adapter.log.error('Unable to get PWS dashboard script: ' + error);
+                    return cb && cb();
+                }
+            });
+
+        } else {
+            // ERROR
+            adapter.log.error('Unable to get PWS dashboard page: ' + error);
+            return cb && cb();
+        }
+    });
+}
+
+function getWebsiteKey(cb, tryQ) {
+    let url = 'https://www.wunderground.com/weather/' + adapter.config.country + '/' + (tryQ ? 'q/' : '') + adapter.config.location;
+
+    adapter.log.debug('get WU weather page: ' + url);
+
+    request({url: url, encoding: 'utf-8'}, (error, response, body) => {
+        if (!error && response.statusCode === 200 && body) {
+            const data = body.match(/api.weather.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
+            if (!data || !data[1]) {
+                return cb && cb();
+            }
+            newWebKey = data[1];
+            adapter.log.info('fetched new webkey from WU weather page: ' + newWebKey);
+            adapter.setObjectNotExists('currentWebKey', {
+                type: 'state',
+                common: {type: 'string', role: 'text', name: 'Current Web Key from webpage', def: ''},
+                native: {id: 'currentWebKey'}
+            }, () => {
+                adapter.setState('currentWebKey', {val: newWebKey, ack: true});
+            });
+            return cb && cb();
+        } else if (!error && response.statusCode === 404 && !tryQ) {
+            getWebsiteKey(cb, true);
+        } else {
+            // ERROR
+            adapter.log.error('Unable to get WU weather page: ' + error);
+            return cb && cb();
+        }
+    });
+}
+
+function parseLegacyResult(body, cb) {
     let qpfMax = 0;
     let popMax = 0;
     let uviSum = 0;
@@ -612,15 +711,15 @@ function parseResult(body, cb) {
     cb && cb();
 }
 
-function getWuData(apiKey, cb) {
+function getLegacyWuData(cb) {
     /*
         const url = 'http://api.wunderground.com/api/' + adapter.config.apiKey + '/forecast/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
     if (adapter.config.station.length > 2) {
         url = 'http://api.wunderground.com/api/' + adapter.config.apiKey + '/forecast/hourly/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
     }
 */
-    adapter.log.debug('Use API Key ' + apiKey);
-    let url = 'http://api.wunderground.com/api/' + apiKey;
+    adapter.log.debug('Use legacy API Key ' + pwsStationKey);
+    let url = 'http://api.wunderground.com/api/' + pwsStationKey;
 
     if (adapter.config.forecast_periods_txt || adapter.config.forecast_periods) {
         url += '/forecast';
@@ -634,6 +733,8 @@ function getWuData(apiKey, cb) {
         url += '/conditions';
     }
 
+    url += '/units:' + (nonMetric ? 'e' : 'm');
+
     url += '/lang:' + adapter.config.language;
 
     if (adapter.config.station.length > 2) {
@@ -645,10 +746,10 @@ function getWuData(apiKey, cb) {
     url += '.json';
 
     if (adapter.config.location.match(/^file:/)) {
-        adapter.log.debug('calling WU: ' + adapter.config.location);
-        return parseResult(JSON.parse(require('fs').readFileSync(adapter.config.location.substring(7)).toString('utf8')), cb);
+        adapter.log.debug('read local WU file: ' + adapter.config.location);
+        return parseLegacyResult(JSON.parse(require('fs').readFileSync(adapter.config.location.substring(7)).toString('utf8')), cb);
     }
-    adapter.log.debug('calling WU: ' + url);
+    adapter.log.debug('get WU legacy data: ' + url);
 
     request({url: url, json: true, encoding: null}, (error, response, body) => {
         /*        body = iconv.decode(new Buffer(body), 'utf-8');
@@ -660,10 +761,13 @@ function getWuData(apiKey, cb) {
                 }*/
         if (!error && response.statusCode === 200) {
             if (body && body.response && body.response.error) {
-                adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error));
+                adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Reset Station Key');
+                pwsStationKey = '';
+                errorCounter++;
+                setImmediate(() => getKeysAndData(cb));
                 return;
             }
-            parseResult(body, cb);
+            parseLegacyResult(body, cb);
         } else {
             // ERROR
             adapter.log.error('Wunderground reported an error: ' + error);

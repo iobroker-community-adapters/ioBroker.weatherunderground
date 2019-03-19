@@ -47,6 +47,9 @@
             if (settings.nonMetric === undefined) {
                 settings.nonMetric = false;
             }
+            if (settings.country === undefined) {
+                settings.country = 'DE';
+            }
 
             for (var key in settings) {
                 if (!settings.hasOwnProperty(key)) continue;
@@ -185,13 +188,18 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="input-field col s12 m6">
+                    <div class="input-field col s12 m4">
+                        <input class="value" type="text" id="country"/>
+                        <label for="country" class="translate">country</label>
+                        <span class="translate">country_info</span>
+                    </div>
+                    <div class="input-field col s12 m4">
                         <input class="value" type="text" id="location"/>
                         <label for="location" class="translate">location</label>
                         <span class="translate">location_info</span>
                         <span class="translate">location_info_1</span>
                     </div>
-                    <div class="input-field col s12 m6 current">
+                    <div class="input-field col s12 m4 current">
                         <input class="value" type="text" id="station"/>
                         <label for="station" class="translate">station</label>
                         <span class="translate">Station - only for current conditions data</span>

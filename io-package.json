@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "2.0.4",
+    "version": "3.0.0",
     "news": {
       "2.0.4": {
         "en": "some typos fixed",
@@ -136,10 +136,11 @@
       "wu",
       "weatherunderground"
     ],
-    "loglevel": "debug",
+    "loglevel": "info",
     "enabled": true,
     "authors": [
-      "Daniel Schaedler <daniel.schaedler@gmail.com>"
+      "Daniel Schaedler <daniel.schaedler@gmail.com>",
+      "Ingo Fischer <iobroker@fischer-ka.de>"
     ]
   },
   "native": {
@@ -152,7 +153,9 @@
     "forecast_hourly": true,
     "current": true,
     "nonMetric": false,
-    "custom_icon_base_url": ""
+    "custom_icon_base_url": "",
+    "country": "DE",
+    "useLegacyApi": true
   },
   "objects": [],
   "instanceObjects": []

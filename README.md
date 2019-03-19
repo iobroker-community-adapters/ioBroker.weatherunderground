@@ -8,13 +8,10 @@
 [![NPM](https://nodei.co/npm/iobroker.weatherunderground.png?downloads=true)](https://nodei.co/npm/iobroker.weatherunderground/)
 
 ioBroker Adapter to load 24h weather forecast for your location from [Weather Underground](http://www.wunderground.com/).
-The adapter loads all 15min (default) hourly forecast data for the next 36h. Additionally it calculates sum/avg/max values of the most used data for 6, 12, 24h.
+The adapter loads all 15min (default) daily and hourly forecast data.
 
 ## Notes
-An api-key from WU is needed to use this adapter:
-* Register/Login at http://www.wunderground.com/weather/api/d/login.html
-* get your apikey at http://www.wunderground.com/weather/api/d/pricing . purchase a free developer key. Be aware of the request limits!
-* Basically the adapter supports to enter multiple keys deparated by a comma
+You can use this adapter with providing an official "PWS owner" API-key or leave API key empty to use keys extracted out of the WU webpage.
 
 As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
 
@@ -71,6 +68,12 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # Сhangelog
+### 3.0.0 (2019-03-19) WIP!!
+* (Apollon77) implement to extract used "legacy" API keys out of WU website to allow restore of functionality for now
+* (Apollon77) Also extract API keys for newer API version from website to be usable together with real "PWS owner keys" in future
+* (Apollon77) TODO: Implement to get data using the New APIs (as well as the officially available PWS-Owner APIs as also additional ones to restore functionality)
+* (Apollon77) Admin 2 support removed and adapted the Admin 3 texts as needed for now
+
 ### 2.0.4 (2018-08-19)
 * (René) some typos
 * (bluefox) Write only numbers and not strings
