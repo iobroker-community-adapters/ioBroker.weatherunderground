@@ -1,0 +1,19 @@
+Fortes averses de neige
+Chance pluie
+Chance grésil
+Chance de neige
+Tempêtes de chance
+Clair
+Nuageux
+Flurries
+Brouillard
+Brumeux
+Plutôt nuageux
+Assez ensoleillé
+Partiellement nuageux
+Partiellement ensoleillé
+Neige fondue
+Pluie
+Neige
+Ensoleillé
+Tempêtes

@@ -1,0 +1,19 @@
+Chance flurries
+Chance rain
+Chance sleet
+Chance snow
+Chance storms
+Clear
+Cloudy
+Flurries
+Fog
+Hazy
+Mostly cloudy
+Mostly sunny
+Partly cloudy
+Partly sunny
+Sleet
+Rain
+Snow
+Sunny
+Storms

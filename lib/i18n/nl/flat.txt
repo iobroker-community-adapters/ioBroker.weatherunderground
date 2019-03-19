@@ -1,0 +1,19 @@
+Chance vliegt
+Kans op regen
+Kans ijzel
+Kans sneeuw
+Chance Storms
+Duidelijk
+Bewolkt
+vlagen
+Mist
+Vaag
+Voornamelijk bewolkt
+Meestal zonnig
+Half bewolkt
+Gedeeltelijk zonnig
+Sleet
+Regen
+Sneeuw
+Zonnig
+Storms
