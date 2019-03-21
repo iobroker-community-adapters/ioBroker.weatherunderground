@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "news": {
+      "3.0.1": {
+        "en": "Extracts API keys from WU webpage and allow usage of legacy and new APIs with and without a PWS owner key",
+        "de": "Extrahiert API-Schlüssel von der WU-Webseite und ermöglicht die Verwendung älterer und neuer APIs mit und ohne PWS-Besitzerschlüssel",
+        "ru": "Извлекает ключи API с веб-страницы WU и позволяет использовать устаревшие и новые API с ключом владельца PWS и без него.",
+        "pt": "Extrai chaves de API da página da Web do WU e permite o uso de APIs herdadas e novas com e sem uma chave de proprietário do PWS",
+        "nl": "Extracteert API-sleutels van de WU-webpagina en staat het gebruik van bestaande en nieuwe API's toe met en zonder een PWS-eigenaarsleutel",
+        "fr": "Extrait les clés API de la page Web WU et permet l'utilisation d'anciennes et de nouvelles API avec et sans clé de propriétaire PWS",
+        "it": "Estrae le chiavi API dalla pagina Web WU e consente l'utilizzo di legacy e nuove API con e senza chiave del proprietario PWS",
+        "es": "Extrae las claves de API de la página web de WU y permite el uso de las API heredadas y nuevas con y sin una clave de propietario de PWS",
+        "pl": "Wyodrębnia klucze API ze strony internetowej WU i zezwala na wykorzystanie starszych i nowych interfejsów API z kluczem właściciela PWS i bez niego",
+        "zh-cn": "从WU网页中提取API密钥，允许使用带有和不带PWS所有者密钥的旧API和新API"
+      },
       "2.0.4": {
         "en": "some typos fixed",
         "de": "einige Tippfehler behoben",
