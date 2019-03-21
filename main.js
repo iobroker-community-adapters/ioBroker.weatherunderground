@@ -23,16 +23,20 @@
 
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const request = require('request');
-//const iconv      = require('iconv-lite');
+const crypto = require('crypto');
 
 const adapter = utils.Adapter('weatherunderground');
 const dictionary = require('./lib/words');
 let lang = 'en';
+let locale = 'en-GB';
 let nonMetric = false;
 
 let officialApiKey;
 let pwsStationKey;
 let newWebKey;
+let currentObservationUrl;
+let forecastDailyUrl;
+let forecastHourlyUrl;
 let errorCounter = 0;
 
 function _(text) {
@@ -59,15 +63,19 @@ adapter.on('ready', () => {
     switch (adapter.config.language) {
         case 'DL':
             lang = 'de';
+            locale = 'de-DE';
             break;
         case 'EN':
             lang = 'en';
+            locale = 'en-GB';
             break;
         case 'RU':
             lang = 'ru';
+            locale = 'ru-RU';
             break;
         case 'NL':
             lang = 'nl';
+            locale = 'nl-NL';
             break;
     }
 
@@ -114,6 +122,8 @@ adapter.on('ready', () => {
 
     checkWeatherVariables();
 
+
+
     adapter.getState('currentStationKey', (err, state) => {
         if (!err && state && state.val) {
             pwsStationKey = state.val;
@@ -125,8 +135,53 @@ adapter.on('ready', () => {
                 adapter.log.info('initialize Web Key: ' + newWebKey);
             }
 
-            getKeysAndData(() => {
-                setTimeout(() => adapter.stop(), 2000);
+            adapter.getState('currentObservationUrl', (err, state) => {
+                if (!err && state && state.val) {
+                    currentObservationUrl = state.val;
+                    adapter.log.info('initialize Current Observation url: ' + currentObservationUrl);
+                }
+
+                adapter.getState('forecastDailyUrl', (err, state) => {
+                    if (!err && state && state.val) {
+                        forecastDailyUrl = state.val;
+                        adapter.log.info('initialize Daily Forecast Url: ' + forecastDailyUrl);
+                    }
+
+                    adapter.getState('forecastHourlyUrl', (err, state) => {
+                        if (!err && state && state.val) {
+                            forecastHourlyUrl = state.val;
+                            adapter.log.info('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
+                        }
+
+                        adapter.getState('locationChecksum', (err, state) => {
+
+                            const locationHash = crypto.createHash('md5').update(adapter.config.location+adapter.config.station).digest('hex');
+                            let locationChange = true;
+                            if (!err && state && state.val && locationHash === state.val) {
+                                adapter.log.debug('location has not changed, reuse extracted URLs');
+                                locationChange = false;
+                            }
+                            if (locationChange) {
+                                adapter.log.debug('location change detected, extract URLs');
+                                currentObservationUrl = null;
+                                forecastDailyUrl = null;
+                                forecastHourlyUrl = null;
+
+                                adapter.setObjectNotExists('locationChecksum', {
+                                    type: 'state',
+                                    common: {type: 'string', role: 'text', name: 'Helper state to detect location changes', def: ''},
+                                    native: {id: 'locationChecksum'}
+                                }, () => {
+                                    adapter.setState('locationChecksum', {val: locationHash, ack: true});
+                                });
+                            }
+
+                            getKeysAndData(() => {
+                                setTimeout(() => adapter.stop(), 2000);
+                            });
+                        });
+                    });
+                });
             });
         });
     });
@@ -149,7 +204,12 @@ function getKeysAndData(cb) {
     else {
         getApiKey(() => {
             if (adapter.config.useLegacyApi) {
+                adapter.log.debug('Use Legacy API');
                 getLegacyWuData(cb);
+            }
+            else {
+                adapter.log.debug('Use New API');
+                getNewWuDataCurrentObservations((data) => getNewWuDataDailyForcast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
             }
         });
     }
@@ -157,11 +217,17 @@ function getKeysAndData(cb) {
 
 
 function handleIconUrl(original) {
-    if (adapter.config.iconSet) {
-        original = 'https://icons.wxug.com/i/c/' + adapter.config.iconSet + '/' + original.substring(original.lastIndexOf('/') + 1);
-    } else
-    if (adapter.config.custom_icon_base_url) {
-        var pos = original.lastIndexOf('.');
+    if (!original) return original;
+    let iconSet = adapter.config.iconSet;
+    if (original.toString().match(/^[0-9]{2,4}$/)) {
+        original = 'https://icons.wxug.com/i/c/v4/' + original + '.svg';
+        if (iconSet === 'i') iconSet = null;
+    }
+    if (iconSet) {
+        original = 'https://icons.wxug.com/i/c/' + encodeURIComponent(iconSet) + '/' + original.substring(original.lastIndexOf('/') + 1);
+    }
+    else if (adapter.config.custom_icon_base_url) {
+        const pos = original.lastIndexOf('.');
 
         if (original.substring(pos + 1) !== adapter.config.custom_icon_format) {
             original = original.replace(/\.\w+$/, '.' + adapter.config.custom_icon_format);
@@ -183,10 +249,14 @@ function getApiKey(cb) {
 }
 
 function getStationKey(cb) {
+    if (pwsStationKey.length) {
+        return cb && cb();
+    }
+
     let url = 'https://www.wunderground.com/personal-weather-station/dashboard';
 
     if (adapter.config.station) {
-        url += '?ID=' + adapter.config.station;
+        url += '?ID=' + encodeURIComponent(adapter.config.station);
     }
 
     adapter.log.debug('get PWS dashboard page: ' + url);
@@ -236,13 +306,17 @@ function getStationKey(cb) {
 }
 
 function getWebsiteKey(cb, tryQ) {
-    let url = 'https://www.wunderground.com/weather/' + adapter.config.country + '/' + (tryQ ? 'q/' : '') + adapter.config.location;
+    if (newWebKey && currentObservationUrl && forecastDailyUrl && forecastHourlyUrl) {
+        return cb && cb();
+    }
+
+    let url = 'https://www.wunderground.com/hourly/' + encodeURIComponent(adapter.config.country) + '/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
 
     adapter.log.debug('get WU weather page: ' + url);
 
     request({url: url, encoding: 'utf-8'}, (error, response, body) => {
         if (!error && response.statusCode === 200 && body) {
-            const data = body.match(/api.weather.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
+            const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
             if (!data || !data[1]) {
                 return cb && cb();
             }
@@ -255,6 +329,45 @@ function getWebsiteKey(cb, tryQ) {
             }, () => {
                 adapter.setState('currentWebKey', {val: newWebKey, ack: true});
             });
+
+            const currentObservation = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/observations\/current[^"]+)"/);
+            if (currentObservation && currentObservation[1]) {
+                currentObservationUrl = currentObservation[1];
+                adapter.log.info('fetched current observations Url from WU weather page: ' + currentObservationUrl);
+                adapter.setObjectNotExists('currentObservationUrl', {
+                    type: 'state',
+                    common: {type: 'string', role: 'text', name: 'Current Observations Url', def: ''},
+                    native: {id: 'currentObservationUrl'}
+                }, () => {
+                    adapter.setState('currentObservationUrl', {val: currentObservationUrl, ack: true});
+                });
+            }
+
+            const forecastDaily = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/daily\/[^"]+)"/);
+            if (forecastDaily && forecastDaily[1]) {
+                forecastDailyUrl = forecastDaily[1];
+                adapter.log.info('fetched forecast 5 day Url from WU weather page: ' + forecastDailyUrl);
+                adapter.setObjectNotExists('forecastDailyUrl', {
+                    type: 'state',
+                    common: {type: 'string', role: 'text', name: 'Daily Forecast Url', def: ''},
+                    native: {id: 'forecastDailyUrl'}
+                }, () => {
+                    adapter.setState('forecastDailyUrl', {val: forecastDailyUrl, ack: true});
+                });
+            }
+
+            const forecastHourly = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/hourly\/[^"]+)"/);
+            if (forecastHourly && forecastHourly[1]) {
+                forecastHourlyUrl = forecastHourly[1];
+                adapter.log.info('fetched hourly forecast Url from WU weather page: ' + forecastHourlyUrl);
+                adapter.setObjectNotExists('forecastHourlyUrl', {
+                    type: 'state',
+                    common: {type: 'string', role: 'text', name: 'Hourly Forecast Url', def: ''},
+                    native: {id: 'forecastHourlyUrl'}
+                }, () => {
+                    adapter.setState('forecastHourlyUrl', {val: forecastHourlyUrl, ack: true});
+                });
+            }
             return cb && cb();
         } else if (!error && response.statusCode === 404 && !tryQ) {
             getWebsiteKey(cb, true);
@@ -711,6 +824,569 @@ function parseLegacyResult(body, cb) {
     cb && cb();
 }
 
+function parseNewResult(body, cb) {
+    let qpfMax = 0;
+    let popMax = 0;
+    let uviSum = 0;
+
+    if (adapter.config.current) {
+        if (body.current_observation) {
+            if (nonMetric && body.current_observation.imperial) {
+                body.current_observation.metric = body.current_observation.imperial;
+            }
+            try {
+                adapter.setState('forecast.current.displayLocationFull', {
+                    ack: true,
+                    val: body.current_observation.neighborhood
+                });
+                adapter.setState('forecast.current.displayLocationLatitude', {
+                    ack: true,
+                    val: body.current_observation.lat
+                });
+                adapter.setState('forecast.current.displayLocationLongitude', {
+                    ack: true,
+                    val: body.current_observation.lon
+                });
+                adapter.setState('forecast.current.displayLocationElevation', {
+                    ack: true,
+                    val: body.current_observation.metric.elev
+                });
+
+                adapter.setState('forecast.current.observationLocationFull', {
+                    ack: true,
+                    val: body.current_observation.neighborhood
+                });
+                adapter.setState('forecast.current.observationLocationLatitude', {
+                    ack: true,
+                    val: body.current_observation.lat
+                });
+                adapter.setState('forecast.current.observationLocationLongitude', {
+                    ack: true,
+                    val: body.current_observation.lon
+                });
+                adapter.setState('forecast.current.observationLocationElevation', {
+                    ack: true,
+                    val: body.current_observation.metric.elev
+                });
+
+                adapter.setState('forecast.current.observationLocationStationID', {
+                    ack: true,
+                    val: body.current_observation.stationID
+                });
+                adapter.setState('forecast.current.localTimeRFC822', {
+                    ack: true,
+                    val: body.current_observation.obsTimeLocal
+                });
+                adapter.setState('forecast.current.observationTimeRFC822', {
+                    ack: true,
+                    val: body.current_observation.obsTimeLocal
+                }); // PDE
+                adapter.setState('forecast.current.observationTime', {
+                    ack: true,
+                    val: new Date(body.current_observation.obsTimeUtc).toLocaleString()
+                }); // PDE
+
+                adapter.setState('forecast.current.weather', {
+                    ack: true,
+                    val: null
+                });
+                adapter.setState('forecast.current.temp', {
+                    ack: true,
+                    val: body.current_observation.metric.temp
+                });
+
+                adapter.setState('forecast.current.relativeHumidity', {
+                    ack: true,
+                    val: body.current_observation.humidity
+                });
+                adapter.setState('forecast.current.windDegrees', {
+                    ack: true,
+                    val: body.current_observation.winddir
+                });
+                adapter.setState('forecast.current.wind', {
+                    ack: true,
+                    val: body.current_observation.metric.windSpeed
+                });
+                adapter.setState('forecast.current.windGust', {
+                    ack: true,
+                    val: body.current_observation.metric.windGust
+                });
+
+                adapter.setState('forecast.current.pressure', {
+                    ack: true,
+                    val: body.current_observation.metric.pressure
+                }); //PDE
+                adapter.setState('forecast.current.dewPoint', {
+                    ack: true,
+                    val: body.current_observation.metric.dewpt
+                });
+                adapter.setState('forecast.current.windChill', {
+                    ack: true,
+                    val: body.current_observation.metric.windChill
+                });
+                adapter.setState('forecast.current.feelsLike', {
+                    ack: true,
+                    val: body.current_observation.metric.heatIndex
+                });
+                adapter.setState('forecast.current.visibility', {
+                    ack: true,
+                    val: null
+                });
+                adapter.setState('forecast.current.solarRadiation', {
+                    ack: true,
+                    val: body.current_observation.solarRadiation
+                });
+                adapter.setState('forecast.current.UV', {
+                    ack: true,
+                    val: body.current_observation.uv
+                });
+
+                adapter.setState('forecast.current.precipitationHour', {
+                    ack: true,
+                    val: body.current_observation.metric.precipRate
+                });
+                adapter.setState('forecast.current.precipitationDay', {
+                    ack: true,
+                    val: body.current_observation.metric.precipTotal
+                });
+
+                adapter.setState('forecast.current.iconURL', {
+                    ack: true,
+                    val: null
+                });
+                adapter.setState('forecast.current.forecastURL', {
+                    ack: true,
+                    val: null
+                });
+                adapter.setState('forecast.current.historyURL', {
+                    ack: true,
+                    val: null
+                });
+                adapter.log.debug('all current conditions values set');
+            } catch (error) {
+                adapter.log.error('Could not parse Conditions-Data: ' + error);
+            }
+        } else {
+            adapter.log.error('No current observation data found in response');
+        }
+    }
+
+    //next 8 periods (day and night) -> text and icon forecast
+    if (adapter.config.forecast_periods_txt) {
+        if (body.daily_forecast && body.daily_forecast.daypart) {
+            const startId = (body.daily_forecast.daypart[0].daypartName[0] === null) ? 1 : 0;
+            for (let i = 0; i < 8; i++) {
+                const idx = startId + i;
+                try {
+                    const now = new Date();
+                    now.setHours(7 + idx * 12);
+
+                    adapter.setState('forecastPeriod.' + i + 'p.date', {
+                        ack: true,
+                        val: now.toLocaleDateString()
+                    });
+                    adapter.setState('forecastPeriod.' + i + 'p.icon', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].iconCode[idx]
+                    });
+                    adapter.setState('forecastPeriod.' + i + 'p.iconURL', {
+                        ack: true,
+                        val: handleIconUrl(body.daily_forecast.daypart[0].iconCode[idx])
+                    });
+                    adapter.setState('forecastPeriod.' + i + 'p.title', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].daypartName[idx]
+                    });
+                    adapter.setState('forecastPeriod.' + i + 'p.state', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].narrative[idx]
+                    });
+                    adapter.setState('forecastPeriod.' + i + 'p.precipitationChance', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].precipChance[idx]
+                    });
+                }
+                catch (error) {
+                    adapter.log.error('exception in : body.txt_forecast' + error);
+                }
+            }
+        }
+        else if (body.daily_forecast2) {
+            let idx = 0;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    if (body.daily_forecast2[i].day) {
+                        adapter.setState('forecastPeriod.' + idx + 'p.date', {
+                            ack: true,
+                            val: new Date(body.daily_forecast2[i].day.fcst_valid_local).toLocaleDateString()
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.icon', {
+                            ack: true,
+                            val: body.daily_forecast2[i].day.icon_code
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.iconURL', {
+                            ack: true,
+                            val: handleIconUrl(body.daily_forecast2[i].day.icon_code)
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.title', {
+                            ack: true,
+                            val: body.daily_forecast2[i].day.daypart_name
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.state', {
+                            ack: true,
+                            val: body.daily_forecast2[i].day.narrative
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.precipitationChance', {
+                            ack: true,
+                            val: body.daily_forecast2[i].day.pop
+                        });
+                        idx++;
+                        if (idx === 8) break;
+                    }
+                    if (body.daily_forecast2[i].night) {
+                        adapter.setState('forecastPeriod.' + idx + 'p.date', {
+                            ack: true,
+                            val: new Date(body.daily_forecast2[i].night.fcst_valid_local).toLocaleDateString()
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.icon', {
+                            ack: true,
+                            val: body.daily_forecast2[i].night.icon_code
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.iconURL', {
+                            ack: true,
+                            val: handleIconUrl(body.daily_forecast2[i].night.icon_code)
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.title', {
+                            ack: true,
+                            val: body.daily_forecast2[i].night.daypart_name
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.state', {
+                            ack: true,
+                            val: body.daily_forecast2[i].night.narrative
+                        });
+                        adapter.setState('forecastPeriod.' + idx + 'p.precipitationChance', {
+                            ack: true,
+                            val: body.daily_forecast2[i].night.pop
+                        });
+                        idx++;
+                        if (idx === 8) break;
+                    }
+
+                }
+                catch (error) {
+                    adapter.log.error('exception in : body.txt_forecast' + error);
+                }
+            }
+        }
+    }
+
+    if (adapter.config.forecast_periods) {
+        //next 4 days
+        if (body.daily_forecast) {
+            for (let i = 0; i < 4; i++) {
+                try {
+                    adapter.setState('forecast.' + i + 'd.date', {
+                        ack: true,
+                        val: new Date(body.daily_forecast.validTimeLocal[i]).toLocaleDateString()
+                    });
+                    adapter.setState('forecast.' + i + 'd.tempMax', {
+                        ack: true,
+                        val: body.daily_forecast.temperatureMax[i]
+                    });
+                    adapter.setState('forecast.' + i + 'd.tempMin', {
+                        ack: true,
+                        val: body.daily_forecast.temperatureMin[i]
+                    });
+                    adapter.setState('forecast.' + i + 'd.icon', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].iconCode[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.state', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].narrative[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.iconURL', {
+                        ack: true,
+                        val: handleIconUrl(body.daily_forecast.daypart[0].iconCode[i * 2])
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationChance', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast.daypart[0].precipChance[i * 2], body.daily_forecast.daypart[0].precipChance[1 + (i * 2)])
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationAllDay', {
+                        ack: true,
+                        val: body.daily_forecast.qpf[i]
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationDay', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].qpf[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationNight', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].qpf[1 + (i * 2)]
+                    });
+                    adapter.setState('forecast.' + i + 'd.snowAllDay', {
+                        ack: true,
+                        val: body.daily_forecast.qpfSnow[i]
+                    });
+                    adapter.setState('forecast.' + i + 'd.snowDay', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].qpfSnow[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.snowNight', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].qpfSnow[1 + (i * 2)]
+                    });
+
+                    adapter.setState('forecast.' + i + 'd.windSpeedMax', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast.daypart[0].windSpeed[i * 2], body.daily_forecast.daypart[0].windSpeed[1 + (i * 2)])
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDirectionMax', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast.daypart[0].windDirection[i * 2], body.daily_forecast.daypart[0].windDirection[1 + (i * 2)])
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDegreesMax', {
+                        ack: true,
+                        val: null
+                    });
+
+                    adapter.setState('forecast.' + i + 'd.windSpeed', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].windSpeed[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDirection', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].windDirection[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDegrees', {
+                        ack: true,
+                        val: null
+                    });
+
+                    adapter.setState('forecast.' + i + 'd.humidity', {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].relativeHumidity[i * 2]
+                    });
+                    adapter.setState('forecast.' + i + 'd.humidityMax', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast.daypart[0].relativeHumidity[i * 2], body.daily_forecast.daypart[0].relativeHumidity[1 + (i * 2)])
+                    });
+                    adapter.setState('forecast.' + i + 'd.humidityMin', {
+                        ack: true,
+                        val: Math.min(body.daily_forecast.daypart[0].relativeHumidity[i * 2], body.daily_forecast.daypart[0].relativeHumidity[1 + (i * 2)])
+                    });
+                }
+                catch (error) {
+                    adapter.log.error('exception in daily forecast data ' + error);
+                }
+            }
+        }
+        else if (body.daily_forecast2) {
+            for (let i = 0; i < 4; i++) {
+                try {
+                    adapter.setState('forecast.' + i + 'd.date', {
+                        ack: true,
+                        val: new Date(body.daily_forecast2[i].fcst_valid_local).toLocaleDateString()
+                    });
+                    adapter.setState('forecast.' + i + 'd.tempMax', {
+                        ack: true,
+                        val: body.daily_forecast2[i].max_temp
+                    });
+                    adapter.setState('forecast.' + i + 'd.tempMin', {
+                        ack: true,
+                        val: body.daily_forecast2[i].min_temp
+                    });
+                    adapter.setState('forecast.' + i + 'd.icon', {
+                        ack: true,
+                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code
+                    });
+                    adapter.setState('forecast.' + i + 'd.state', {
+                        ack: true,
+                        val: body.daily_forecast2[i].narrative
+                    });
+                    adapter.setState('forecast.' + i + 'd.iconURL', {
+                        ack: true,
+                        val: handleIconUrl(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code)
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationChance', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.pop : 0, body.daily_forecast2[i].night.pop)
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationAllDay', {
+                        ack: true,
+                        val: body.daily_forecast2[i].qpf
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationDay', {
+                        ack: true,
+                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.qpf : null
+                    });
+                    adapter.setState('forecast.' + i + 'd.precipitationNight', {
+                        ack: true,
+                        val: body.daily_forecast2[i].night.qpf
+                    });
+                    adapter.setState('forecast.' + i + 'd.snowAllDay', {
+                        ack: true,
+                        val: body.daily_forecast2[i].snow_qpf
+                    });
+                    adapter.setState('forecast.' + i + 'd.snowDay', {
+                        ack: true,
+                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.snow_qpf : null
+                    });
+                    adapter.setState('forecast.' + i + 'd.snowNight', {
+                        ack: true,
+                        val: body.daily_forecast2[i].night.snow_qpf
+                    });
+
+                    adapter.setState('forecast.' + i + 'd.windSpeedMax', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wspd : 0, body.daily_forecast2[i].night.wspd)
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDirectionMax', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wdir : 0, body.daily_forecast2[i].night.wdir)
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDegreesMax', {
+                        ack: true,
+                        val: null
+                    });
+
+                    adapter.setState('forecast.' + i + 'd.windSpeed', {
+                        ack: true,
+                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wspd : body.daily_forecast2[i].night.wspd
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDirection', {
+                        ack: true,
+                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wdir : body.daily_forecast2[i].night.wdir
+                    });
+                    adapter.setState('forecast.' + i + 'd.windDegrees', {
+                        ack: true,
+                        val: null
+                    });
+
+                    adapter.setState('forecast.' + i + 'd.humidity', {
+                        ack: true,
+                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.rh : body.daily_forecast2[i].night.rh
+                    });
+                    adapter.setState('forecast.' + i + 'd.humidityMax', {
+                        ack: true,
+                        val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.rh : 0, body.daily_forecast2[i].night.rh)
+                    });
+                    adapter.setState('forecast.' + i + 'd.humidityMin', {
+                        ack: true,
+                        val: Math.min(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.rh : 100, body.daily_forecast2[i].night.rh)
+                    });
+                }
+                catch (error) {
+                    adapter.log.error('exception in daily forecast data ' + error);
+                }
+            }
+        }
+    }
+
+    // next 36 hours
+    if (adapter.config.forecast_hourly) {
+        if (body.hourly_forecast) {
+            for (let i = 0; i < 36; i++) {
+                try {
+                    adapter.setState('forecastHourly.' + i + 'h.time', {
+                        ack: true,
+                        val: new Date(body.hourly_forecast[i].fcst_valid * 1000).toLocaleString()
+                    });
+                    adapter.setState('forecastHourly.' + i + 'h.temp', {
+                        ack: true,
+                        val: body.hourly_forecast[i].temp
+                    });
+                    adapter.setState('forecastHourly.' + i + 'h.fctcode', {
+                        ack: true,
+                        val: null
+                    });
+                    adapter.setState('forecastHourly.' + i + 'h.sky', {
+                        ack: true,
+                        val: body.hourly_forecast[i].clds
+                    }); //?
+                    adapter.setState('forecastHourly.' + i + 'h.windSpeed', {
+                        ack: true,
+                        val: body.hourly_forecast[i].wspd
+                    }); // windspeed in kmh
+                    adapter.setState('forecastHourly.' + i + 'h.windDirection', {
+                        ack: true,
+                        val: body.hourly_forecast[i].wdir
+                    }); //wind dir in degrees
+                    adapter.setState('forecastHourly.' + i + 'h.uv', {
+                        ack: true,
+                        val: body.hourly_forecast[i].uv_index
+                    }); //UV Index -> wikipedia
+                    adapter.setState('forecastHourly.' + i + 'h.humidity', {
+                        ack: true,
+                        val: body.hourly_forecast[i].rh
+                    });
+                    adapter.setState('forecastHourly.' + i + 'h.heatIndex', {
+                        ack: true,
+                        val: body.hourly_forecast[i].hi
+                    }); // -> wikipedia
+                    adapter.setState('forecastHourly.' + i + 'h.feelsLike', {
+                        ack: true,
+                        val: body.hourly_forecast[i].feels_like
+                    }); // -> wikipedia
+                    adapter.setState('forecastHourly.' + i + 'h.precipitation', {
+                        ack: true,
+                        val: body.hourly_forecast[i].qpf
+                    }); // Quantitative precipitation forecast
+                    adapter.setState('forecastHourly.' + i + 'h.snow', {
+                        ack: true,
+                        val: body.hourly_forecast[i].snow_qpf
+                    });
+                    adapter.setState('forecastHourly.' + i + 'h.precipitationChance', {
+                        ack: true,
+                        val: body.hourly_forecast[i].pop
+                    }); // probability of Precipitation
+                    adapter.setState('forecastHourly.' + i + 'h.mslp', {
+                        ack: true,
+                        val: body.hourly_forecast[i].mslp
+                    }); // mean sea level pressure
+
+                    qpfMax += body.hourly_forecast[i].qpf;
+                    uviSum += body.hourly_forecast[i].uv_index;
+                    if (body.hourly_forecast[i].pop > popMax) {
+                        popMax = body.hourly_forecast[i].pop;
+                    }
+
+                    // 6h
+                    if (i === 5) {
+                        adapter.setState('forecastHourly.6h.sum.precipitation', {ack: true, val: qpfMax});
+                        adapter.setState('forecastHourly.6h.sum.precipitationChance', {ack: true, val: popMax});
+                        adapter.setState('forecastHourly.6h.sum.uv', {ack: true, val: uviSum / 6});
+                    }
+                    // 12h
+                    if (i === 11) {
+                        adapter.setState('forecastHourly.12h.sum.precipitation', {ack: true, val: qpfMax});
+                        adapter.setState('forecastHourly.12h.sum.precipitationChance', {ack: true, val: popMax});
+                        adapter.setState('forecastHourly.12h.sum.uv', {ack: true, val: uviSum / 12});
+                    }
+                    // 24h
+                    if (i === 23) {
+                        adapter.setState('forecastHourly.24h.sum.precipitation', {ack: true, val: qpfMax});
+                        adapter.setState('forecastHourly.24h.sum.precipitationChance', {ack: true, val: popMax});
+                        adapter.setState('forecastHourly.24h.sum.uv', {ack: true, val: uviSum / 24});
+                    }
+                } catch (error) {
+                    adapter.log.error('Could not parse hourly Forecast-Data: ' + error);
+                }
+            }
+
+            adapter.log.debug('all forecast values set');
+        }
+
+        else {
+            adapter.log.error('No forecast data found in response');
+        }
+    }
+
+    cb && cb();
+}
+
+
 function getLegacyWuData(cb) {
     /*
         const url = 'http://api.wunderground.com/api/' + adapter.config.apiKey + '/forecast/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
@@ -719,7 +1395,7 @@ function getLegacyWuData(cb) {
     }
 */
     adapter.log.debug('Use legacy API Key ' + pwsStationKey);
-    let url = 'http://api.wunderground.com/api/' + pwsStationKey;
+    let url = 'http://api.wunderground.com/api/' + encodeURIComponent(pwsStationKey);
 
     if (adapter.config.forecast_periods_txt || adapter.config.forecast_periods) {
         url += '/forecast';
@@ -735,13 +1411,13 @@ function getLegacyWuData(cb) {
 
     url += '/units:' + (nonMetric ? 'e' : 'm');
 
-    url += '/lang:' + adapter.config.language;
+    url += '/lang:' + encodeURIComponent(adapter.config.language);
 
     if (adapter.config.station.length > 2) {
-        url += '/q/pws:' + adapter.config.station;
+        url += '/q/pws:' + encodeURIComponent(adapter.config.station);
     }
     else {
-        url += '/q/' + adapter.config.location;
+        url += '/q/' + encodeURIComponent(adapter.config.location);
     }
     url += '.json';
 
@@ -752,13 +1428,6 @@ function getLegacyWuData(cb) {
     adapter.log.debug('get WU legacy data: ' + url);
 
     request({url: url, json: true, encoding: null}, (error, response, body) => {
-        /*        body = iconv.decode(new Buffer(body), 'utf-8');
-                try {
-                    body = JSON.parse(body);
-                } catch (e) {
-                    adapter.log.error('Cannot parse answer: ' + body);
-                    return;
-                }*/
         if (!error && response.statusCode === 200) {
             if (body && body.response && body.response.error) {
                 adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Reset Station Key');
@@ -770,10 +1439,140 @@ function getLegacyWuData(cb) {
             parseLegacyResult(body, cb);
         } else {
             // ERROR
-            adapter.log.error('Wunderground reported an error: ' + error);
+            adapter.log.error('Wunderground reported an error: ' + error + ', ' + response.statusCode);
         }
         if (cb) cb();
     });
+}
+
+function modifyExtractedUrl(url) {
+    url = url.replace(/(units=)(.{1})/,'$1' + (nonMetric ? 'e' : 'm'));
+    url = url.replace(/(language=)([a-zA-Z\-]{5})/,'$1' + encodeURIComponent(lang));
+    return url;
+}
+
+function getNewWuDataCurrentObservations(cb) {
+    adapter.log.debug('Use new API Key ' + newWebKey);
+    // always get current because we need the station coordinates
+
+    const weatherData = {};
+
+    let url;
+    if (adapter.config.station) {
+        const usedKey = adapter.config.current ? (officialApiKey || newWebKey) : newWebKey;
+        url = 'https://api.weather.com/v2/pws/observations/current?stationId=' + encodeURIComponent(adapter.config.station) + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&apiKey=' + usedKey;
+    } else {
+        url = modifyExtractedUrl(currentObservationUrl);
+    }
+    adapter.log.debug('get current observation data: ' + url);
+
+    request({url: url, json: true, encoding: null}, (error, response, body) => {
+        if (!error && response.statusCode === 200) {
+            if (body && !body.observations) {
+                adapter.log.error('no observations in response');
+            } else {
+                weatherData.current_observation = body.observations[0];
+            }
+        } else if (!error && response.statusCode === 401) {
+            if (officialApiKey) {
+                adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
+                officialApiKey = '';
+            } else {
+                adapter.log.error('Key rejected, reset webkey and try again');
+                newWebKey = '';
+            }
+            errorCounter++;
+            setImmediate(() => getKeysAndData(cb));
+            return;
+        } else {
+            // ERROR
+            adapter.log.error('Wunderground reported an error: ' + response.statusCode + ', ' + error);
+        }
+        cb && cb(weatherData);
+    });
+}
+
+function getNewWuDataDailyForcast(weatherData, cb) {
+    if (adapter.config.forecast_periods_txt || adapter.config.forecast_periods) {
+        let url;
+        if (adapter.config.station && officialApiKey && weatherData.current_observation && weatherData.current_observation.lon !== undefined && weatherData.current_observation.lat !== undefined ) {
+            // https://api.weather.com/v3/wx/forecast/daily/5day?geocode=49.03578568,8.34588718&language=de&format=json&units=m&apiKey=712eb8d021404624aeb8d021402624d6
+            url = 'https://api.weather.com/v3/wx/forecast/daily/5day?geocode=' + encodeURIComponent(weatherData.current_observation.lat + ',' + weatherData.current_observation.lon) + '&language=' + lang + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&apiKey=' + (officialApiKey || newWebKey);
+        } else {
+            url = modifyExtractedUrl(forecastDailyUrl);
+            url = url.replace(/\/[0-9]+day/,'/5day');
+        }
+        adapter.log.debug('get daily forecast data: ' + url);
+
+        request({url: url, json: true, encoding: null}, (error, response, body) => {
+            if (!error && response.statusCode === 200) {
+                if (body && !body.dayOfWeek) {
+                    if (body.forecasts) {
+                        weatherData.daily_forecast2 = body.forecasts;
+                    }
+                    else {
+                        adapter.log.error('no daily forecast in response');
+                    }
+                } else {
+                    weatherData.daily_forecast = body;
+                }
+            } else if (!error && response.statusCode === 401) {
+                if (officialApiKey) {
+                    adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
+                    officialApiKey = '';
+                } else {
+                    adapter.log.error('Key rejected, reset webkey and try again');
+                    newWebKey = '';
+                }
+                errorCounter++;
+                setImmediate(() => getKeysAndData(cb));
+                return;
+            } else {
+                // ERROR
+                adapter.log.error('Wunderground reported an error: ' + response.statusCode + ', ' + error);
+            }
+            cb && cb(weatherData);
+        });
+    }
+    else {
+        cb && cb(weatherData);
+    }
+}
+
+function getNewWuDataHourlyForcast(weatherData, cb) {
+    if (adapter.config.forecast_hourly) {
+        let url = modifyExtractedUrl(forecastHourlyUrl);
+        url = url.replace(/\/[0-9]+hour/,'/48hour');
+        adapter.log.debug('get hourly forecast data: ' + url);
+
+        request({url: url, json: true, encoding: null}, (error, response, body) => {
+            if (!error && response.statusCode === 200) {
+                if (body && !body.forecasts) {
+                    adapter.log.error('no hourly forecast in response');
+                } else {
+                    weatherData.hourly_forecast = body.forecasts;
+                }
+            } else if (!error && response.statusCode === 401) {
+                if (officialApiKey) {
+                    adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
+                    officialApiKey = '';
+                } else {
+                    adapter.log.error('Key rejected, reset webkey and try again');
+                    newWebKey = '';
+                }
+                errorCounter++;
+                setImmediate(() => getKeysAndData(cb));
+                return;
+            } else {
+                // ERROR
+                adapter.log.error('Wunderground reported an error: ' + response.statusCode + ', ' + error);
+            }
+            cb && cb(weatherData);
+        });
+    }
+    else {
+        cb && cb(weatherData);
+    }
 }
 
 function checkWeatherVariables() {

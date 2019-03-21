@@ -66,5 +66,17 @@ systemDictionary = {
         "es": "Si se deja vacío, se intenta extraer la clave general actual de la página web de WU",
         "pl": "Jeśli pozostanie pusty, próbuje się wyodrębnić bieżący klucz ogólny ze strony WU",
         "zh-cn": "如果留空，则尝试从WU网页中提取当前的常规密钥"
+    },
+    "useLegacyApi": {
+        "en": "Use legacy WU APIs",
+        "de": "Ältere WU-APIs nutzen",
+        "ru": "Используйте устаревшие API WU",
+        "pt": "Use APIs herdadas do WU",
+        "nl": "Gebruik oudere WU-API's",
+        "fr": "Utiliser les anciennes API WU",
+        "it": "Utilizzare le API WU legacy",
+        "es": "Usar las API de WU heredadas",
+        "pl": "Użyj starszych interfejsów API WU",
+        "zh-cn": "使用旧版WU API"
     }
 };
