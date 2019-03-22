@@ -50,6 +50,9 @@
             if (settings.country === undefined) {
                 settings.country = 'DE';
             }
+            if (settings.useLegacyApi === undefined) {
+                settings.useLegacyApi = true;
+            }
 
             for (var key in settings) {
                 if (!settings.hasOwnProperty(key)) continue;

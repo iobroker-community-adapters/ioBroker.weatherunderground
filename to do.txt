@@ -1,6 +1,0 @@
-﻿>What about backward compatibility? Should in settings the last two checkboxes be active by default ?!
-(BF) Which exactly?
-
->Or do you have "if undefined" handling in there?
-no
-
