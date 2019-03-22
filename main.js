@@ -240,7 +240,7 @@ function handleIconUrl(original) {
 }
 
 function getApiKey(cb) {
-    if (officialApiKey.length > 0 && officialApiKey.length !== 32) {
+    if (officialApiKey && officialApiKey.length > 0 && officialApiKey.length !== 32) {
         adapter.log.warn('API key invalid, please enter the new PWS owner API key or remove the key, ignoring it!');
         officialApiKey = '';
     }
@@ -249,7 +249,7 @@ function getApiKey(cb) {
 }
 
 function getStationKey(cb) {
-    if (pwsStationKey.length) {
+    if (pwsStationKey && pwsStationKey.length) {
         return cb && cb();
     }
 
