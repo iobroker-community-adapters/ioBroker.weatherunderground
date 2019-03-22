@@ -127,30 +127,30 @@ adapter.on('ready', () => {
     adapter.getState('currentStationKey', (err, state) => {
         if (!err && state && state.val) {
             pwsStationKey = state.val;
-            adapter.log.info('initialize PWS Station Key: ' + pwsStationKey);
+            adapter.log.debug('initialize PWS Station Key: ' + pwsStationKey);
         }
         adapter.getState('currentWebKey', (err, state) => {
             if (!err && state && state.val) {
                 newWebKey = state.val;
-                adapter.log.info('initialize Web Key: ' + newWebKey);
+                adapter.log.debug('initialize Web Key: ' + newWebKey);
             }
 
             adapter.getState('currentObservationUrl', (err, state) => {
                 if (!err && state && state.val) {
                     currentObservationUrl = state.val;
-                    adapter.log.info('initialize Current Observation url: ' + currentObservationUrl);
+                    adapter.log.debug('initialize Current Observation url: ' + currentObservationUrl);
                 }
 
                 adapter.getState('forecastDailyUrl', (err, state) => {
                     if (!err && state && state.val) {
                         forecastDailyUrl = state.val;
-                        adapter.log.info('initialize Daily Forecast Url: ' + forecastDailyUrl);
+                        adapter.log.debug('initialize Daily Forecast Url: ' + forecastDailyUrl);
                     }
 
                     adapter.getState('forecastHourlyUrl', (err, state) => {
                         if (!err && state && state.val) {
                             forecastHourlyUrl = state.val;
-                            adapter.log.info('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
+                            adapter.log.debug('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
                         }
 
                         adapter.getState('locationChecksum', (err, state) => {
@@ -280,7 +280,7 @@ function getStationKey(cb) {
                         return cb && cb();
                     }
                     pwsStationKey = pwsApiKey[1];
-                    adapter.log.info('fetched new stationKey from WU webpage: ' + pwsStationKey);
+                    adapter.log.debug('fetched new stationKey from WU webpage: ' + pwsStationKey);
                     adapter.setObjectNotExists('currentStationKey', {
                         type: 'state',
                         common: {type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: ''},
@@ -292,7 +292,7 @@ function getStationKey(cb) {
                     return cb && cb();
                 } else {
                     // ERROR
-                    adapter.log.error('Unable to get PWS dashboard script: ' + error);
+                    adapter.log.error('Unable to get PWS dashboard script: ' + response.statusCode + '/' + error);
                     return cb && cb();
                 }
             });
@@ -321,7 +321,7 @@ function getWebsiteKey(cb, tryQ) {
                 return cb && cb();
             }
             newWebKey = data[1];
-            adapter.log.info('fetched new webkey from WU weather page: ' + newWebKey);
+            adapter.log.debug('fetched new webkey from WU weather page: ' + newWebKey);
             adapter.setObjectNotExists('currentWebKey', {
                 type: 'state',
                 common: {type: 'string', role: 'text', name: 'Current Web Key from webpage', def: ''},
@@ -333,7 +333,7 @@ function getWebsiteKey(cb, tryQ) {
             const currentObservation = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/observations\/current[^"]+)"/);
             if (currentObservation && currentObservation[1]) {
                 currentObservationUrl = currentObservation[1];
-                adapter.log.info('fetched current observations Url from WU weather page: ' + currentObservationUrl);
+                adapter.log.debug('fetched current observations Url from WU weather page: ' + currentObservationUrl);
                 adapter.setObjectNotExists('currentObservationUrl', {
                     type: 'state',
                     common: {type: 'string', role: 'text', name: 'Current Observations Url', def: ''},
@@ -346,7 +346,7 @@ function getWebsiteKey(cb, tryQ) {
             const forecastDaily = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/daily\/[^"]+)"/);
             if (forecastDaily && forecastDaily[1]) {
                 forecastDailyUrl = forecastDaily[1];
-                adapter.log.info('fetched forecast 5 day Url from WU weather page: ' + forecastDailyUrl);
+                adapter.log.debug('fetched forecast 5 day Url from WU weather page: ' + forecastDailyUrl);
                 adapter.setObjectNotExists('forecastDailyUrl', {
                     type: 'state',
                     common: {type: 'string', role: 'text', name: 'Daily Forecast Url', def: ''},
@@ -359,7 +359,7 @@ function getWebsiteKey(cb, tryQ) {
             const forecastHourly = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/hourly\/[^"]+)"/);
             if (forecastHourly && forecastHourly[1]) {
                 forecastHourlyUrl = forecastHourly[1];
-                adapter.log.info('fetched hourly forecast Url from WU weather page: ' + forecastHourlyUrl);
+                adapter.log.debug('fetched hourly forecast Url from WU weather page: ' + forecastHourlyUrl);
                 adapter.setObjectNotExists('forecastHourlyUrl', {
                     type: 'state',
                     common: {type: 'string', role: 'text', name: 'Hourly Forecast Url', def: ''},
@@ -373,7 +373,7 @@ function getWebsiteKey(cb, tryQ) {
             getWebsiteKey(cb, true);
         } else {
             // ERROR
-            adapter.log.error('Unable to get WU weather page: ' + error);
+            adapter.log.error('Unable to get WU weather page: ' + response.statusCode + '/' + error);
             return cb && cb();
         }
     });
@@ -620,7 +620,6 @@ function parseLegacyResult(body, cb) {
 
     if (adapter.config.forecast_periods) {
         //next 4 days
-        //adapter.log.debug('555');
         if (body.forecast && body.forecast.simpleforecast && body.forecast.simpleforecast.forecastday) {
             for (let i = 0; i < 4; i++) {
                 if (!body.forecast.simpleforecast.forecastday[i]) continue;
@@ -1007,7 +1006,7 @@ function parseNewResult(body, cb) {
                     });
                 }
                 catch (error) {
-                    adapter.log.error('exception in : body.txt_forecast' + error);
+                    adapter.log.error('exception in : body.daily_forecast' + error);
                 }
             }
         }
@@ -1074,7 +1073,7 @@ function parseNewResult(body, cb) {
 
                 }
                 catch (error) {
-                    adapter.log.error('exception in : body.txt_forecast' + error);
+                    adapter.log.error('exception in : body.daily_forecast2' + error);
                 }
             }
         }
@@ -1469,7 +1468,7 @@ function getNewWuDataCurrentObservations(cb) {
     request({url: url, json: true, encoding: null}, (error, response, body) => {
         if (!error && response.statusCode === 200) {
             if (body && !body.observations) {
-                adapter.log.error('no observations in response');
+                adapter.log.error('no observations in response from ' + url);
             } else {
                 weatherData.current_observation = body.observations[0];
             }
@@ -1486,7 +1485,7 @@ function getNewWuDataCurrentObservations(cb) {
             return;
         } else {
             // ERROR
-            adapter.log.error('Wunderground reported an error: ' + response.statusCode + ', ' + error);
+            adapter.log.error('Wunderground reported an error: ' + response.statusCode + '/' + error);
         }
         cb && cb(weatherData);
     });
@@ -1511,7 +1510,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
                         weatherData.daily_forecast2 = body.forecasts;
                     }
                     else {
-                        adapter.log.error('no daily forecast in response');
+                        adapter.log.error('no daily forecast in response from ' + url);
                     }
                 } else {
                     weatherData.daily_forecast = body;
@@ -1529,7 +1528,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
                 return;
             } else {
                 // ERROR
-                adapter.log.error('Wunderground reported an error: ' + response.statusCode + ', ' + error);
+                adapter.log.error('Wunderground reported an error: ' + response.statusCode + '/' + error);
             }
             cb && cb(weatherData);
         });
@@ -1548,7 +1547,7 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
         request({url: url, json: true, encoding: null}, (error, response, body) => {
             if (!error && response.statusCode === 200) {
                 if (body && !body.forecasts) {
-                    adapter.log.error('no hourly forecast in response');
+                    adapter.log.error('no hourly forecast in response from ' + url);
                 } else {
                     weatherData.hourly_forecast = body.forecasts;
                 }
@@ -1565,7 +1564,7 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
                 return;
             } else {
                 // ERROR
-                adapter.log.error('Wunderground reported an error: ' + response.statusCode + ', ' + error);
+                adapter.log.error('Wunderground reported an error: ' + response.statusCode + '/' + error);
             }
             cb && cb(weatherData);
         });
