@@ -13,9 +13,10 @@ The adapter loads all 15min (default) daily and hourly forecast data.
 ## Notes
 You can use this adapter with providing an official "PWS owner" API-key or leave API key empty to use keys extracted out of the WU webpage.
 
-As location see docu: http://www.wunderground.com/weather/api/d/docs?d=data/index (-> query)
-
 ## Icon Sets
+
+There are some different Icon Sets available when using "Legacy API", see below. For the usabe with the new API the image names have changed (see https://docs.google.com/document/d/1dNCf6nF6cjm4oOxQxjtqNuAvG_iEe5f9MQH1xlCeV4s/edit) and are now number based ... they can be downloaded from e.g. https://drive.google.com/drive/folders/0B6fWQWXuE09OOWtBOXJNX190TDQ and could be used as custom set (see below). 
+
 In Adapter settings change "Custom Icon-Base-URL" to one of the available Icon Set on Weatherunderground:
 (source: https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets )
 
@@ -68,7 +69,7 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # Сhangelog
-### 3.0.5 (2019-03-22)
+### 3.0.7 (2019-03-22)
 * (Apollon77) implement to extract used "legacy" API keys out of WU website to allow restore of functionality for now
 * (Apollon77) Also extract API keys for newer API version from website to be usable together with real "PWS owner keys" in future
 * (Apollon77) optionally get data using the New APIs (as well as the officially available PWS-Owner APIs as also additional ones to restore functionality)
