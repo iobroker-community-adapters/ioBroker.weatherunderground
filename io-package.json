@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "3.0.5",
+    "version": "3.0.6",
     "news": {
-      "3.0.5": {
+      "3.0.6": {
         "en": "Extracts API keys from WU webpage and allow usage of legacy and new APIs with and without a PWS owner key",
         "de": "Extrahiert API-Schlüssel von der WU-Webseite und ermöglicht die Verwendung älterer und neuer APIs mit und ohne PWS-Besitzerschlüssel",
         "ru": "Извлекает ключи API с веб-страницы WU и позволяет использовать устаревшие и новые API с ключом владельца PWS и без него.",
@@ -136,7 +136,7 @@
     "schedule": "12 * * * *",
     "icon": "wu.png",
     "extIcon": "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
-    "readme": "https://github.com/dschaedl/ioBroker.weatherunderground",
+    "readme": "https://github.com/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
     "license": "MIT",
     "npmLibs": [],
     "type": "weather",
