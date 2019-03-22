@@ -68,7 +68,7 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 # Сhangelog
-### 3.0.4 (2019-03-22)
+### 3.0.5 (2019-03-22)
 * (Apollon77) implement to extract used "legacy" API keys out of WU website to allow restore of functionality for now
 * (Apollon77) Also extract API keys for newer API version from website to be usable together with real "PWS owner keys" in future
 * (Apollon77) optionally get data using the New APIs (as well as the officially available PWS-Owner APIs as also additional ones to restore functionality)
