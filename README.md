@@ -1,6 +1,5 @@
 ![Logo](admin/wu.png)
 # ioBroker.weatherunderground
-===============
 
 ![Number of Installations](http://iobroker.live/badges/weatherunderground-installed.svg) ![Number of Installations](http://iobroker.live/badges/weatherunderground-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
@@ -69,7 +68,7 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 ## Changelog
-
+ 
 ### 3.0.7 (2019-03-22)
 * (Apollon77) implement to extract used "legacy" API keys out of WU website to allow restore of functionality for now
 * (Apollon77) Also extract API keys for newer API version from website to be usable together with real "PWS owner keys" in future
