@@ -68,7 +68,7 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 ## ToDo
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
-# Сhangelog
+## Сhangelog
 ### 3.0.7 (2019-03-22)
 * (Apollon77) implement to extract used "legacy" API keys out of WU website to allow restore of functionality for now
 * (Apollon77) Also extract API keys for newer API version from website to be usable together with real "PWS owner keys" in future
@@ -83,31 +83,31 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 * (bluefox) Warning! Breaking changes! States are renamed.
 * (bluefox) Refactoring of states and roles
 
-## 1.1.2 (2017-11-24)
+### 1.1.2 (2017-11-24)
 * (Apollon77) Add option to specify image format for custom image urls
 
-## 1.1.1 (2017-11-08)
+### 1.1.1 (2017-11-08)
 * (Apollon77) Optimize API usage by getting all data with one call instead of two
 * (Apollon77) Add support for multiple API-Keys
 
-## 1.1.0 (2017-10-30)
+### 1.1.0 (2017-10-30)
 * (Apollon77) Add option to overwrite Icon Base URL
 
-## 1.0.8 (2017-07-12)
+### 1.0.8 (2017-07-12)
 * (DeepCoreSystem) add 2 current observation values, fixes of some datapoint caps.
 
-## 1.0.7 (2017-06-19)
+### 1.0.7 (2017-06-19)
 * (Dutchman) add Dutch language suppport
 
-## 1.0.6 (2017-05-16)
+### 1.0.6 (2017-05-16)
 * (Rene) bug fixing
 	+ all 4 sets are enabled as default
 	+ change of checkbox enables saves button
 
-## 1.0.5 (2017-05-14)
+### 1.0.5 (2017-05-14)
 * (Rene) hourly forecast extend to 36h
 
-## 1.0.4 (2017-04-09)
+### 1.0.4 (2017-04-09)
 * (Rene) parse much more data
    + today's 24 h
    + next 4 days / nights as text
@@ -115,53 +115,49 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
    + current values
    each can be enabled or disabled
 
-## 1.0.3 (2016-11-01)
+### 1.0.3 (2016-11-01)
 * (bluefox) Catch parse errors
 
-## 1.0.2 (2016-10-29)
+### 1.0.2 (2016-10-29)
 * (Apollon77) make sure precip values are always integers
 
-## 1.0.1 (2016-07-21)
+### 1.0.1 (2016-07-21)
 * (jens-maus) conversion from feet to meter for observation_location
 
-## 1.0.0 (2016-07-12)
+### 1.0.0 (2016-07-12)
 * (Apollon77) add daily rain level forecast
 
-## 0.2.0 (2016-07-01)
+### 0.2.0 (2016-07-01)
 * (Apollon77) Add Error handling and station-usage for forcasts
 
-## 0.1.1 (2016-06-07)
+### 0.1.1 (2016-06-07)
 * (ploebb) Fix forecast api URL
 
-## 0.1.0 (2016-05-07)
+### 0.1.0 (2016-05-07)
 * (bluefox) convert text to floats
 * (bluefox) support languages
 
-## 0.0.5
+### 0.0.5
 corrected humidity value within current weather info (slice + unit)
 
-## 0.0.4
+### 0.0.4
 checking for spaces in location
 added current conditions
 
-## 0.0.3
+### 0.0.3
 bugfix in summed pop-value.
 
-## 0.0.2
+### 0.0.2
 config dialog fixed
 
-## 0.0.1
+### 0.0.1
 initial release with all basics to load WU-forecast data
 
-# Todo
-TODO
-
-
-# License
+## License
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2016 dschaedl <daniel.schaedler@gmail.com>
+Copyright (c) 2015-2019 dschaedl <daniel.schaedler@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
