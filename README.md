@@ -68,6 +68,9 @@ http://forum.iobroker.org/viewtopic.php?f=20&t=2042&sid=a863d19838bc49439759bef8
 There is a still a problem with encoding. The addresses with "äüöß" will be shown wrong.
 
 ## Changelog
+
+### 3.0.8 (2019-03-23)
+* (Apollon77) Add additional guidance when location is not found by WU
  
 ### 3.0.7 (2019-03-22)
 * (Apollon77) implement to extract used "legacy" API keys out of WU website to allow restore of functionality for now

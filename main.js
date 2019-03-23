@@ -296,7 +296,6 @@ function getStationKey(cb) {
                     return cb && cb();
                 }
             });
-
         } else {
             // ERROR
             adapter.log.error('Unable to get PWS dashboard page: ' + error);
@@ -371,6 +370,9 @@ function getWebsiteKey(cb, tryQ) {
             return cb && cb();
         } else if (!error && response.statusCode === 404 && !tryQ) {
             getWebsiteKey(cb, true);
+        } else if (!error && response.statusCode === 404) {
+            adapter.log.error('The given Location can not be found. Please check on https://wunderground.com or try geo coordinates (lat,lon) or nearby cities!');
+            return cb && cb();
         } else {
             // ERROR
             adapter.log.error('Unable to get WU weather page: ' + response.statusCode + '/' + error);

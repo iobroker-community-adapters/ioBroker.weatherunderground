@@ -1,175 +1,187 @@
 {
-  "common": {
-    "name": "weatherunderground",
-    "version": "3.0.7",
-    "news": {
-      "3.0.7": {
-        "en": "Extracts API keys from WU webpage and allow usage of legacy and new APIs with and without a PWS owner key",
-        "de": "Extrahiert API-Schlüssel von der WU-Webseite und ermöglicht die Verwendung älterer und neuer APIs mit und ohne PWS-Besitzerschlüssel",
-        "ru": "Извлекает ключи API с веб-страницы WU и позволяет использовать устаревшие и новые API с ключом владельца PWS и без него.",
-        "pt": "Extrai chaves de API da página da Web do WU e permite o uso de APIs herdadas e novas com e sem uma chave de proprietário do PWS",
-        "nl": "Extracteert API-sleutels van de WU-webpagina en staat het gebruik van bestaande en nieuwe API's toe met en zonder een PWS-eigenaarsleutel",
-        "fr": "Extrait les clés API de la page Web WU et permet l'utilisation d'anciennes et de nouvelles API avec et sans clé de propriétaire PWS",
-        "it": "Estrae le chiavi API dalla pagina Web WU e consente l'utilizzo di legacy e nuove API con e senza chiave del proprietario PWS",
-        "es": "Extrae las claves de API de la página web de WU y permite el uso de las API heredadas y nuevas con y sin una clave de propietario de PWS",
-        "pl": "Wyodrębnia klucze API ze strony internetowej WU i zezwala na wykorzystanie starszych i nowych interfejsów API z kluczem właściciela PWS i bez niego",
-        "zh-cn": "从WU网页中提取API密钥，允许使用带有和不带PWS所有者密钥的旧API和新API"
-      },
-      "2.0.4": {
-        "en": "some typos fixed",
-        "de": "einige Tippfehler behoben",
-        "ru": "некоторые фиксированные опечатки",
-        "pt": "alguns erros corrigidos",
-        "nl": "sommige typefouten zijn verholpen",
-        "fr": "des fautes de frappe fixes",
-        "it": "alcuni errori di battitura corretti",
-        "es": "algunos errores tipográficos arreglados",
-        "pl": "Naprawiono niektóre literówki"
-      },
-      "2.0.3": {
-        "en": "Warning! Breaking changes!\nRefactoring of states and roles",
-        "de": "Warnung! Breaking Änderungen!\nRefactoring von Zuständen und Rollen",
-        "ru": "Предупреждение! Нарушение изменений!\nРефакторинг состояний и ролей",
-        "pt": "Atenção! Quebrando mudanças!\nRefatoração de estados e papéis",
-        "nl": "Waarschuwing! Veranderingen doorbreken!\nRefactoring van staten en rollen",
-        "fr": "Attention! Briser les changements!\nRefactorisation des états et des rôles",
-        "it": "Avvertimento! Ultime modifiche!\nRefactoring di stati e ruoli",
-        "es": "¡Advertencia! ¡Rompiendo cambios!\nRefactorización de estados y roles",
-        "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról"
-      },
-      "1.1.2": {
-        "en": "Add option to specify image format for custom image urls",
-        "de": "Möglichkeit hinzugefügt das Bildformat für eigene URLs anzugeben",
-        "ru": "Add option to specify image format for custom image urls"
-      },
-      "1.1.1": {
-        "en": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys",
-        "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden, Unterstützung für mehrere Keys hinzugefügt",
-        "ru": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys"
-      },
-      "1.1.0": {
-        "en": "Add option to overwrite Icon Base URL",
-        "de": "Option hinzugefügt um Icon-Basis-URL zu überschreiben",
-        "ru": ""
-      },
-      "1.0.8": {
-        "en": "Add 2 current observation values, fixes of some datapoint caps.",
-        "de": "Zwei aktuelle Messwerte ergaenzt, Grossschreibung einiger Datenpunkte angepasst.",
-        "ru": ""
-      },
-      "1.0.7": {
-        "en": "add dutch language support",
-        "de": "Hollaendische sprache hinzugefuegt",
-        "ru": ""
-      },
-      "1.0.6": {
-        "en": "bug fixing",
-        "de": "Fehlerbehebung",
-        "ru": ""
-      },
-      "1.0.5": {
-        "en": "hourly forecast extend to 36h",
-        "de": "stündliche Vorhersage auf 36 h erweitert",
-        "ru": ""
-      },
-      "1.0.4": {
-        "en": "some more forecast data",
-        "de": "noch mehr Vorhersage-Daten",
-        "ru": ""
-      },
-      "1.0.3": {
-        "en": "Catch parse errors",
-        "de": "Bearbeite Parsefehler",
-        "ru": "Обработка ошибок парсинга"
-      },
-      "1.0.2": {
-        "en": "make sure precip values are always integers",
-        "de": "Konvertiere precip-Wert immer nach Integer",
-        "ru": "Конвертация значения precip в integer"
-      },
-      "1.0.1": {
-        "en": "conversion from feet to meter for observation_location",
-        "de": "conversion from feet to meter for observation_location",
-        "ru": "conversion from feet to meter for observation_location"
-      },
-      "1.0.0": {
-        "en": "add daily rain level forecast",
-        "de": "add daily rain level forecast",
-        "ru": "add daily rain level forecast"
-      },
-      "0.2.0": {
-        "en": "Add Error handling and station-usage for forcasts",
-        "de": "Add Error handling and station-usage for forcasts",
-        "ru": "Add Error handling and station-usage for forcasts"
-      },
-      "0.1.1": {
-        "en": "Fix forecast api URL",
-        "de": "Fix forecast api URL",
-        "ru": "Fix forecast api URL"
-      }
+    "common": {
+        "name": "weatherunderground",
+        "version": "3.0.8",
+        "news": {
+            "3.0.8": {
+                "en": "Add additional guidance in log if location is not found by WU",
+                "de": "Fügen Sie zusätzliche Anweisungen im Protokoll hinzu, wenn der Standort von der WU nicht gefunden wird",
+                "ru": "Добавьте дополнительное руководство в журнал, если местоположение не найдено WU",
+                "pt": "Adicionar orientação adicional no log se o local não for encontrado por WU",
+                "nl": "Voeg extra begeleiding toe in het log als locatie niet wordt gevonden door WU",
+                "fr": "Ajout de conseils supplémentaires dans le journal si l'emplacement n'est pas trouvé par WU",
+                "it": "Aggiungi ulteriori indicazioni nel registro se la posizione non viene trovata da WU",
+                "es": "Agregue orientación adicional en el registro si WU no encuentra la ubicación",
+                "pl": "Dodaj dodatkowe wskazówki w dzienniku, jeśli lokalizacja nie zostanie znaleziona przez WU",
+                "zh-cn": "如果WU找不到位置，请在日志中添加其他指南"
+            },
+            "3.0.7": {
+                "en": "Extracts API keys from WU webpage and allow usage of legacy and new APIs with and without a PWS owner key",
+                "de": "Extrahiert API-Schlüssel von der WU-Webseite und ermöglicht die Verwendung älterer und neuer APIs mit und ohne PWS-Besitzerschlüssel",
+                "ru": "Извлекает ключи API с веб-страницы WU и позволяет использовать устаревшие и новые API с ключом владельца PWS и без него.",
+                "pt": "Extrai chaves de API da página da Web do WU e permite o uso de APIs herdadas e novas com e sem uma chave de proprietário do PWS",
+                "nl": "Extracteert API-sleutels van de WU-webpagina en staat het gebruik van bestaande en nieuwe API's toe met en zonder een PWS-eigenaarsleutel",
+                "fr": "Extrait les clés API de la page Web WU et permet l'utilisation d'anciennes et de nouvelles API avec et sans clé de propriétaire PWS",
+                "it": "Estrae le chiavi API dalla pagina Web WU e consente l'utilizzo di legacy e nuove API con e senza chiave del proprietario PWS",
+                "es": "Extrae las claves de API de la página web de WU y permite el uso de las API heredadas y nuevas con y sin una clave de propietario de PWS",
+                "pl": "Wyodrębnia klucze API ze strony internetowej WU i zezwala na wykorzystanie starszych i nowych interfejsów API z kluczem właściciela PWS i bez niego",
+                "zh-cn": "从WU网页中提取API密钥，允许使用带有和不带PWS所有者密钥的旧API和新API"
+            },
+            "2.0.4": {
+                "en": "some typos fixed",
+                "de": "einige Tippfehler behoben",
+                "ru": "некоторые фиксированные опечатки",
+                "pt": "alguns erros corrigidos",
+                "nl": "sommige typefouten zijn verholpen",
+                "fr": "des fautes de frappe fixes",
+                "it": "alcuni errori di battitura corretti",
+                "es": "algunos errores tipográficos arreglados",
+                "pl": "Naprawiono niektóre literówki"
+            },
+            "2.0.3": {
+                "en": "Warning! Breaking changes!\nRefactoring of states and roles",
+                "de": "Warnung! Breaking Änderungen!\nRefactoring von Zuständen und Rollen",
+                "ru": "Предупреждение! Нарушение изменений!\nРефакторинг состояний и ролей",
+                "pt": "Atenção! Quebrando mudanças!\nRefatoração de estados e papéis",
+                "nl": "Waarschuwing! Veranderingen doorbreken!\nRefactoring van staten en rollen",
+                "fr": "Attention! Briser les changements!\nRefactorisation des états et des rôles",
+                "it": "Avvertimento! Ultime modifiche!\nRefactoring di stati e ruoli",
+                "es": "¡Advertencia! ¡Rompiendo cambios!\nRefactorización de estados y roles",
+                "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról"
+            },
+            "1.1.2": {
+                "en": "Add option to specify image format for custom image urls",
+                "de": "Möglichkeit hinzugefügt das Bildformat für eigene URLs anzugeben",
+                "ru": "Add option to specify image format for custom image urls"
+            },
+            "1.1.1": {
+                "en": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys",
+                "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden, Unterstützung für mehrere Keys hinzugefügt",
+                "ru": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys"
+            },
+            "1.1.0": {
+                "en": "Add option to overwrite Icon Base URL",
+                "de": "Option hinzugefügt um Icon-Basis-URL zu überschreiben",
+                "ru": ""
+            },
+            "1.0.8": {
+                "en": "Add 2 current observation values, fixes of some datapoint caps.",
+                "de": "Zwei aktuelle Messwerte ergaenzt, Grossschreibung einiger Datenpunkte angepasst.",
+                "ru": ""
+            },
+            "1.0.7": {
+                "en": "add dutch language support",
+                "de": "Hollaendische sprache hinzugefuegt",
+                "ru": ""
+            },
+            "1.0.6": {
+                "en": "bug fixing",
+                "de": "Fehlerbehebung",
+                "ru": ""
+            },
+            "1.0.5": {
+                "en": "hourly forecast extend to 36h",
+                "de": "stündliche Vorhersage auf 36 h erweitert",
+                "ru": ""
+            },
+            "1.0.4": {
+                "en": "some more forecast data",
+                "de": "noch mehr Vorhersage-Daten",
+                "ru": ""
+            },
+            "1.0.3": {
+                "en": "Catch parse errors",
+                "de": "Bearbeite Parsefehler",
+                "ru": "Обработка ошибок парсинга"
+            },
+            "1.0.2": {
+                "en": "make sure precip values are always integers",
+                "de": "Konvertiere precip-Wert immer nach Integer",
+                "ru": "Конвертация значения precip в integer"
+            },
+            "1.0.1": {
+                "en": "conversion from feet to meter for observation_location",
+                "de": "conversion from feet to meter for observation_location",
+                "ru": "conversion from feet to meter for observation_location"
+            },
+            "1.0.0": {
+                "en": "add daily rain level forecast",
+                "de": "add daily rain level forecast",
+                "ru": "add daily rain level forecast"
+            },
+            "0.2.0": {
+                "en": "Add Error handling and station-usage for forcasts",
+                "de": "Add Error handling and station-usage for forcasts",
+                "ru": "Add Error handling and station-usage for forcasts"
+            },
+            "0.1.1": {
+                "en": "Fix forecast api URL",
+                "de": "Fix forecast api URL",
+                "ru": "Fix forecast api URL"
+            }
+        },
+        "title": "weatherunderground forecast",
+        "titleLang": {
+            "en": "Weatherunderground forecast",
+            "de": "Vorhersage Weatherunderground",
+            "ru": "Weatherunderground прогноз",
+            "pt": "Previsão do Weatherunderground",
+            "nl": "Weatherunderground voorspelling",
+            "fr": "Météo Weatherunderground",
+            "it": "Previsioni Weatherunderground",
+            "es": "Previsión Weatherunderground",
+            "pl": "Prognoza Weatherunderground"
+        },
+        "desc": {
+            "en": "Loads Weatherunderground weather forecast for your location",
+            "de": "Lädt Wetterwetterprognose für Ihren Standort",
+            "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
+            "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
+            "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
+            "fr": "Charge Weatherunder météo Prévisions pour votre localité",
+            "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
+            "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
+            "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji"
+        },
+        "platform": "Javascript/Node.js",
+        "mode": "schedule",
+        "schedule": "12 * * * *",
+        "icon": "wu.png",
+        "extIcon": "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
+        "readme": "https://github.com/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
+        "license": "MIT",
+        "npmLibs": [],
+        "type": "weather",
+        "materialize": true,
+        "keywords": [
+            "iobroker",
+            "weather",
+            "forecast",
+            "wu",
+            "weatherunderground"
+        ],
+        "loglevel": "info",
+        "enabled": true,
+        "authors": [
+            "Daniel Schaedler <daniel.schaedler@gmail.com>",
+            "Ingo Fischer <iobroker@fischer-ka.de>"
+        ]
     },
-    "title": "weatherunderground forecast",
-    "titleLang": {
-      "en": "Weatherunderground forecast",
-      "de": "Vorhersage Weatherunderground",
-      "ru": "Weatherunderground прогноз",
-      "pt": "Previsão do Weatherunderground",
-      "nl": "Weatherunderground voorspelling",
-      "fr": "Météo Weatherunderground",
-      "it": "Previsioni Weatherunderground",
-      "es": "Previsión Weatherunderground",
-      "pl": "Prognoza Weatherunderground"
+    "native": {
+        "apikey": "",
+        "location": "",
+        "station": "",
+        "language": "DL",
+        "forecast_periods_txt": true,
+        "forecast_periods": true,
+        "forecast_hourly": true,
+        "current": true,
+        "nonMetric": false,
+        "custom_icon_base_url": "",
+        "country": "DE",
+        "useLegacyApi": true,
+        "iconSet": "i"
     },
-    "desc": {
-      "en": "Loads Weatherunderground weather forecast for your location",
-      "de": "Lädt Wetterwetterprognose für Ihren Standort",
-      "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
-      "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
-      "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
-      "fr": "Charge Weatherunder météo Prévisions pour votre localité",
-      "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
-      "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
-      "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji"
-    },
-    "platform": "Javascript/Node.js",
-    "mode": "schedule",
-    "schedule": "12 * * * *",
-    "icon": "wu.png",
-    "extIcon": "https://raw.githubusercontent.com/dschaedl/ioBroker.weatherunderground/master/admin/wu.png",
-    "readme": "https://github.com/dschaedl/ioBroker.weatherunderground/blob/master/README.md",
-    "license": "MIT",
-    "npmLibs": [],
-    "type": "weather",
-    "materialize": true,
-    "keywords": [
-      "iobroker",
-      "weather",
-      "forecast",
-      "wu",
-      "weatherunderground"
-    ],
-    "loglevel": "info",
-    "enabled": true,
-    "authors": [
-      "Daniel Schaedler <daniel.schaedler@gmail.com>",
-      "Ingo Fischer <iobroker@fischer-ka.de>"
-    ]
-  },
-  "native": {
-    "apikey": "",
-    "location": "",
-    "station": "",
-    "language": "DL",
-    "forecast_periods_txt": true,
-    "forecast_periods": true,
-    "forecast_hourly": true,
-    "current": true,
-    "nonMetric": false,
-    "custom_icon_base_url": "",
-    "country": "DE",
-    "useLegacyApi": true,
-    "iconSet": "i"
-  },
-  "objects": [],
-  "instanceObjects": []
+    "objects": [],
+    "instanceObjects": []
 }
