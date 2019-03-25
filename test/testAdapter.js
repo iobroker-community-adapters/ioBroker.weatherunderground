@@ -121,7 +121,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
 /**/
 
     it('Test ' + adapterShortName + ': check states', function (done) {
-        this.timeout(5000);
+        this.timeout(15000);
 
         setTimeout(function () {
             states.getState('weatherunderground.0.forecast.current.temp', function (err, state) {
@@ -145,7 +145,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
                     });
                 });
             });
-        }, 100);
+        }, 10000);
     });
 
     after('Test ' + adapterShortName + ' adapter: Stop js-controller', function (done) {
