@@ -261,7 +261,7 @@ function getStationKey(cb) {
 
     adapter.log.debug('get PWS dashboard page: ' + url);
 
-    request({url: url, encoding: 'utf-8'}, (error, response, body) => {
+    request({url: url, encoding: 'utf-8', followAllRedirects: true}, (error, response, body) => {
         if (!error && response.statusCode === 200 && body) {
             const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
             if (!scriptFile || !scriptFile[1]) {
@@ -1428,7 +1428,7 @@ function getLegacyWuData(cb) {
     }
     adapter.log.debug('get WU legacy data: ' + url);
 
-    request({url: url, json: true, encoding: null}, (error, response, body) => {
+    request({url: url, json: true, encoding: null, followAllRedirects: true}, (error, response, body) => {
         if (!error && response.statusCode === 200) {
             if (body && body.response && body.response.error) {
                 adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Reset Station Key');

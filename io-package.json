@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.0.8",
+        "version": "3.0.9",
         "news": {
             "3.0.8": {
                 "en": "Add additional guidance in log if location is not found by WU",
