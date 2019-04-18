@@ -265,6 +265,20 @@ function getStationKey(cb) {
         if (!error && response.statusCode === 200 && body) {
             const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
             if (!scriptFile || !scriptFile[1]) {
+                const pwsApiKey = body.match(/WU_LEGACY_API_KEY&q;:&q;([^&]+)&q/);
+                if (!pwsApiKey || !pwsApiKey[1]) {
+                    return cb && cb();
+                }
+                pwsStationKey = pwsApiKey[1];
+                adapter.log.debug('fetched new stationKey from WU webpage-0419: ' + pwsStationKey);
+                adapter.setObjectNotExists('currentStationKey', {
+                    type: 'state',
+                    common: {type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: ''},
+                    native: {id: 'currentStationKey'}
+                }, () => {
+                    adapter.setState('currentStationKey', {val: pwsStationKey, ack: true});
+                });
+
                 return cb && cb();
             }
             if (scriptFile[1].startsWith('//')) scriptFile[1] = 'https:' + scriptFile[1];
