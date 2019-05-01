@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/dschaedl/ioBroker.weatherunderground"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground"
   },
   "dependencies": {
     "request": "^2.87.0",
@@ -31,7 +31,7 @@
     "chai": "^4.1.2"
   },
   "bugs": {
-    "url": "https://github.com/dschaedl/ioBroker.weatherunderground/issues"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/issues"
   },
   "main": "main.js",
   "scripts": {
