@@ -253,13 +253,16 @@ function getStationKey(cb) {
         return cb && cb();
     }
 
-    let url = 'https://www.wunderground.com/personal-weather-station/dashboard';
+    let url = 'https://www.wunderground.com/dashboard/pws/IBERLIN1658';
 
     if (adapter.config.station) {
         if (adapter.config.station.startsWith('pws:')) {
             adapter.config.station = adapter.config.station.substr(4);
         }
         url = 'https://www.wunderground.com/dashboard/pws/' + encodeURIComponent(adapter.config.station);
+    }
+    else {
+        adapter.log.info('using fallback station ID to get key because no PWS station ID provided.');
     }
 
     adapter.log.debug('get PWS dashboard page: ' + url);
