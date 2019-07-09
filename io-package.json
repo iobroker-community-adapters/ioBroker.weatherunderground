@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.0.11",
+        "version": "3.0.12",
         "news": {
+            "3.0.12": {
+                "en": "adopt to changes by WU",
+                "de": "Änderungen von WU berücksichtigt",
+                "ru": "принять к изменениям WU",
+                "pt": "adotar as mudanças por WU",
+                "nl": "vast te stellen aan veranderingen door WU",
+                "fr": "adopter les modifications par WU",
+                "it": "adottare le modifiche da WU",
+                "es": "adoptar a los cambios por WU",
+                "pl": "dostosować się do zmian przez WU",
+                "zh-cn": "采纳吴的变化"
+            },
             "3.0.11": {
                 "en": "adopt to changes by WU",
                 "de": "Änderungen von WU berücksichtigt",

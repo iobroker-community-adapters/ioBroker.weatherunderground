@@ -1489,6 +1489,13 @@ function getLegacyWuData(cb) {
                 return;
             }
             parseLegacyResult(body, cb);
+        } else if (!error && response.statusCode === 401) {
+            adapter.log.error('Key rejected, reset legacy key and try again');
+            pwsStationKey = '';
+
+            errorCounter++;
+            setImmediate(() => getKeysAndData(cb));
+            return;
         } else {
             // ERROR
             adapter.log.error('Wunderground reported an error: ' + error + ', ' + response.statusCode);

@@ -69,6 +69,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
+### 3.0.11 (2019-07-09)
+* (Apollon77) Re-Fetch PWS station key on Error 401
+ 
 ### 3.0.10 (2019-05-27)
 * (Apollon77) Adopt logic to WU changes
  
