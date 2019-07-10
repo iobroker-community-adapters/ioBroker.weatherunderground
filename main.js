@@ -219,7 +219,10 @@ function getKeysAndData(cb) {
 function handleIconUrl(original) {
     if (!original) return original;
     let iconSet = adapter.config.iconSet;
-    if (original.toString().match(/^[0-9]{2,4}$/)) {
+    if (typeof original !== 'string') {
+        original = original.toString();
+    }
+    if (original.match(/^[0-9]{2,4}$/)) {
         original = 'https://icons.wxug.com/i/c/v4/' + original + '.svg';
         if (iconSet === 'i') iconSet = null;
     }

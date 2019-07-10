@@ -69,7 +69,10 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
-### 3.0.11 (2019-07-09)
+### 3.0.13 (2019-07-10)
+* (Apollon77) Fix error in image url handling
+ 
+### 3.0.11/12 (2019-07-09)
 * (Apollon77) Re-Fetch PWS station key on Error 401
  
 ### 3.0.10 (2019-05-27)
