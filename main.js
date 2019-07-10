@@ -1485,7 +1485,7 @@ function getLegacyWuData(cb) {
     }, (error, response, body) => {
         if (!error && response.statusCode === 200) {
             if (body && body.response && body.response.error) {
-                adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Reset Station Key');
+                adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Resetting Station Key');
                 pwsStationKey = '';
                 errorCounter++;
                 setImmediate(() => getKeysAndData(cb));
@@ -1493,7 +1493,7 @@ function getLegacyWuData(cb) {
             }
             parseLegacyResult(body, cb);
         } else if (!error && response.statusCode === 401) {
-            adapter.log.error('Key rejected, reset legacy key and try again');
+            adapter.log.info('Key rejected, resetting legacy key and trying again ...');
             pwsStationKey = '';
 
             errorCounter++;
@@ -1548,7 +1548,7 @@ function getNewWuDataCurrentObservations(cb) {
                 adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
                 officialApiKey = '';
             } else {
-                adapter.log.error('Key rejected, reset webkey and try again');
+                adapter.log.info('Key rejected, resetting webkey and trying again');
                 newWebKey = '';
             }
             errorCounter++;
@@ -1599,7 +1599,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
                     adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
                     officialApiKey = '';
                 } else {
-                    adapter.log.error('Key rejected, reset webkey and try again');
+                    adapter.log.info('Key rejected, resetting webkey and trying again');
                     newWebKey = '';
                 }
                 errorCounter++;
@@ -1643,7 +1643,7 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
                     adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
                     officialApiKey = '';
                 } else {
-                    adapter.log.error('Key rejected, reset webkey and try again');
+                    adapter.log.info('Key rejected, resetting webkey and trying again');
                     newWebKey = '';
                 }
                 errorCounter++;
