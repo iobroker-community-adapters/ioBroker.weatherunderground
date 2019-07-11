@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.0.13",
+        "version": "3.0.14",
         "news": {
+            "3.0.14": {
+                "en": "optimize checking of pws station id",
+                "de": "Optimierung der Überprüfung der pws-Stations-ID",
+                "ru": "оптимизировать проверку идентификатора станции pws",
+                "pt": "otimizar a verificação do id da estação pws",
+                "nl": "optimalisatie van de controle van het pws-stations-ID",
+                "fr": "optimiser la vérification de l'identifiant de la station pws",
+                "it": "ottimizzare il controllo dell'id della stazione pws",
+                "es": "Optimiza la comprobación de la ID de la estación pws",
+                "pl": "optymalizacja sprawdzania identyfikatora stacji pws",
+                "zh-cn": "优化pws站id的检查"
+            },
             "3.0.12": {
                 "en": "adopt to changes by WU",
                 "de": "Änderungen von WU berücksichtigt",

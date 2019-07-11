@@ -259,8 +259,9 @@ function getStationKey(cb) {
     let url = 'https://www.wunderground.com/dashboard/pws/IBERLIN1658';
 
     if (adapter.config.station) {
+        adapter.config.station = adapter.config.station.trim();
         if (adapter.config.station.startsWith('pws:')) {
-            adapter.config.station = adapter.config.station.substr(4);
+            adapter.config.station = adapter.config.station.substr(4).trim();
         }
         url = 'https://www.wunderground.com/dashboard/pws/' + encodeURIComponent(adapter.config.station);
     }
