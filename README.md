@@ -69,6 +69,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
+### 3.1.0 (2019-07-12)
+* (Apollon77) remove option for legacy API because disabled by WU
+ 
 ### 3.0.14 (2019-07-11)
 * (Apollon77) optimize checking of pws station id
  

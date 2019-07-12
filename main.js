@@ -87,6 +87,7 @@ adapter.on('ready', () => {
         adapter.config.useLegacyApi = true;
     }
 
+    adapter.config.useLegacyApi = false;
     if (typeof adapter.config.forecast_periods_txt === 'undefined') {
         adapter.log.info('forecast_periods_txt not defined. now enabled. check settings and save');
         adapter.config.forecast_periods_txt = true;
@@ -199,20 +200,25 @@ adapter.on('ready', () => {
 
 function getKeysAndData(cb) {
     if (errorCounter > 2) {
-        cb();
+        if (adapter.config.useLegacyApi) {
+            adapter.config.useLegacyApi = false;
+            errorCounter = 0;
+        }
+        else {
+            cb();
+            return;
+        }
     }
-    else {
-        getApiKey(() => {
-            if (adapter.config.useLegacyApi) {
-                adapter.log.debug('Use Legacy API');
-                getLegacyWuData(cb);
-            }
-            else {
-                adapter.log.debug('Use New API');
-                getNewWuDataCurrentObservations((data) => getNewWuDataDailyForcast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
-            }
-        });
-    }
+    getApiKey(() => {
+        if (adapter.config.useLegacyApi) {
+            adapter.log.debug('Use Legacy API');
+            getLegacyWuData(cb);
+        }
+        else {
+            adapter.log.debug('Use New API');
+            getNewWuDataCurrentObservations((data) => getNewWuDataDailyForcast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
+        }
+    });
 }
 
 

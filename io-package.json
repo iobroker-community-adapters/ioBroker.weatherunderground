@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.0.14",
+        "version": "3.1.0",
         "news": {
+            "3.1.0": {
+                "en": "remove option for legacy API because disabled by WU",
+                "de": "Option für Legacy-API entfernen, da von WU deaktiviert",
+                "ru": "опция удаления для устаревшего API, потому что отключена WU",
+                "pt": "remover a opção da API legada porque desativada pelo WU",
+                "nl": "verwijder optie voor legacy API omdat uitgeschakeld door WU",
+                "fr": "option de suppression pour l'API héritée car désactivée par WU",
+                "it": "rimuovi l'opzione per l'API legacy perché disabilitata da WU",
+                "es": "eliminar la opción para la API heredada porque está deshabilitada por WU",
+                "pl": "usuń opcję starszego API, ponieważ została wyłączona przez WU",
+                "zh-cn": "删除遗留API的选项，因为WU禁用了该选项"
+            },
             "3.0.14": {
                 "en": "optimize checking of pws station id",
                 "de": "Optimierung der Überprüfung der pws-Stations-ID",
