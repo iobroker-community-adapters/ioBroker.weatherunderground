@@ -3,6 +3,18 @@
         "name": "weatherunderground",
         "version": "3.1.1",
         "news": {
+            "3.1.1": {
+                "en": "made wind direction as string additionally to degrees available",
+                "de": "Windrichtung als String zusätzlich zu Grad zur Verfügung gestellt",
+                "ru": "направление ветра в виде строки дополнительно к градусам",
+                "pt": "fez direção do vento como string adicionalmente aos graus disponíveis",
+                "nl": "maakte windrichting als een snaar extra graden beschikbaar",
+                "fr": "fait la direction du vent en tant que ficelle en plus des degrés disponibles",
+                "it": "ha reso la direzione del vento come stringa aggiuntiva ai gradi disponibili",
+                "es": "Dirección del viento hecha como cuerda adicionalmente a grados disponibles.",
+                "pl": "udostępniono kierunek wiatru jako ciąg dodatkowo do stopni",
+                "zh-cn": "除了可用的度数之外，还将风向作为弦"
+            },
             "3.1.0": {
                 "en": "remove option for legacy API because disabled by WU",
                 "de": "Option für Legacy-API entfernen, da von WU deaktiviert",
