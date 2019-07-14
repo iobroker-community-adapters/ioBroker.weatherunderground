@@ -30,6 +30,7 @@ const dictionary = require('./lib/words');
 let lang = 'en';
 let locale = 'en-GB';
 let nonMetric = false;
+const windDirections = ['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW','N'];
 
 let officialApiKey;
 let pwsStationKey;
@@ -513,6 +514,10 @@ function parseLegacyResult(body, cb) {
                     ack: true,
                     val: parseFloat(body.current_observation.wind_degrees)
                 });
+                adapter.setState('forecast.current.windDirection', {
+                    ack: true,
+                    val: windDirections[Math.floor((body.current_observation.wind_degrees + 11.25) / 22.5)]
+                });
                 if (nonMetric) {
                     adapter.setState('forecast.current.wind', {
                         ack: true,
@@ -956,6 +961,10 @@ function parseNewResult(body, cb) {
                     ack: true,
                     val: body.current_observation.winddir
                 });
+                adapter.setState('forecast.current.windDirection', {
+                    ack: true,
+                    val: windDirections[Math.floor((body.current_observation.winddir + 11.25) / 22.5)]
+                });
                 adapter.setState('forecast.current.wind', {
                     ack: true,
                     val: body.current_observation.metric.windSpeed
@@ -1210,11 +1219,11 @@ function parseNewResult(body, cb) {
                     });
                     adapter.setState('forecast.' + i + 'd.windDirection', {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].windDirection[i * 2]
+                        val: windDirections[Math.floor((body.daily_forecast.daypart[0].windDirection[i * 2] + 11.25) / 22.5)]
                     });
                     adapter.setState('forecast.' + i + 'd.windDegrees', {
                         ack: true,
-                        val: null
+                        val: body.daily_forecast.daypart[0].windDirection[i * 2]
                     });
 
                     adapter.setState('forecast.' + i + 'd.humidity', {
@@ -1945,10 +1954,22 @@ function checkWeatherVariables() {
         adapter.setObjectNotExists('forecast.current.windDegrees', {
             type: 'state',
             common: {
-                name: 'Wind direction',
+                name: 'Wind direction Degrees',
                 role: 'value.direction.wind',
                 type: 'number',
                 unit: '°',
+                read: true,
+                write: false
+            },
+            native: {id: 'current_observation.wind_degrees'}
+        });
+        adapter.setObjectNotExists('forecast.current.windDirection', {
+            type: 'state',
+            common: {
+                name: 'Wind direction',
+                role: 'value.direction.wind',
+                type: 'string',
+                unit: '',
                 read: true,
                 write: false
             },
@@ -2544,7 +2565,7 @@ function checkWeatherVariables() {
             adapter.setObjectNotExists(id + 'windDegrees', {
                 type: 'state',
                 common: {
-                    name: 'average wind direction',
+                    name: 'average wind direction degrees',
                     role: 'value.direction.wind.forecast.' + p,
                     unit: '°',
                     type: 'number',
@@ -2552,6 +2573,18 @@ function checkWeatherVariables() {
                     write: false
                 },
                 native: {id: id + 'avewind.degrees'}
+            });
+            adapter.setObjectNotExists(id + 'windDirection', {
+                type: 'state',
+                common: {
+                    name: 'average wind direction',
+                    role: 'value.direction.wind.forecast.' + p,
+                    unit: '',
+                    type: 'string',
+                    read: true,
+                    write: false
+                },
+                native: {id: id + 'avewind.direction'}
             });
 
             adapter.setObjectNotExists(id + 'humidity', {

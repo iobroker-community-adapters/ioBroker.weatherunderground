@@ -69,6 +69,9 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
+### 3.1.1 (2019-07-14)
+* (Apollon77) add windDirection as string calculated based on degrees
+ 
 ### 3.1.0 (2019-07-12)
 * (Apollon77) remove option for legacy API because disabled by WU
  
