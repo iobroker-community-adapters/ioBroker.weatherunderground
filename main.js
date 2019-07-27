@@ -1526,6 +1526,9 @@ function getLegacyWuData(cb) {
 function modifyExtractedUrl(url) {
     url = url.replace(/(units=)(.{1})/,'$1' + (nonMetric ? 'e' : 'm'));
     url = url.replace(/(language=)([a-zA-Z\-]{5})/,'$1' + encodeURIComponent(lang));
+    if (url.includes('/v2/') && !url.includes('numericPrecision=')) {
+        url = url.replace('?', '?numericPrecision=decimal&');
+    }
     return url;
 }
 
@@ -1538,7 +1541,7 @@ function getNewWuDataCurrentObservations(cb) {
     let url;
     if (adapter.config.station) {
         const usedKey = adapter.config.current ? (officialApiKey || newWebKey) : newWebKey;
-        url = 'https://api.weather.com/v2/pws/observations/current?stationId=' + encodeURIComponent(adapter.config.station) + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&apiKey=' + usedKey;
+        url = 'https://api.weather.com/v2/pws/observations/current?stationId=' + encodeURIComponent(adapter.config.station) + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&numericPrecision=decimal&apiKey=' + usedKey;
     } else {
         url = modifyExtractedUrl(currentObservationUrl);
     }

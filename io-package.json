@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.1.1",
+        "version": "3.1.2",
         "news": {
+            "3.1.2": {
+                "en": "use new parameters to get decimal precision values",
+                "de": "Verwenden Sie neue Parameter, um dezimale Genauigkeitswerte zu erhalten",
+                "ru": "использовать новые параметры для получения значений десятичной точности",
+                "pt": "use novos parâmetros para obter valores de precisão decimais",
+                "nl": "gebruik nieuwe parameters om decimale precisiewaarden te krijgen",
+                "fr": "utiliser de nouveaux paramètres pour obtenir des valeurs de précision décimales",
+                "it": "utilizzare nuovi parametri per ottenere valori di precisione decimali",
+                "es": "Usa nuevos parámetros para obtener valores de precisión decimales.",
+                "pl": "użyj nowych parametrów, aby uzyskać wartości dokładności dziesiętnej",
+                "zh-cn": "使用新参数获取小数精度值"
+            },
             "3.1.1": {
                 "en": "made wind direction as string additionally to degrees available",
                 "de": "Windrichtung als String zusätzlich zu Grad zur Verfügung gestellt",
