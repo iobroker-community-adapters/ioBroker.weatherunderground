@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.1.2",
+        "version": "3.1.3",
         "news": {
+            "3.1.3": {
+                "en": "text correction",
+                "de": "Textkorrektur",
+                "ru": "коррекция текста",
+                "pt": "correção de texto",
+                "nl": "tekstcorrectie",
+                "fr": "correction de texte",
+                "it": "correzione del testo",
+                "es": "corrección de texto",
+                "pl": "korekta tekstu",
+                "zh-cn": "文字修正"
+            },
             "3.1.2": {
                 "en": "use new parameters to get decimal precision values",
                 "de": "Verwenden Sie neue Parameter, um dezimale Genauigkeitswerte zu erhalten",
