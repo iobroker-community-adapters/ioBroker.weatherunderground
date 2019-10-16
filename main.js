@@ -367,6 +367,7 @@ function getWebsiteKey(cb, tryQ) {
             'Accept': '*/*'
         }
     }, (error, response, body) => {
+        body = body.replace(new RegExp("&q;", 'g'), '"');
         if (!error && response.statusCode === 200 && body) {
             const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
             if (!data || !data[1]) {
@@ -384,7 +385,7 @@ function getWebsiteKey(cb, tryQ) {
 
             const currentObservation = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/observations\/current[^"]+)"/);
             if (currentObservation && currentObservation[1]) {
-                currentObservationUrl = currentObservation[1];
+                currentObservationUrl = currentObservation[1].replace(new RegExp("&a;", 'g'), '&');
                 adapter.log.debug('fetched current observations Url from WU weather page: ' + currentObservationUrl);
                 adapter.setObjectNotExists('currentObservationUrl', {
                     type: 'state',
@@ -396,8 +397,9 @@ function getWebsiteKey(cb, tryQ) {
             }
 
             const forecastDaily = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/daily\/[^"]+)"/);
+            adapter.log.debug('body match forecast: ' + data);
             if (forecastDaily && forecastDaily[1]) {
-                forecastDailyUrl = forecastDaily[1];
+                forecastDailyUrl = forecastDaily[1].replace(new RegExp("&a;", 'g'), '&');
                 adapter.log.debug('fetched forecast 5 day Url from WU weather page: ' + forecastDailyUrl);
                 adapter.setObjectNotExists('forecastDailyUrl', {
                     type: 'state',
@@ -410,7 +412,7 @@ function getWebsiteKey(cb, tryQ) {
 
             const forecastHourly = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/hourly\/[^"]+)"/);
             if (forecastHourly && forecastHourly[1]) {
-                forecastHourlyUrl = forecastHourly[1];
+                forecastHourlyUrl = forecastHourly[1].replace(new RegExp("&a;", 'g'), '&');
                 adapter.log.debug('fetched hourly forecast Url from WU weather page: ' + forecastHourlyUrl);
                 adapter.setObjectNotExists('forecastHourlyUrl', {
                     type: 'state',
@@ -787,64 +789,64 @@ function parseLegacyResult(body, cb) {
         if (body.hourly_forecast) {
             const type = nonMetric ? 'english' : 'metric';
             for (let i = 0; i < 36; i++) {
-                if (!body.hourly_forecast[i]) continue;
+                //if (!body.hourly_forecast[i]) continue;
                 try {
                     // see http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary for infos about properties and codes
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(parseInt(body.hourly_forecast[i].FCTTIME.epoch, 10) * 1000).toLocaleString()
+                        val: new Date(parseInt(body.hourly_forecast.expirationTimeUtc[i], 10) * 1000).toLocaleString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].temp[type])
+                        val: parseFloat(body.hourly_forecast.temperature[i])
                     });
                     adapter.setState('forecastHourly.' + i + 'h.fctcode', {
                         ack: true,
-                        val: body.hourly_forecast[i].fctcode
+                        val: body.hourly_forecast.iconCode[i]
                     }); //forecast description number -> see link above
-                    adapter.setState('forecastHourly.' + i + 'h.sky', {ack: true, val: body.hourly_forecast[i].sky}); //?
+                    adapter.setState('forecastHourly.' + i + 'h.sky', {ack: true, val: body.hourly_forecast.cloudCover[i]}); //?
                     adapter.setState('forecastHourly.' + i + 'h.windSpeed', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].wspd[type])
+                        val: parseFloat(body.hourly_forecast.windSpeed[i])
                     }); // windspeed in kmh
                     adapter.setState('forecastHourly.' + i + 'h.windDirection', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].wdir.degrees)
+                        val: parseFloat(body.hourly_forecast.windDirection[i])
                     }); //wind dir in degrees
-                    adapter.setState('forecastHourly.' + i + 'h.uv', {ack: true, val: parseFloat(body.hourly_forecast[i].uvi)}); //UV Index -> wikipedia
+                    adapter.setState('forecastHourly.' + i + 'h.uv', {ack: true, val: parseFloat(body.hourly_forecast.uvIndex[i])}); //UV Index -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.humidity', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].humidity)
+                        val: parseFloat(body.hourly_forecast.relativeHumidity[i])
                     });
                     adapter.setState('forecastHourly.' + i + 'h.heatIndex', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].heatindex[type])
+                        val: parseFloat(body.hourly_forecast.temperatureHeatIndex[i])
                     }); // -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.feelsLike', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].feelslike[type])
+                        val: parseFloat(body.hourly_forecast.temperatureFeelsLike[i])
                     }); // -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.precipitation', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].qpf[type])
+                        val: parseFloat(body.hourly_forecast.qpf[i])
                     }); // Quantitative precipitation forecast
                     adapter.setState('forecastHourly.' + i + 'h.snow', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].snow[type])
+                        val: parseFloat(body.hourly_forecast.qpfSnow[i])
                     });
                     adapter.setState('forecastHourly.' + i + 'h.precipitationChance', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].pop)
+                        val: parseFloat(body.hourly_forecast.precipChance[i])
                     }); // probability of Precipitation
                     adapter.setState('forecastHourly.' + i + 'h.mslp', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast[i].mslp[type])
+                        val: parseFloat(body.hourly_forecast.pressureMeanSeaLevel[i])
                     }); // mean sea level pressure
 
-                    qpfMax += Number(body.hourly_forecast[i].qpf[type]);
-                    uviSum += Number(body.hourly_forecast[i].uvi);
-                    if (Number(body.hourly_forecast[i].pop) > popMax) {
-                        popMax = Number(body.hourly_forecast[i].pop);
+                    qpfMax += Number(body.hourly_forecast.qpf[i]);
+                    uviSum += Number(body.hourly_forecast.uvIndex[i]);
+                    if (Number(body.hourly_forecast.precipChance[i]) > popMax) {
+                        popMax = Number(body.hourly_forecast.precipChance[i]);
                     }
 
                     // 6h
@@ -1353,11 +1355,11 @@ function parseNewResult(body, cb) {
                 try {
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(body.hourly_forecast[i].fcst_valid * 1000).toLocaleString()
+                        val: new Date(body.hourly_forecast.expirationTimeUtc[i] * 1000).toLocaleString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
-                        val: body.hourly_forecast[i].temp
+                        val: body.hourly_forecast.temperature[i]
                     });
                     adapter.setState('forecastHourly.' + i + 'h.fctcode', {
                         ack: true,
@@ -1365,53 +1367,53 @@ function parseNewResult(body, cb) {
                     });
                     adapter.setState('forecastHourly.' + i + 'h.sky', {
                         ack: true,
-                        val: body.hourly_forecast[i].clds
+                        val: body.hourly_forecast.cloudCover[i]
                     }); //?
                     adapter.setState('forecastHourly.' + i + 'h.windSpeed', {
                         ack: true,
-                        val: body.hourly_forecast[i].wspd
+                        val: body.hourly_forecast.windSpeed[i]
                     }); // windspeed in kmh
                     adapter.setState('forecastHourly.' + i + 'h.windDirection', {
                         ack: true,
-                        val: body.hourly_forecast[i].wdir
+                        val: body.hourly_forecast.windDirection[i]
                     }); //wind dir in degrees
                     adapter.setState('forecastHourly.' + i + 'h.uv', {
                         ack: true,
-                        val: body.hourly_forecast[i].uv_index
+                        val: body.hourly_forecast.uvIndex[i]
                     }); //UV Index -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.humidity', {
                         ack: true,
-                        val: body.hourly_forecast[i].rh
+                        val: body.hourly_forecast.relativeHumidity[i]
                     });
                     adapter.setState('forecastHourly.' + i + 'h.heatIndex', {
                         ack: true,
-                        val: body.hourly_forecast[i].hi
+                        val: body.hourly_forecast.temperatureHeatIndex[i]
                     }); // -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.feelsLike', {
                         ack: true,
-                        val: body.hourly_forecast[i].feels_like
+                        val: body.hourly_forecast.temperatureFeelsLike[i]
                     }); // -> wikipedia
                     adapter.setState('forecastHourly.' + i + 'h.precipitation', {
                         ack: true,
-                        val: body.hourly_forecast[i].qpf
+                        val: body.hourly_forecast.qpf[i]
                     }); // Quantitative precipitation forecast
                     adapter.setState('forecastHourly.' + i + 'h.snow', {
                         ack: true,
-                        val: body.hourly_forecast[i].snow_qpf
+                        val: body.hourly_forecast.qpfSnow[i]
                     });
                     adapter.setState('forecastHourly.' + i + 'h.precipitationChance', {
                         ack: true,
-                        val: body.hourly_forecast[i].pop
+                        val: body.hourly_forecast.precipChance[i]
                     }); // probability of Precipitation
                     adapter.setState('forecastHourly.' + i + 'h.mslp', {
                         ack: true,
-                        val: body.hourly_forecast[i].mslp
+                        val: body.hourly_forecast.pressureMeanSeaLevel[i]
                     }); // mean sea level pressure
 
-                    qpfMax += body.hourly_forecast[i].qpf;
-                    uviSum += body.hourly_forecast[i].uv_index;
-                    if (body.hourly_forecast[i].pop > popMax) {
-                        popMax = body.hourly_forecast[i].pop;
+                    qpfMax += body.hourly_forecast.qpf[i];
+                    uviSum += body.hourly_forecast.uvIndex[i];
+                    if (body.hourly_forecast.precipChance[i] > popMax) {
+                        popMax = body.hourly_forecast.precipChance[i];
                     }
 
                     // 6h
@@ -1652,10 +1654,11 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
             }
         }, (error, response, body) => {
             if (!error && response.statusCode === 200) {
-                if (body && !body.forecasts) {
+                try {
+                    weatherData.hourly_forecast = body;
+
+                } catch (e) {
                     adapter.log.error('no hourly forecast in response from ' + url);
-                } else {
-                    weatherData.hourly_forecast = body.forecasts;
                 }
             } else if (!error && response.statusCode === 401) {
                 if (officialApiKey) {
