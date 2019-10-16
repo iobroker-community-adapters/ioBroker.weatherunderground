@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.1.3",
+        "version": "3.1.4",
         "news": {
+            "3.1.4": {
+                "en": "run once after changes; adopt to changes by WU",
+                "de": "Nach Änderungen einmal ausführen; Änderungen von WU berücksichtigt",
+                "ru": "запустить один раз после изменений; принять к изменениям WU",
+                "pt": "executar uma vez após as alterações; adotar as mudanças por WU",
+                "nl": "eenmaal uitvoeren na wijzigingen; vast te stellen aan veranderingen door WU",
+                "fr": "exécuter une fois après les modifications; adopter les modifications par WU",
+                "it": "eseguire una volta dopo le modifiche; adottare le modifiche da WU",
+                "es": "correr una vez después de los cambios; adoptar a los cambios por WU",
+                "pl": "uruchom raz po zmianach; dostosować się do zmian przez WU",
+                "zh-cn": "更改后运行一次; 采纳吴的变化"
             "3.1.3": {
                 "en": "text correction",
                 "de": "Textkorrektur",
@@ -270,6 +281,7 @@
         ],
         "loglevel": "info",
         "enabled": true,
+        "allowInit": true,
         "authors": [
             "Daniel Schaedler <daniel.schaedler@gmail.com>",
             "Ingo Fischer <iobroker@fischer-ka.de>"

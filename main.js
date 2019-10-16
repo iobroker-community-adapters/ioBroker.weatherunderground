@@ -147,12 +147,20 @@ adapter.on('ready', () => {
                     if (!err && state && state.val) {
                         forecastDailyUrl = state.val;
                         adapter.log.debug('initialize Daily Forecast Url: ' + forecastDailyUrl);
+                        if (forecastDailyUrl.includes('/v1/')) {
+                            adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
+                            forecastDailyUrl = '';
+                        }
                     }
 
                     adapter.getState('forecastHourlyUrl', (err, state) => {
                         if (!err && state && state.val) {
                             forecastHourlyUrl = state.val;
                             adapter.log.debug('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
+                            if (forecastHourlyUrl.includes('/v1/')) {
+                                adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
+                                forecastHourlyUrl = '';
+                            }
                         }
 
                         adapter.getState('locationChecksum', (err, state) => {
@@ -367,7 +375,7 @@ function getWebsiteKey(cb, tryQ) {
             'Accept': '*/*'
         }
     }, (error, response, body) => {
-        body = body.replace(new RegExp("&q;", 'g'), '"');
+        body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
         if (!error && response.statusCode === 200 && body) {
             const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
             if (!data || !data[1]) {
@@ -385,7 +393,7 @@ function getWebsiteKey(cb, tryQ) {
 
             const currentObservation = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/observations\/current[^"]+)"/);
             if (currentObservation && currentObservation[1]) {
-                currentObservationUrl = currentObservation[1].replace(new RegExp("&a;", 'g'), '&');
+                currentObservationUrl = currentObservation[1];
                 adapter.log.debug('fetched current observations Url from WU weather page: ' + currentObservationUrl);
                 adapter.setObjectNotExists('currentObservationUrl', {
                     type: 'state',
@@ -397,9 +405,9 @@ function getWebsiteKey(cb, tryQ) {
             }
 
             const forecastDaily = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/daily\/[^"]+)"/);
-            adapter.log.debug('body match forecast: ' + data);
+            //adapter.log.debug('body match forecast: ' + data);
             if (forecastDaily && forecastDaily[1]) {
-                forecastDailyUrl = forecastDaily[1].replace(new RegExp("&a;", 'g'), '&');
+                forecastDailyUrl = forecastDaily[1];
                 adapter.log.debug('fetched forecast 5 day Url from WU weather page: ' + forecastDailyUrl);
                 adapter.setObjectNotExists('forecastDailyUrl', {
                     type: 'state',
@@ -412,7 +420,7 @@ function getWebsiteKey(cb, tryQ) {
 
             const forecastHourly = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/hourly\/[^"]+)"/);
             if (forecastHourly && forecastHourly[1]) {
-                forecastHourlyUrl = forecastHourly[1].replace(new RegExp("&a;", 'g'), '&');
+                forecastHourlyUrl = forecastHourly[1];
                 adapter.log.debug('fetched hourly forecast Url from WU weather page: ' + forecastHourlyUrl);
                 adapter.setObjectNotExists('forecastHourlyUrl', {
                     type: 'state',
