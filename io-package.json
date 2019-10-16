@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.1.5",
+        "version": "3.1.6",
         "news": {
-            "3.1.5": {
+            "3.1.6": {
                 "en": "run once after changes; adopt to changes by WU",
                 "de": "Nach Änderungen einmal ausführen; Änderungen von WU berücksichtigt",
                 "ru": "запустить один раз после изменений; принять к изменениям WU",
@@ -14,7 +14,7 @@
                 "es": "correr una vez después de los cambios; adoptar a los cambios por WU",
                 "pl": "uruchom raz po zmianach; dostosować się do zmian przez WU",
                 "zh-cn": "更改后运行一次; 采纳吴的变化"
-            }
+            },
             "3.1.3": {
                 "en": "text correction",
                 "de": "Textkorrektur",

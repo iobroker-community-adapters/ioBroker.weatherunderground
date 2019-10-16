@@ -69,7 +69,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
-### 3.1.4 (2019-10-16)
+### 3.1.6 (2019-10-16)
 * (Bjoern3003) adjust to WU changes, now v3 API for hourly data
 * (Apollon77) run once after installation/update
  
