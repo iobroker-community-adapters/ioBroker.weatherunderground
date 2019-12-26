@@ -1363,7 +1363,7 @@ function parseNewResult(body, cb) {
                 try {
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(body.hourly_forecast.expirationTimeUtc[i] * 1000).toLocaleString()
+                        val: new Date(body.hourly_forecast.validTimeUtc[i] * 1000).toLocaleString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
