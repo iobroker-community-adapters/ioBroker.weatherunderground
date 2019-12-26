@@ -802,7 +802,7 @@ function parseLegacyResult(body, cb) {
                     // see http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary for infos about properties and codes
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(Date.UTC(parseInt(body.hourly_forecast.validTimeUtc[i], 10) * 1000)).toLocaleString()
+                        val: new Date(parseInt(body.hourly_forecast.validTimeUtc[i], 10) * 1000).toString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
@@ -1363,7 +1363,7 @@ function parseNewResult(body, cb) {
                 try {
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(Date.UTC(body.hourly_forecast.validTimeUtc[i] * 1000)).toLocaleString()
+                        val: new Date(body.hourly_forecast.validTimeUtc[i] * 1000).toString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
