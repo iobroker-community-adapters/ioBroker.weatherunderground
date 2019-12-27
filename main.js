@@ -1538,6 +1538,7 @@ function getLegacyWuData(cb) {
 }
 
 function modifyExtractedUrl(url) {
+    url = url || '';
     url = url.replace(/(units=)(.{1})/,'$1' + (nonMetric ? 'e' : 'm'));
     url = url.replace(/(language=)([a-zA-Z\-]{5})/,'$1' + encodeURIComponent(lang));
     if (url.includes('/v2/') && !url.includes('numericPrecision=')) {
