@@ -1425,7 +1425,7 @@ function parseNewResult(body, cb) {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.visibility[i]) * (nonMetric ? 1 : 1.609)
                     });
-                    adapter.log('Visibility: ' + body.hourly_forecast.visibility[i] + ', multiplier: ' + (nonMetric ? 1 : 1.609), 'info');
+                    adapter.log.info('Visibility: ' + body.hourly_forecast.visibility[i] + ', multiplier: ' + (nonMetric ? 1 : 1.609));
 
                     qpfMax += body.hourly_forecast.qpf[i];
                     uviSum += body.hourly_forecast.uvIndex[i];
