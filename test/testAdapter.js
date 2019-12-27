@@ -82,8 +82,8 @@ describe('Test ' + adapterShortName + ' adapter', function() {
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
-            config.native.location = 'file://' + __dirname.replace(/\\/g, '/') + '/lib/forecast.json';
-            config.native.language = 'GE';
+            config.native.location = 'Berlin';
+            config.native.language = 'DL';
 
             setup.setAdapterConfig(config.common, config.native);
 
