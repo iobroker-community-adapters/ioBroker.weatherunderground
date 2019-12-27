@@ -852,7 +852,7 @@ function parseLegacyResult(body, cb) {
                     }); // mean sea level pressure
                     adapter.setState('forecastHourly.' + i + 'h.visibility', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast.visibility[i]) * (nonMetric ? 1 : 1.609)
+                        val: parseFloat(body.hourly_forecast.visibility[i])
                     });
 
                     qpfMax += Number(body.hourly_forecast.qpf[i]);
@@ -1423,7 +1423,7 @@ function parseNewResult(body, cb) {
                     }); // mean sea level pressure
                     adapter.setState('forecastHourly.' + i + 'h.visibility', {
                         ack: true,
-                        val: body.hourly_forecast.visibility[i] * (nonMetric ? 1 : 1.609)
+                        val: parseFloat(body.hourly_forecast.visibility[i])
                     });
 
                     qpfMax += body.hourly_forecast.qpf[i];
