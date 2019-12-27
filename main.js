@@ -40,6 +40,14 @@ let forecastDailyUrl;
 let forecastHourlyUrl;
 let errorCounter = 0;
 
+const requestHeaders = {
+    'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/68.0',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3',
+    'Accept-Encoding': 'deflate',
+    'Host': 'api.weather.com'
+};
+
 function _(text) {
     if (!text) return '';
 
@@ -290,12 +298,9 @@ function getStationKey(cb) {
         url: url,
         encoding: 'utf-8',
         followAllRedirects: true,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-            'Accept': '*/*'
-        }
+        headers: requestHeaders
     }, (error, response, body) => {
-        if (!error && response.statusCode === 200 && body) {
+        if (!error && response && response.statusCode === 200 && body) {
             const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
             if (!scriptFile || !scriptFile[1]) {
                 const pwsApiKey = body.match(/WU_LEGACY_API_KEY&q;:&q;([^&]+)&q/);
@@ -321,12 +326,9 @@ function getStationKey(cb) {
             request({
                 url: scriptFile[1],
                 encoding: 'utf-8',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-                    'Accept': '*/*'
-                }
+                headers: requestHeaders
              }, (error, response, body) => {
-                if (!error && response.statusCode === 200 && body) {
+                if (!error && response && response.statusCode === 200 && body) {
 
 // "https://api.wunderground.com/api/606f3f6977348613/conditions/forecast10day/hourly10day/astronomy10day/pwsidentity/units:" + units + "/v:2.0/q/pws:" + stationid + ".json?ID=" + stationid + "&callback=?"
                     const pwsApiKey = body.match(/https:\/\/api.wunderground.com\/api\/([^\/]+)\/conditions\//);
@@ -346,13 +348,13 @@ function getStationKey(cb) {
                     return cb && cb();
                 } else {
                     // ERROR
-                    adapter.log.error('Unable to get PWS dashboard script: ' + response.statusCode + '/' + error);
+                    adapter.log.error('Unable to get PWS dashboard script: ' + (response ? response.statusCode : '--') + '/' + error);
                     return cb && cb();
                 }
             });
         } else {
             // ERROR
-            adapter.log.error('Unable to get PWS dashboard page: ' + error + ' / ' + response.statusCode);
+            adapter.log.error('Unable to get PWS dashboard page: ' + error + ' / ' + (response ? response.statusCode : '--'));
             return cb && cb();
         }
     });
@@ -370,13 +372,10 @@ function getWebsiteKey(cb, tryQ) {
     request({
         url: url,
         encoding: 'utf-8',
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-            'Accept': '*/*'
-        }
+        headers: requestHeaders
     }, (error, response, body) => {
         body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
-        if (!error && response.statusCode === 200 && body) {
+        if (!error && response && response.statusCode === 200 && body) {
             const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
             if (!data || !data[1]) {
                 return cb && cb();
@@ -431,14 +430,14 @@ function getWebsiteKey(cb, tryQ) {
                 });
             }
             return cb && cb();
-        } else if (!error && response.statusCode === 404 && !tryQ) {
+        } else if (!error && response && response.statusCode === 404 && !tryQ) {
             getWebsiteKey(cb, true);
-        } else if (!error && response.statusCode === 404) {
+        } else if (!error && response && response.statusCode === 404) {
             adapter.log.error('The given Location can not be found. Please check on https://wunderground.com or try geo coordinates (lat,lon) or nearby cities!');
             return cb && cb();
         } else {
             // ERROR
-            adapter.log.error('Unable to get WU weather page: ' + response.statusCode + '/' + error);
+            adapter.log.error('Unable to get WU weather page: ' + (response ? response.statusCode : '--') + '/' + error);
             return cb && cb();
         }
     });
@@ -1512,12 +1511,9 @@ function getLegacyWuData(cb) {
         json: true,
         encoding: null,
         followAllRedirects: true,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-            'Accept': '*/*'
-        }
+        headers: requestHeaders
     }, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
+        if (!error && response && response.statusCode === 200) {
             if (body && body.response && body.response.error) {
                 adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Resetting Station Key');
                 pwsStationKey = '';
@@ -1526,7 +1522,7 @@ function getLegacyWuData(cb) {
                 return;
             }
             parseLegacyResult(body, cb);
-        } else if (!error && response.statusCode === 401) {
+        } else if (!error && response && response.statusCode === 401) {
             adapter.log.info('Key rejected, resetting legacy key and trying again ...');
             pwsStationKey = '';
 
@@ -1535,7 +1531,7 @@ function getLegacyWuData(cb) {
             return;
         } else {
             // ERROR
-            adapter.log.error('Wunderground reported an error: ' + error + ', ' + response.statusCode);
+            adapter.log.error('Wunderground reported an error: ' + error + ', ' + (response ? response.statusCode : '--'));
         }
         if (cb) cb();
     });
@@ -1569,18 +1565,15 @@ function getNewWuDataCurrentObservations(cb) {
         url: url,
         json: true,
         encoding: null,
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-            'Accept': '*/*'
-        }
+        headers: requestHeaders
     }, (error, response, body) => {
-        if (!error && response.statusCode === 200) {
+        if (!error && response && response.statusCode === 200) {
             if (body && !body.observations) {
                 adapter.log.error('no observations in response from ' + url);
             } else {
                 weatherData.current_observation = body.observations[0];
             }
-        } else if (!error && response.statusCode === 401) {
+        } else if (!error && response && response.statusCode === 401) {
             if (officialApiKey) {
                 adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
                 officialApiKey = '';
@@ -1593,7 +1586,7 @@ function getNewWuDataCurrentObservations(cb) {
             return;
         } else {
             // ERROR
-            adapter.log.error('Wunderground reported an error: ' + response.statusCode + '/' + error);
+            adapter.log.error('Wunderground reported an error: ' + (response ? response.statusCode : '--') + '/' + error);
         }
         cb && cb(weatherData);
     });
@@ -1615,12 +1608,9 @@ function getNewWuDataDailyForcast(weatherData, cb) {
             url: url,
             json: true,
             encoding: null,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-                'Accept': '*/*'
-            }
+            headers: requestHeaders
         }, (error, response, body) => {
-            if (!error && response.statusCode === 200) {
+            if (!error && response && response.statusCode === 200) {
                 if (body && !body.dayOfWeek) {
                     if (body.forecasts) {
                         weatherData.daily_forecast2 = body.forecasts;
@@ -1631,7 +1621,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
                 } else {
                     weatherData.daily_forecast = body;
                 }
-            } else if (!error && response.statusCode === 401) {
+            } else if (!error && response && response.statusCode === 401) {
                 if (officialApiKey) {
                     adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
                     officialApiKey = '';
@@ -1644,7 +1634,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
                 return;
             } else {
                 // ERROR
-                adapter.log.error('Wunderground reported an error: ' + response.statusCode + '/' + error);
+                adapter.log.error('Wunderground reported an error: ' + (response ? response.statusCode : '--') + '/' + error);
             }
             cb && cb(weatherData);
         });
@@ -1664,19 +1654,16 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
             url: url,
             json: true,
             encoding: null,
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/67.0',
-                'Accept': '*/*'
-            }
+            headers: requestHeaders
         }, (error, response, body) => {
-            if (!error && response.statusCode === 200) {
+            if (!error && response && response.statusCode === 200) {
                 try {
                     weatherData.hourly_forecast = body;
 
                 } catch (e) {
                     adapter.log.error('no hourly forecast in response from ' + url);
                 }
-            } else if (!error && response.statusCode === 401) {
+            } else if (!error && response && response.statusCode === 401) {
                 if (officialApiKey) {
                     adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
                     officialApiKey = '';
@@ -1689,7 +1676,7 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
                 return;
             } else {
                 // ERROR
-                adapter.log.error('Wunderground reported an error: ' + response.statusCode + '/' + error);
+                adapter.log.error('Wunderground reported an error: ' + (response ? response.statusCode : '--') + '/' + error);
             }
             cb && cb(weatherData);
         });

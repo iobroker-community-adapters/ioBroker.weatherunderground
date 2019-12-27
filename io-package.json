@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.1.6",
+        "version": "3.2.0",
         "news": {
+            "3.2.0": {
+                "en": "forecast expiry time fixed, visibility index to objects on hourly forecast added",
+                "de": "Prognoseverfallzeit behoben, Sichtbarkeitsindex für Objekte in der stündlichen Prognose hinzugefügt",
+                "ru": "фиксированное время истечения прогноза, добавлен индекс видимости объектов на почасовом прогнозе",
+                "pt": "tempo de expiração da previsão fixo, índice de visibilidade dos objetos na previsão horária adicionada",
+                "nl": "voorspelde vervaltijd vast, zichtindex voor objecten op voorspelling per uur toegevoegd",
+                "fr": "heure d'expiration des prévisions fixée, indice de visibilité des objets sur les prévisions horaires ajouté",
+                "it": "tempo di scadenza della previsione fisso, indice di visibilità agli oggetti sulla previsione oraria aggiunta",
+                "es": "tiempo de vencimiento del pronóstico fijo, índice de visibilidad de los objetos en el pronóstico por hora agregado",
+                "pl": "ustalony czas wygaśnięcia prognozy, dodano wskaźnik widoczności obiektów na prognozie godzinowej",
+                "zh-cn": "固定的预测到期时间，添加了按小时预测的对象的可见性索引"
+            },
             "3.1.6": {
                 "en": "run once after changes; adopt to changes by WU",
                 "de": "Nach Änderungen einmal ausführen; Änderungen von WU berücksichtigt",
