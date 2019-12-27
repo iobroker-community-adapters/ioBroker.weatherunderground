@@ -1425,6 +1425,7 @@ function parseNewResult(body, cb) {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.visibility[i]) * (nonMetric ? 1 : 1.609)
                     });
+                    adapter.log('Visibility: ' + body.hourly_forecast.visibility[i] + ', multiplier: ' + (nonMetric ? 1 : 1.609), 'info');
 
                     qpfMax += body.hourly_forecast.qpf[i];
                     uviSum += body.hourly_forecast.uvIndex[i];
@@ -2795,7 +2796,7 @@ function checkWeatherVariables() {
                 common: {
                     name: 'Visibility',
                     type: 'number',
-                    role: 'value.visibility',
+                    role: 'value.distance.visibility',
                     unit: nonMetric ? 'mi' : 'km',
                     read: true,
                     write: false
