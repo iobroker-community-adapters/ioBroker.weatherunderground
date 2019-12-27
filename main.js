@@ -850,6 +850,10 @@ function parseLegacyResult(body, cb) {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.pressureMeanSeaLevel[i])
                     }); // mean sea level pressure
+                    adapter.setState('forecastHourly.' + i + 'h.visibility', {
+                        ack: true,
+                        val: parseFloat(body.hourly_forecast.visibility[i]) * (nonMetric ? 1 : 1.609)
+                    });
 
                     qpfMax += Number(body.hourly_forecast.qpf[i]);
                     uviSum += Number(body.hourly_forecast.uvIndex[i]);
@@ -1417,6 +1421,10 @@ function parseNewResult(body, cb) {
                         ack: true,
                         val: body.hourly_forecast.pressureMeanSeaLevel[i]
                     }); // mean sea level pressure
+                    adapter.setState('forecastHourly.' + i + 'h.visibility', {
+                        ack: true,
+                        val: parseFloat(body.hourly_forecast.visibility[i]) * (nonMetric ? 1 : 1.609)
+                    });
 
                     qpfMax += body.hourly_forecast.qpf[i];
                     uviSum += body.hourly_forecast.uvIndex[i];
@@ -2782,6 +2790,19 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'mslp.' + nonMetric ? 'metric' : 'english'}
             });
+            adapter.setObjectNotExists(id + 'visibility', {
+                type: 'state',
+                common: {
+                    name: 'Visibility',
+                    type: 'number',
+                    role: 'value.visibility',
+                    unit: nonMetric ? 'mi' : 'km',
+                    read: true,
+                    write: false
+                },
+                native: {id: id + 'visibility'}
+            });
+            
         }
 
         adapter.setObjectNotExists('forecastHourly.6h.sum.precipitation', {
