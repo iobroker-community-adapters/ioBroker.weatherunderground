@@ -802,7 +802,7 @@ function parseLegacyResult(body, cb) {
                     // see http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary for infos about properties and codes
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(parseInt(body.hourly_forecast.expirationTimeUtc[i], 10) * 1000).toLocaleString()
+                        val: new Date(parseInt(body.hourly_forecast.validTimeUtc[i], 10) * 1000).toString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
@@ -850,6 +850,10 @@ function parseLegacyResult(body, cb) {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.pressureMeanSeaLevel[i])
                     }); // mean sea level pressure
+                    adapter.setState('forecastHourly.' + i + 'h.visibility', {
+                        ack: true,
+                        val: parseFloat(body.hourly_forecast.visibility[i])
+                    });
 
                     qpfMax += Number(body.hourly_forecast.qpf[i]);
                     uviSum += Number(body.hourly_forecast.uvIndex[i]);
@@ -1363,7 +1367,7 @@ function parseNewResult(body, cb) {
                 try {
                     adapter.setState('forecastHourly.' + i + 'h.time', {
                         ack: true,
-                        val: new Date(body.hourly_forecast.expirationTimeUtc[i] * 1000).toLocaleString()
+                        val: new Date(body.hourly_forecast.validTimeUtc[i] * 1000).toString()
                     });
                     adapter.setState('forecastHourly.' + i + 'h.temp', {
                         ack: true,
@@ -1417,6 +1421,10 @@ function parseNewResult(body, cb) {
                         ack: true,
                         val: body.hourly_forecast.pressureMeanSeaLevel[i]
                     }); // mean sea level pressure
+                    adapter.setState('forecastHourly.' + i + 'h.visibility', {
+                        ack: true,
+                        val: parseFloat(body.hourly_forecast.visibility[i])
+                    });
 
                     qpfMax += body.hourly_forecast.qpf[i];
                     uviSum += body.hourly_forecast.uvIndex[i];
@@ -2782,6 +2790,19 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'mslp.' + nonMetric ? 'metric' : 'english'}
             });
+            adapter.setObjectNotExists(id + 'visibility', {
+                type: 'state',
+                common: {
+                    name: 'Visibility',
+                    type: 'number',
+                    role: 'value.distance.visibility',
+                    unit: nonMetric ? 'mi' : 'km',
+                    read: true,
+                    write: false
+                },
+                native: {id: id + 'visibility'}
+            });
+            
         }
 
         adapter.setObjectNotExists('forecastHourly.6h.sum.precipitation', {
