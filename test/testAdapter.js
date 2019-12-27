@@ -83,7 +83,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
             config.native.location = 'Berlin';
-            config.native.language = 'DL';
+            config.native.language = 'GE';
 
             setup.setAdapterConfig(config.common, config.native);
 
