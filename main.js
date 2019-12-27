@@ -1423,9 +1423,8 @@ function parseNewResult(body, cb) {
                     }); // mean sea level pressure
                     adapter.setState('forecastHourly.' + i + 'h.visibility', {
                         ack: true,
-                        val: parseFloat(body.hourly_forecast.visibility[i]) * (nonMetric ? 1 : 1.609)
+                        val: body.hourly_forecast.visibility[i] * (nonMetric ? 1 : 1.609)
                     });
-                    adapter.log.info('Visibility: ' + body.hourly_forecast.visibility[i] + ', multiplier: ' + (nonMetric ? 1 : 1.609));
 
                     qpfMax += body.hourly_forecast.qpf[i];
                     uviSum += body.hourly_forecast.uvIndex[i];
