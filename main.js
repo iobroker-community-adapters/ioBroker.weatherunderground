@@ -43,9 +43,7 @@ let errorCounter = 0;
 const requestHeaders = {
     'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/68.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3',
-    'Accept-Encoding': 'deflate',
-    'Host': 'api.weather.com'
+    'Accept-Language': 'de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3'
 };
 
 function _(text) {
