@@ -1,6 +1,6 @@
 {
   "name": "iobroker.weatherunderground",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "weatherunderground forecast",
   "author": "Daniel Schaedler <daniel.schaedler@gmail.com>",
   "contributors": [
@@ -22,12 +22,12 @@
     "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground"
   },
   "dependencies": {
-    "request": "^2.88.0",
-    "@iobroker/adapter-core": "^1.0.3"
+    "request": "^2.88.2",
+    "@iobroker/adapter-core": "^2.2.1"
   },
   "devDependencies": {
     "gulp": "^4.0.2",
-    "mocha": "^6.2.1",
+    "mocha": "^7.1.1",
     "chai": "^4.2.0"
   },
   "bugs": {

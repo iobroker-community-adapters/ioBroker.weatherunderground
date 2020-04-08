@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.2.0",
+        "version": "3.2.1",
         "news": {
+            "3.2.1": {
+                "en": "Corrected 'Imperial' terminology",
+                "de": "Korrigierte 'imperiale' Terminologie",
+                "ru": "Исправленная «имперская» терминология",
+                "pt": "Terminologia 'Imperial' corrigida",
+                "nl": "Gecorrigeerde 'imperiale' terminologie",
+                "fr": "Terminologie «impériale» corrigée",
+                "it": "Terminologia \"imperiale\" corretta",
+                "es": "Terminología 'imperial' corregida",
+                "pl": "Poprawiona terminologia „imperialna”",
+                "zh-cn": "更正了“帝国”术语"
+            },
             "3.2.0": {
                 "en": "forecast expiry time fixed, visibility index to objects on hourly forecast added",
                 "de": "Prognoseverfallzeit behoben, Sichtbarkeitsindex für Objekte in der stündlichen Prognose hinzugefügt",
@@ -284,6 +296,7 @@
         "license": "MIT",
         "npmLibs": [],
         "type": "weather",
+        "compact": true,
         "materialize": true,
         "keywords": [
             "iobroker",

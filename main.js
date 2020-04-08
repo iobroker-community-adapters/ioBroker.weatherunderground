@@ -1,6 +1,6 @@
 /* jshint -W097 */
 /* jshint strict: false */
-/*jslint node: true */
+/* jslint node: true */
 
 /**
  *
@@ -21,16 +21,17 @@
 
 'use strict';
 
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const request = require('request');
-const crypto = require('crypto');
+const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
+const request     = require('request');
+const crypto      = require('crypto');
+const adapterName = require('./package.json').name.split('.').pop();
+let adapter;
 
-const adapter = utils.Adapter('weatherunderground');
 const dictionary = require('./lib/words');
 let lang = 'en';
 let locale = 'en-GB';
 let nonMetric = false;
-const windDirections = ['N','NNO','NO','ONO','O','OSO','SO','SSO','S','SSW','SW','WSW','W','WNW','NW','NNW','N'];
+const windDirections = ['N', 'NNO', 'NO', 'ONO', 'O', 'OSO', 'SO', 'SSO', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW', 'N'];
 
 let officialApiKey;
 let pwsStationKey;
@@ -47,7 +48,9 @@ const requestHeaders = {
 };
 
 function _(text) {
-    if (!text) return '';
+    if (!text) {
+        return '';
+    }
 
     if (dictionary[text]) {
         let newText = dictionary[text][lang];
@@ -63,175 +66,176 @@ function _(text) {
     return text;
 }
 
-adapter.on('ready', () => {
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {name: adapterName});
+    adapter = new utils.Adapter(options);
 
-    adapter.config.language = adapter.config.language || 'DL';
+    adapter.on('ready', () => {
 
-    switch (adapter.config.language) {
-        case 'DL':
-            lang = 'de';
-            locale = 'de-DE';
-            break;
-        case 'EN':
-            lang = 'en';
-            locale = 'en-GB';
-            break;
-        case 'RU':
-            lang = 'ru';
-            locale = 'ru-RU';
-            break;
-        case 'NL':
-            lang = 'nl';
-            locale = 'nl-NL';
-            break;
-    }
+        adapter.config.language = adapter.config.language || 'DL';
 
-    if (!adapter.config.country) {
-        adapter.config.country = 'DE';
-    }
-
-    if (adapter.config.useLegacyApi === undefined) {
-        adapter.config.useLegacyApi = true;
-    }
-
-    adapter.config.useLegacyApi = false;
-    if (typeof adapter.config.forecast_periods_txt === 'undefined') {
-        adapter.log.info('forecast_periods_txt not defined. now enabled. check settings and save');
-        adapter.config.forecast_periods_txt = true;
-    }
-    if (typeof adapter.config.forecast_periods === 'undefined') {
-        adapter.log.info('forecast_periods not defined. now enabled. check settings and save');
-        adapter.config.forecast_periods = true;
-    }
-    if (typeof adapter.config.forecast_hourly === 'undefined') {
-        adapter.log.info('forecast_hourly not defined. now enabled. check settings and save');
-        adapter.config.forecast_hourly = true;
-    }
-    if (typeof adapter.config.current === 'undefined') {
-        adapter.log.info('current not defined. now enabled. check settings and save');
-        adapter.config.current = true;
-    }
-    if (typeof adapter.config.custom_icon_base_url === 'undefined') {
-        adapter.config.custom_icon_base_url = '';
-    } else {
-        adapter.config.custom_icon_base_url = adapter.config.custom_icon_base_url.trim();
-        if (adapter.config.custom_icon_base_url && adapter.config.custom_icon_base_url[adapter.config.custom_icon_base_url.length - 1] !== '/') {
-            adapter.config.custom_icon_base_url += '/';
+        switch (adapter.config.language) {
+            case 'DL':
+                lang = 'de';
+                locale = 'de-DE';
+                break;
+            case 'EN':
+                lang = 'en';
+                locale = 'en-GB';
+                break;
+            case 'RU':
+                lang = 'ru';
+                locale = 'ru-RU';
+                break;
+            case 'NL':
+                lang = 'nl';
+                locale = 'nl-NL';
+                break;
         }
-    }
-    if (typeof adapter.config.custom_icon_format === 'undefined') {
-        adapter.config.custom_icon_format = 'gif';
-    }
-    adapter.log.debug('on ready: ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
-    nonMetric = !!adapter.config.nonMetric;
-
-    officialApiKey = adapter.config.apikey;
-
-    checkWeatherVariables();
-
-
-
-    adapter.getState('currentStationKey', (err, state) => {
-        if (!err && state && state.val) {
-            pwsStationKey = state.val;
-            adapter.log.debug('initialize PWS Station Key: ' + pwsStationKey);
+        if (!adapter.config.country) {
+            adapter.config.country = 'DE';
         }
-        adapter.getState('currentWebKey', (err, state) => {
-            if (!err && state && state.val) {
-                newWebKey = state.val;
-                adapter.log.debug('initialize Web Key: ' + newWebKey);
+
+        if (adapter.config.useLegacyApi === undefined) {
+            adapter.config.useLegacyApi = true;
+        }
+
+        adapter.config.useLegacyApi = false;
+        if (typeof adapter.config.forecast_periods_txt === 'undefined') {
+            adapter.log.info('forecast_periods_txt not defined. now enabled. check settings and save');
+            adapter.config.forecast_periods_txt = true;
+        }
+        if (typeof adapter.config.forecast_periods === 'undefined') {
+            adapter.log.info('forecast_periods not defined. now enabled. check settings and save');
+            adapter.config.forecast_periods = true;
+        }
+        if (typeof adapter.config.forecast_hourly === 'undefined') {
+            adapter.log.info('forecast_hourly not defined. now enabled. check settings and save');
+            adapter.config.forecast_hourly = true;
+        }
+        if (typeof adapter.config.current === 'undefined') {
+            adapter.log.info('current not defined. now enabled. check settings and save');
+            adapter.config.current = true;
+        }
+        if (typeof adapter.config.custom_icon_base_url === 'undefined') {
+            adapter.config.custom_icon_base_url = '';
+        } else {
+            adapter.config.custom_icon_base_url = adapter.config.custom_icon_base_url.trim();
+            if (adapter.config.custom_icon_base_url && adapter.config.custom_icon_base_url[adapter.config.custom_icon_base_url.length - 1] !== '/') {
+                adapter.config.custom_icon_base_url += '/';
             }
+        }
+        if (typeof adapter.config.custom_icon_format === 'undefined') {
+            adapter.config.custom_icon_format = 'gif';
+        }
+        adapter.log.debug('on ready: ' + adapter.config.language + ' ' + adapter.config.forecast_periods_txt + ' ' + adapter.config.forecast_periods + ' ' + adapter.config.current + ' ' + adapter.config.forecast_hourly);
 
-            adapter.getState('currentObservationUrl', (err, state) => {
+        nonMetric = !!adapter.config.nonMetric;
+
+        officialApiKey = adapter.config.apikey;
+
+        checkWeatherVariables();
+
+
+
+        adapter.getState('currentStationKey', (err, state) => {
+            if (!err && state && state.val) {
+                pwsStationKey = state.val;
+                adapter.log.debug('initialize PWS Station Key: ' + pwsStationKey);
+            }
+            adapter.getState('currentWebKey', (err, state) => {
                 if (!err && state && state.val) {
-                    currentObservationUrl = state.val;
-                    adapter.log.debug('initialize Current Observation url: ' + currentObservationUrl);
+                    newWebKey = state.val;
+                    adapter.log.debug('initialize Web Key: ' + newWebKey);
                 }
 
-                adapter.getState('forecastDailyUrl', (err, state) => {
+                adapter.getState('currentObservationUrl', (err, state) => {
                     if (!err && state && state.val) {
-                        forecastDailyUrl = state.val;
-                        adapter.log.debug('initialize Daily Forecast Url: ' + forecastDailyUrl);
-                        if (forecastDailyUrl.includes('/v1/')) {
-                            adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
-                            forecastDailyUrl = '';
-                        }
+                        currentObservationUrl = state.val;
+                        adapter.log.debug('initialize Current Observation url: ' + currentObservationUrl);
                     }
 
-                    adapter.getState('forecastHourlyUrl', (err, state) => {
+                    adapter.getState('forecastDailyUrl', (err, state) => {
                         if (!err && state && state.val) {
-                            forecastHourlyUrl = state.val;
-                            adapter.log.debug('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
-                            if (forecastHourlyUrl.includes('/v1/')) {
+                            forecastDailyUrl = state.val;
+                            adapter.log.debug('initialize Daily Forecast Url: ' + forecastDailyUrl);
+                            if (forecastDailyUrl.includes('/v1/')) {
                                 adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
-                                forecastHourlyUrl = '';
+                                forecastDailyUrl = '';
                             }
                         }
 
-                        adapter.getState('locationChecksum', (err, state) => {
-
-                            const locationHash = crypto.createHash('md5').update(adapter.config.location+adapter.config.station).digest('hex');
-                            let locationChange = true;
-                            if (!err && state && state.val && locationHash === state.val) {
-                                adapter.log.debug('location has not changed, reuse extracted URLs');
-                                locationChange = false;
-                            }
-                            if (locationChange) {
-                                adapter.log.debug('location change detected, extract URLs');
-                                currentObservationUrl = null;
-                                forecastDailyUrl = null;
-                                forecastHourlyUrl = null;
-
-                                adapter.setObjectNotExists('locationChecksum', {
-                                    type: 'state',
-                                    common: {type: 'string', role: 'text', name: 'Helper state to detect location changes', def: ''},
-                                    native: {id: 'locationChecksum'}
-                                }, () => {
-                                    adapter.setState('locationChecksum', {val: locationHash, ack: true});
-                                });
+                        adapter.getState('forecastHourlyUrl', (err, state) => {
+                            if (!err && state && state.val) {
+                                forecastHourlyUrl = state.val;
+                                adapter.log.debug('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
+                                if (forecastHourlyUrl.includes('/v1/')) {
+                                    adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
+                                    forecastHourlyUrl = '';
+                                }
                             }
 
-                            getKeysAndData(() => {
-                                setTimeout(() => adapter.stop(), 2000);
+                            adapter.getState('locationChecksum', (err, state) => {
+
+                                const locationHash = crypto.createHash('md5').update(adapter.config.location + adapter.config.station).digest('hex');
+                                let locationChange = true;
+                                if (!err && state && state.val && locationHash === state.val) {
+                                    adapter.log.debug('location has not changed, reuse extracted URLs');
+                                    locationChange = false;
+                                }
+                                if (locationChange) {
+                                    adapter.log.debug('location change detected, extract URLs');
+                                    currentObservationUrl = null;
+                                    forecastDailyUrl = null;
+                                    forecastHourlyUrl = null;
+
+                                    adapter.setObjectNotExists('locationChecksum', {
+                                        type: 'state',
+                                        common: {type: 'string', role: 'text', name: 'Helper state to detect location changes', def: ''},
+                                        native: {id: 'locationChecksum'}
+                                    }, () => adapter.setState('locationChecksum', {val: locationHash, ack: true}));
+                                }
+
+                                getKeysAndData(() =>
+                                    setTimeout(() => adapter.stop(), 2000));
                             });
                         });
                     });
                 });
             });
         });
+
+
+
+        // force terminate after 1min
+        // don't know why it does not terminate by itself...
+        setTimeout(() => {
+            adapter.log.warn('force terminate');
+            adapter.terminate ? adapter.terminate() : process.exit(0);
+        }, 60000);
     });
 
-
-
-    // force terminate after 1min
-    // don't know why it does not terminate by itself...
-    setTimeout(() => {
-        adapter.log.warn('force terminate');
-        process.exit(0);
-    }, 60000);
-});
-
+    return adapter;
+}
 
 function getKeysAndData(cb) {
     if (errorCounter > 2) {
         if (adapter.config.useLegacyApi) {
             adapter.config.useLegacyApi = false;
             errorCounter = 0;
-        }
-        else {
-            cb();
-            return;
+        } else {
+            return cb();
         }
     }
     getApiKey(() => {
         if (adapter.config.useLegacyApi) {
             adapter.log.debug('Use Legacy API');
             getLegacyWuData(cb);
-        }
-        else {
+        } else {
             adapter.log.debug('Use New API');
-            getNewWuDataCurrentObservations((data) => getNewWuDataDailyForcast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
+            getNewWuDataCurrentObservations(data => getNewWuDataDailyForcast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
         }
     });
 }
@@ -1463,7 +1467,6 @@ function parseNewResult(body, cb) {
     cb && cb();
 }
 
-
 function getLegacyWuData(cb) {
     /*
         const url = 'http://api.wunderground.com/api/' + adapter.config.apiKey + '/forecast/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
@@ -1492,8 +1495,7 @@ function getLegacyWuData(cb) {
 
     if (adapter.config.station.length > 2) {
         url += '/q/pws:' + encodeURIComponent(adapter.config.station);
-    }
-    else {
+    } else {
         url += '/q/' + encodeURIComponent(adapter.config.location);
     }
     url += '.json';
@@ -2860,4 +2862,12 @@ function checkWeatherVariables() {
             native: {id: 'forecast.24h.sum.uvi'}
         });
     }
+}
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
