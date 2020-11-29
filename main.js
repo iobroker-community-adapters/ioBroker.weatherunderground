@@ -368,6 +368,9 @@ function getWebsiteKey(cb, tryQ) {
     }
 
     let url = 'https://www.wunderground.com/hourly/' + encodeURIComponent(adapter.config.country) + '/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
+    if (adapter.config.location.match(/^[0-9]+\.[0-9]+,[0-9]+\.[0-9]+$/)) { // Geocode
+        url = 'https://www.wunderground.com/hourly/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
+    }
 
     adapter.log.debug('get WU weather page: ' + url);
 
@@ -1468,12 +1471,6 @@ function parseNewResult(body, cb) {
 }
 
 function getLegacyWuData(cb) {
-    /*
-        const url = 'http://api.wunderground.com/api/' + adapter.config.apiKey + '/forecast/hourly/lang:' + adapter.config.language + '/q/' + adapter.config.location + '.json';
-    if (adapter.config.station.length > 2) {
-        url = 'http://api.wunderground.com/api/' + adapter.config.apiKey + '/forecast/hourly/lang:' + adapter.config.language + '/q/pws:' + adapter.config.station + '.json';
-    }
-*/
     adapter.log.debug('Use legacy API Key ' + pwsStationKey);
     let url = 'http://api.wunderground.com/api/' + encodeURIComponent(pwsStationKey);
 
