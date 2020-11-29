@@ -247,7 +247,7 @@ function handleIconUrl(original) {
     if (typeof original !== 'string') {
         original = original.toString();
     }
-    if (original.match(/^[0-9]{2,4}$/)) {
+    if (original.match(/^[0-9]{1,4}$/)) {
         original = 'https://icons.wxug.com/i/c/v4/' + original + '.svg';
         if (iconSet === 'i') iconSet = null;
     }
