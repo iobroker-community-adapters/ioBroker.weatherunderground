@@ -368,7 +368,7 @@ function getWebsiteKey(cb, tryQ) {
     }
 
     let url = 'https://www.wunderground.com/hourly/' + encodeURIComponent(adapter.config.country) + '/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
-    if (adapter.config.location.match(/^[0-9]+\.[0-9]+,[0-9]+\.[0-9]+$/)) { // Geocode
+    if (adapter.config.location.startsWith('pws:') || adapter.config.location.match(/^[A-Z]+[0-9]{1,4}$/) || adapter.config.location.match(/^[0-9]+\.[0-9]+,[0-9]+\.[0-9]+$/)) { // Geocode
         url = 'https://www.wunderground.com/hourly/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
     }
 
