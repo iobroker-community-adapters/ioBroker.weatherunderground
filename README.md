@@ -71,6 +71,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ### __WORK IN PROGRESS__
 * (Apollon77) icons sometimes did not had a correct extension
+* (Apollon77) Correct some cases with different types of locations when reading data
 
 ### 3.2.1
 * (raintonr) Corrected 'Imperial' terminology.
