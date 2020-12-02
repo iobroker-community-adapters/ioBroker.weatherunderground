@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.2.1",
+        "version": "3.2.2",
         "news": {
+            "3.2.2": {
+                "en": "icons sometimes did not had a correct extension\nCorrect some cases with different types of locations when reading data",
+                "de": "Symbole hatten manchmal keine korrekte Erweiterung\nKorrigieren Sie einige Fälle mit unterschiedlichen Speicherorten beim Lesen von Daten",
+                "ru": "значки иногда не имели правильного расширения\nИсправьте некоторые случаи с разными типами местоположений при чтении данных",
+                "pt": "os ícones às vezes não tinham uma extensão correta\nCorrija alguns casos com diferentes tipos de locais ao ler os dados",
+                "nl": "pictogrammen hadden soms geen juiste extensie\nCorrigeer enkele gevallen met verschillende soorten locaties bij het lezen van gegevens",
+                "fr": "les icônes n'avaient parfois pas une extension correcte\nCorrigez certains cas avec différents types d'emplacements lors de la lecture de données",
+                "it": "le icone a volte non avevano un'estensione corretta\nCorreggere alcuni casi con diversi tipi di posizioni durante la lettura dei dati",
+                "es": "los iconos a veces no tenían una extensión correcta\nCorrija algunos casos con diferentes tipos de ubicaciones al leer datos",
+                "pl": "ikony czasami nie miały poprawnego rozszerzenia\nPopraw niektóre przypadki z różnymi typami lokalizacji podczas odczytu danych",
+                "zh-cn": "图标有时没有正确的扩展名\n读取数据时更正具有不同类型位置的某些情况"
+            },
             "3.2.1": {
                 "en": "Corrected 'Imperial' terminology",
                 "de": "Korrigierte 'imperiale' Terminologie",
@@ -207,61 +219,6 @@
                 "en": "Add option to overwrite Icon Base URL",
                 "de": "Option hinzugefügt um Icon-Basis-URL zu überschreiben",
                 "ru": ""
-            },
-            "1.0.8": {
-                "en": "Add 2 current observation values, fixes of some datapoint caps.",
-                "de": "Zwei aktuelle Messwerte ergaenzt, Grossschreibung einiger Datenpunkte angepasst.",
-                "ru": ""
-            },
-            "1.0.7": {
-                "en": "add dutch language support",
-                "de": "Hollaendische sprache hinzugefuegt",
-                "ru": ""
-            },
-            "1.0.6": {
-                "en": "bug fixing",
-                "de": "Fehlerbehebung",
-                "ru": ""
-            },
-            "1.0.5": {
-                "en": "hourly forecast extend to 36h",
-                "de": "stündliche Vorhersage auf 36 h erweitert",
-                "ru": ""
-            },
-            "1.0.4": {
-                "en": "some more forecast data",
-                "de": "noch mehr Vorhersage-Daten",
-                "ru": ""
-            },
-            "1.0.3": {
-                "en": "Catch parse errors",
-                "de": "Bearbeite Parsefehler",
-                "ru": "Обработка ошибок парсинга"
-            },
-            "1.0.2": {
-                "en": "make sure precip values are always integers",
-                "de": "Konvertiere precip-Wert immer nach Integer",
-                "ru": "Конвертация значения precip в integer"
-            },
-            "1.0.1": {
-                "en": "conversion from feet to meter for observation_location",
-                "de": "conversion from feet to meter for observation_location",
-                "ru": "conversion from feet to meter for observation_location"
-            },
-            "1.0.0": {
-                "en": "add daily rain level forecast",
-                "de": "add daily rain level forecast",
-                "ru": "add daily rain level forecast"
-            },
-            "0.2.0": {
-                "en": "Add Error handling and station-usage for forcasts",
-                "de": "Add Error handling and station-usage for forcasts",
-                "ru": "Add Error handling and station-usage for forcasts"
-            },
-            "0.1.1": {
-                "en": "Fix forecast api URL",
-                "de": "Fix forecast api URL",
-                "ru": "Fix forecast api URL"
             }
         },
         "title": "weatherunderground forecast",
