@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.2.2",
+        "version": "3.2.3",
         "news": {
+            "3.2.3": {
+                "en": "make sure adapter do not crash when no data could be read\nAdd Sentry error reporting",
+                "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt, wenn keine Daten gelesen werden konnten\nSentry-Fehlerberichterstattung hinzufügen",
+                "ru": "убедитесь, что адаптер не выйдет из строя, когда данные не могут быть прочитаны\nДобавить отчет об ошибках Sentry",
+                "pt": "certifique-se de que o adaptador não trave quando nenhum dado puder ser lido\nAdicionar relatório de erro de Sentry",
+                "nl": "zorg ervoor dat de adapter niet crasht als er geen gegevens kunnen worden gelezen\nVoeg Sentry-foutrapportage toe",
+                "fr": "assurez-vous que l'adaptateur ne plante pas lorsqu'aucune donnée ne peut être lue\nAjouter un rapport d'erreur Sentry",
+                "it": "assicurarsi che l'adattatore non si blocchi quando non è possibile leggere i dati\nAggiungi la segnalazione degli errori di Sentry",
+                "es": "asegúrese de que el adaptador no se bloquee cuando no se puedan leer datos\nAgregar informe de errores de Sentry",
+                "pl": "upewnij się, że adapter nie ulega awarii, gdy nie można odczytać żadnych danych\nDodaj raportowanie błędów Sentry",
+                "zh-cn": "确保在无法读取数据时适配器不会崩溃\n添加Sentry错误报告"
+            },
             "3.2.2": {
                 "en": "icons sometimes did not had a correct extension\nCorrect some cases with different types of locations when reading data",
                 "de": "Symbole hatten manchmal keine korrekte Erweiterung\nKorrigieren Sie einige Fälle mit unterschiedlichen Speicherorten beim Lesen von Daten",
@@ -214,11 +226,6 @@
                 "en": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys",
                 "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden, Unterstützung für mehrere Keys hinzugefügt",
                 "ru": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys"
-            },
-            "1.1.0": {
-                "en": "Add option to overwrite Icon Base URL",
-                "de": "Option hinzugefügt um Icon-Basis-URL zu überschreiben",
-                "ru": ""
             }
         },
         "title": "weatherunderground forecast",
@@ -272,7 +279,9 @@
         "plugins": {
             "sentry": {
                 "dsn": "https://eceef3154b014c2db3267875a45b6888@sentry.iobroker.net/112",
-                "errorBlacklist": ["SyntaxError"]
+                "errorBlacklist": [
+                    "SyntaxError"
+                ]
             }
         },
         "dependencies": [

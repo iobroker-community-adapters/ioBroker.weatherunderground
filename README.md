@@ -71,7 +71,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.2.3 (2020-12-26)
 * (Apollon77) make sure adapter do not crash when no data could be read
 * (Apollon77) Add Sentry error reporting
 
