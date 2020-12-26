@@ -147,8 +147,8 @@ jobs:
           export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           export SENTRY_URL=https://sentry.iobroker.net
           export SENTRY_ORG=iobroker
-          export SENTRY_PROJECT=iobroker-homee
-          export SENTRY_VERSION=iobroker.homee@${{ steps.extract_release.outputs.VERSION }}
+          export SENTRY_PROJECT=iobroker-weatherunderground
+          export SENTRY_VERSION=iobroker.weatherunderground@${{ steps.extract_release.outputs.VERSION }}
           sentry-cli releases new $SENTRY_VERSION
           sentry-cli releases finalize $SENTRY_VERSION
 

@@ -268,6 +268,17 @@
         "authors": [
             "Daniel Schaedler <daniel.schaedler@gmail.com>",
             "Ingo Fischer <iobroker@fischer-ka.de>"
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://eceef3154b014c2db3267875a45b6888@sentry.iobroker.net/112",
+                "errorBlacklist": ["SyntaxError"]
+            }
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=1.4.2"
+            }
         ]
     },
     "native": {

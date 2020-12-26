@@ -905,6 +905,10 @@ function parseNewResult(body, cb) {
     let popMax = 0;
     let uviSum = 0;
 
+    if (!body) {
+        adapter.log.error('No data received!');
+        return cb && cb();
+    }
     if (adapter.config.current) {
         if (body.current_observation) {
             if (nonMetric && body.current_observation.imperial) {
