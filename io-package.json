@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.2.3",
+        "version": "3.2.4",
         "news": {
+            "3.2.4": {
+                "en": "Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "de": "Absturz verhindern (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "pt": "Evitar caso de colisão (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "nl": "Voorkom crashgeval (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "fr": "Prévenir les cas d'accident (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "it": "Prevenire il crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "es": "Caso de prevención de choque (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "pl": "Zapobiegaj przypadkowi awarii (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "zh-cn": "防止发生崩溃情况（哨兵IOBROKER-WEATHERUNDERGROUND-1，IOBROKER-WEATHERUNDERGROUND-2）"
+            },
             "3.2.3": {
                 "en": "make sure adapter do not crash when no data could be read\nAdd Sentry error reporting",
                 "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt, wenn keine Daten gelesen werden konnten\nSentry-Fehlerberichterstattung hinzufügen",
@@ -221,11 +233,6 @@
                 "en": "Add option to specify image format for custom image urls",
                 "de": "Möglichkeit hinzugefügt das Bildformat für eigene URLs anzugeben",
                 "ru": "Add option to specify image format for custom image urls"
-            },
-            "1.1.1": {
-                "en": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys",
-                "de": "API-Nutzung optimiert, indem alle Daten einer ABfrage anstelle zwei abgefragt werden, Unterstützung für mehrere Keys hinzugefügt",
-                "ru": "Optimize API usage by getting all data with one call instead of two, add support for multiple keys"
             }
         },
         "title": "weatherunderground forecast",
