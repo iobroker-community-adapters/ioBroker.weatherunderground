@@ -905,7 +905,7 @@ function parseNewResult(body, cb) {
     let popMax = 0;
     let uviSum = 0;
 
-    if (!body) {
+    if (!body || !Objects.keys(body).length) {
         adapter.log.error('No data received!');
         return cb && cb();
     }
@@ -1570,7 +1570,7 @@ function getNewWuDataCurrentObservations(cb) {
         headers: requestHeaders
     }, (error, response, body) => {
         if (!error && response && response.statusCode === 200) {
-            if (body && !body.observations) {
+            if (!body || !body.observations) {
                 adapter.log.error('no observations in response from ' + url);
             } else {
                 weatherData.current_observation = body.observations[0];
@@ -1595,6 +1595,7 @@ function getNewWuDataCurrentObservations(cb) {
 }
 
 function getNewWuDataDailyForcast(weatherData, cb) {
+    weatherData = weatherData || {};
     if (adapter.config.forecast_periods_txt || adapter.config.forecast_periods) {
         let url;
         if (adapter.config.station && officialApiKey && weatherData.current_observation && weatherData.current_observation.lon !== undefined && weatherData.current_observation.lat !== undefined ) {
@@ -1613,8 +1614,8 @@ function getNewWuDataDailyForcast(weatherData, cb) {
             headers: requestHeaders
         }, (error, response, body) => {
             if (!error && response && response.statusCode === 200) {
-                if (body && !body.dayOfWeek) {
-                    if (body.forecasts) {
+                if (!body || !body.dayOfWeek) {
+                    if (body && body.forecasts) {
                         weatherData.daily_forecast2 = body.forecasts;
                     }
                     else {
@@ -1647,6 +1648,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
 }
 
 function getNewWuDataHourlyForcast(weatherData, cb) {
+    weatherData = weatherData || {};
     if (adapter.config.forecast_hourly) {
         let url = modifyExtractedUrl(forecastHourlyUrl);
         url = url.replace(/\/[0-9]+hour/,'/48hour');
