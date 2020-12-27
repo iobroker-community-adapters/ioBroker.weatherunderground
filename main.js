@@ -905,7 +905,7 @@ function parseNewResult(body, cb) {
     let popMax = 0;
     let uviSum = 0;
 
-    if (!body || !Objects.keys(body).length) {
+    if (!body || !Object.keys(body).length) {
         adapter.log.error('No data received!');
         return cb && cb();
     }

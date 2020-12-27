@@ -71,7 +71,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
-### 3.2.4 (2020-12-27)
+### __WORK IN PROGRESS__
 * (Apollon77) Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)
 
 ### 3.2.3 (2020-12-26)
