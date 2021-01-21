@@ -41,6 +41,8 @@ let forecastDailyUrl;
 let forecastHourlyUrl;
 let errorCounter = 0;
 
+let stopInProgress = false;
+
 const requestHeaders = {
     'User-Agent': 'Mozilla/5.0 (Windows) Gecko/20100101 Firefox/68.0',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -71,7 +73,7 @@ function startAdapter(options) {
     Object.assign(options, {name: adapterName});
     adapter = new utils.Adapter(options);
 
-    adapter.on('ready', () => {
+    adapter.on('ready', async () => {
 
         adapter.config.language = adapter.config.language || 'DL';
 
@@ -136,7 +138,7 @@ function startAdapter(options) {
 
         officialApiKey = adapter.config.apikey;
 
-        checkWeatherVariables();
+        await checkWeatherVariables();
 
 
 
@@ -207,11 +209,10 @@ function startAdapter(options) {
             });
         });
 
-
-
         // force terminate after 1min
         // don't know why it does not terminate by itself...
         setTimeout(() => {
+            stopInProgress = true;
             adapter.log.warn('force terminate');
             adapter.terminate ? adapter.terminate() : process.exit(0);
         }, 60000);
@@ -230,6 +231,7 @@ function getKeysAndData(cb) {
         }
     }
     getApiKey(() => {
+        if (stopInProgress) return;
         if (adapter.config.useLegacyApi) {
             adapter.log.debug('Use Legacy API');
             getLegacyWuData(cb);
@@ -302,6 +304,7 @@ function getStationKey(cb) {
         followAllRedirects: true,
         headers: requestHeaders
     }, (error, response, body) => {
+        if (stopInProgress) return;
         if (!error && response && response.statusCode === 200 && body) {
             const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
             if (!scriptFile || !scriptFile[1]) {
@@ -330,6 +333,7 @@ function getStationKey(cb) {
                 encoding: 'utf-8',
                 headers: requestHeaders
              }, (error, response, body) => {
+                if (stopInProgress) return;
                 if (!error && response && response.statusCode === 200 && body) {
 
 // "https://api.wunderground.com/api/606f3f6977348613/conditions/forecast10day/hourly10day/astronomy10day/pwsidentity/units:" + units + "/v:2.0/q/pws:" + stationid + ".json?ID=" + stationid + "&callback=?"
@@ -379,7 +383,10 @@ function getWebsiteKey(cb, tryQ) {
         encoding: 'utf-8',
         headers: requestHeaders
     }, (error, response, body) => {
-        body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
+        if (stopInProgress) return;
+        if (body) {
+            body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
+        }
         if (!error && response && response.statusCode === 200 && body) {
             const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
             if (!data || !data[1]) {
@@ -448,7 +455,7 @@ function getWebsiteKey(cb, tryQ) {
     });
 }
 
-function parseLegacyResult(body, cb) {
+async function parseLegacyResult(body, cb) {
     let qpfMax = 0;
     let popMax = 0;
     let uviSum = 0;
@@ -456,183 +463,183 @@ function parseLegacyResult(body, cb) {
     if (adapter.config.current) {
         if (body.current_observation) {
             try {
-                adapter.setState('forecast.current.displayLocationFull', {
+                await adapter.setStateAsync('forecast.current.displayLocationFull', {
                     ack: true,
                     val: body.current_observation.display_location.full
                 });
-                adapter.setState('forecast.current.displayLocationLatitude', {
+                await adapter.setStateAsync('forecast.current.displayLocationLatitude', {
                     ack: true,
                     val: parseFloat(body.current_observation.display_location.latitude)
                 });
-                adapter.setState('forecast.current.displayLocationLongitude', {
+                await adapter.setStateAsync('forecast.current.displayLocationLongitude', {
                     ack: true,
                     val: parseFloat(body.current_observation.display_location.longitude)
                 });
-                adapter.setState('forecast.current.displayLocationElevation', {
+                await adapter.setStateAsync('forecast.current.displayLocationElevation', {
                     ack: true,
                     val: parseFloat(body.current_observation.display_location.elevation)
                 });
 
-                adapter.setState('forecast.current.observationLocationFull', {
+                await adapter.setStateAsync('forecast.current.observationLocationFull', {
                     ack: true,
                     val: body.current_observation.observation_location.full
                 });
-                adapter.setState('forecast.current.observationLocationLatitude', {
+                await adapter.setStateAsync('forecast.current.observationLocationLatitude', {
                     ack: true,
                     val: parseFloat(body.current_observation.observation_location.latitude)
                 });
-                adapter.setState('forecast.current.observationLocationLongitude', {
+                await adapter.setStateAsync('forecast.current.observationLocationLongitude', {
                     ack: true,
                     val: parseFloat(body.current_observation.observation_location.longitude)
                 });
                 if (nonMetric) {
-                    adapter.setState('forecast.current.observationLocationElevation', {
+                    await adapter.setStateAsync('forecast.current.observationLocationElevation', {
                         ack: true,
                         val: (parseFloat(body.current_observation.observation_location.elevation))
                     }); // ft
                 } else {
-                    adapter.setState('forecast.current.observationLocationElevation', {
+                    await adapter.setStateAsync('forecast.current.observationLocationElevation', {
                         ack: true,
                         val: (Math.round(parseFloat(body.current_observation.observation_location.elevation) * 0.3048) * 100) / 100
                     }); // convert ft to m
                 }
 
-                adapter.setState('forecast.current.observationLocationStationID', {
+                await adapter.setStateAsync('forecast.current.observationLocationStationID', {
                     ack: true,
                     val: body.current_observation.station_id
                 });
-                adapter.setState('forecast.current.localTimeRFC822', {
+                await adapter.setStateAsync('forecast.current.localTimeRFC822', {
                     ack: true,
                     val: body.current_observation.local_time_rfc822
                 });
-                adapter.setState('forecast.current.observationTimeRFC822', {
+                await adapter.setStateAsync('forecast.current.observationTimeRFC822', {
                     ack: true,
                     val: body.current_observation.observation_time_rfc822
                 }); // PDE
-                adapter.setState('forecast.current.observationTime', {
+                await adapter.setStateAsync('forecast.current.observationTime', {
                     ack: true,
                     val: new Date(parseInt(body.current_observation.local_epoch, 10) * 1000).toLocaleString()
                 }); // PDE
 
-                adapter.setState('forecast.current.weather', {ack: true, val: body.current_observation.weather});
+                await adapter.setStateAsync('forecast.current.weather', {ack: true, val: body.current_observation.weather});
                 if (nonMetric) {
-                    adapter.setState('forecast.current.temp', {ack: true, val: parseFloat(body.current_observation.temp_f)});
+                    await adapter.setStateAsync('forecast.current.temp', {ack: true, val: parseFloat(body.current_observation.temp_f)});
                 } else {
-                    adapter.setState('forecast.current.temp', {ack: true, val: parseFloat(body.current_observation.temp_c)});
+                    await adapter.setStateAsync('forecast.current.temp', {ack: true, val: parseFloat(body.current_observation.temp_c)});
                 }
-                adapter.setState('forecast.current.relativeHumidity', {
+                await adapter.setStateAsync('forecast.current.relativeHumidity', {
                     ack: true,
                     val: parseFloat(body.current_observation.relative_humidity.replace('%', ''))
                 });
-                adapter.setState('forecast.current.windDegrees', {
+                await adapter.setStateAsync('forecast.current.windDegrees', {
                     ack: true,
                     val: parseFloat(body.current_observation.wind_degrees)
                 });
-                adapter.setState('forecast.current.windDirection', {
+                await adapter.setStateAsync('forecast.current.windDirection', {
                     ack: true,
                     val: windDirections[Math.floor((body.current_observation.wind_degrees + 11.25) / 22.5)]
                 });
                 if (nonMetric) {
-                    adapter.setState('forecast.current.wind', {
+                    await adapter.setStateAsync('forecast.current.wind', {
                         ack: true,
                         val: parseFloat(body.current_observation.wind_mph)
                     });
-                    adapter.setState('forecast.current.windGust', {
+                    await adapter.setStateAsync('forecast.current.windGust', {
                         ack: true,
                         val: parseFloat(body.current_observation.wind_gust_mph)
                     });
                 } else {
-                    adapter.setState('forecast.current.wind', {
+                    await adapter.setStateAsync('forecast.current.wind', {
                         ack: true,
                         val: parseFloat(body.current_observation.wind_kph)
                     });
-                    adapter.setState('forecast.current.windGust', {
+                    await adapter.setStateAsync('forecast.current.windGust', {
                         ack: true,
                         val: parseFloat(body.current_observation.wind_gust_kph)
                     });
                 }
 
-                adapter.setState('forecast.current.pressure', {
+                await adapter.setStateAsync('forecast.current.pressure', {
                     ack: true,
                     val: parseFloat(body.current_observation.pressure_mb)
                 }); //PDE
                 if (nonMetric) {
-                    adapter.setState('forecast.current.dewPoint', {
+                    await adapter.setStateAsync('forecast.current.dewPoint', {
                         ack: true,
                         val: body.current_observation.dewpoint_f === 'NA' ? null : parseFloat(body.current_observation.dewpoint_f)
                     });
-                    adapter.setState('forecast.current.windChill', {
+                    await adapter.setStateAsync('forecast.current.windChill', {
                         ack: true,
                         val: body.current_observation.windchill_f === 'NA' ? null : parseFloat(body.current_observation.windchill_f)
                     });
-                    adapter.setState('forecast.current.feelsLike', {
+                    await adapter.setStateAsync('forecast.current.feelsLike', {
                         ack: true,
                         val: body.current_observation.feelslike_f === 'NA' ? null : parseFloat(body.current_observation.feelslike_f)
                     });
-                    adapter.setState('forecast.current.visibility', {
+                    await adapter.setStateAsync('forecast.current.visibility', {
                         ack: true,
                         val: parseFloat(body.current_observation.visibility_mi)
                     });
                 } else {
-                    adapter.setState('forecast.current.dewPoint', {
+                    await adapter.setStateAsync('forecast.current.dewPoint', {
                         ack: true,
                         val: body.current_observation.dewpoint_c === 'NA' ? null : parseFloat(body.current_observation.dewpoint_c)
                     });
-                    adapter.setState('forecast.current.windChill', {
+                    await adapter.setStateAsync('forecast.current.windChill', {
                         ack: true,
                         val: body.current_observation.windchill_c === 'NA' ? null : parseFloat(body.current_observation.windchill_c)
                     });
-                    adapter.setState('forecast.current.feelsLike', {
+                    await adapter.setStateAsync('forecast.current.feelsLike', {
                         ack: true,
                         val: body.current_observation.feelslike_c === 'NA' ? null : parseFloat(body.current_observation.feelslike_c)
                     });
-                    adapter.setState('forecast.current.visibility', {
+                    await adapter.setStateAsync('forecast.current.visibility', {
                         ack: true,
                         val: parseFloat(body.current_observation.visibility_km)
                     });
                 }
-                adapter.setState('forecast.current.solarRadiation', {
+                await adapter.setStateAsync('forecast.current.solarRadiation', {
                     ack: true,
                     val: body.current_observation.solarradiation
                 });
-                adapter.setState('forecast.current.UV', {ack: true, val: parseFloat(body.current_observation.UV)});
+                await adapter.setStateAsync('forecast.current.UV', {ack: true, val: parseFloat(body.current_observation.UV)});
                 if (nonMetric) {
                     if (!isNaN(parseInt(body.current_observation.precip_1hr_in, 10))) {
-                        adapter.setState('forecast.current.precipitationHour', {
+                        await adapter.setStateAsync('forecast.current.precipitationHour', {
                             ack: true,
                             val: parseInt(body.current_observation.precip_1hr_in, 10)
                         });
                     }
                     if (!isNaN(parseInt(body.current_observation.precip_today_in, 10))) {
-                        adapter.setState('forecast.current.precipitationDay', {
+                        await adapter.setStateAsync('forecast.current.precipitationDay', {
                             ack: true,
                             val: parseInt(body.current_observation.precip_today_in, 10)
                         });
                     }
                 } else {
                     if (!isNaN(parseInt(body.current_observation.precip_1hr_metric, 10))) {
-                        adapter.setState('forecast.current.precipitationHour', {
+                        await adapter.setStateAsync('forecast.current.precipitationHour', {
                             ack: true,
                             val: parseInt(body.current_observation.precip_1hr_metric, 10)
                         });
                     }
                     if (!isNaN(parseInt(body.current_observation.precip_today_metric, 10))) {
-                        adapter.setState('forecast.current.precipitationDay', {
+                        await adapter.setStateAsync('forecast.current.precipitationDay', {
                             ack: true,
                             val: parseInt(body.current_observation.precip_today_metric, 10)
                         });
                     }
                 }
 
-                adapter.setState('forecast.current.iconURL', {
+                await adapter.setStateAsync('forecast.current.iconURL', {
                     ack: true,
                     val: handleIconUrl(body.current_observation.icon_url)
                 });
-                adapter.setState('forecast.current.forecastURL', {
+                await adapter.setStateAsync('forecast.current.forecastURL', {
                     ack: true,
                     val: body.current_observation.forecast_url
                 });
-                adapter.setState('forecast.current.historyURL', {ack: true, val: body.current_observation.history_url});
+                await adapter.setStateAsync('forecast.current.historyURL', {ack: true, val: body.current_observation.history_url});
                 adapter.log.debug('all current conditions values set');
             } catch (error) {
                 adapter.log.error('Could not parse Conditions-Data: ' + error);
@@ -652,34 +659,34 @@ function parseLegacyResult(body, cb) {
                     const now = new Date();
                     now.setHours(now.getHours() + body.forecast.txt_forecast.forecastday[i].period * 12);
 
-                    adapter.setState('forecastPeriod.' + i + 'p.date', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.date', {
                         ack: true,
                         val: now.toLocaleDateString()
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.icon', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.icon', {
                         ack: true,
                         val: body.forecast.txt_forecast.forecastday[i].icon
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.iconURL', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.iconURL', {
                         ack: true,
                         val: handleIconUrl(body.forecast.txt_forecast.forecastday[i].icon_url)
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.title', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.title', {
                         ack: true,
                         val: body.forecast.txt_forecast.forecastday[i].title
                     });
                     if (nonMetric) {
-                        adapter.setState('forecastPeriod.' + i + 'p.state', {
+                        await adapter.setStateAsync('forecastPeriod.' + i + 'p.state', {
                             ack: true,
                             val: body.forecast.txt_forecast.forecastday[i].fcttext
                         });
                     } else {
-                        adapter.setState('forecastPeriod.' + i + 'p.state', {
+                        await adapter.setStateAsync('forecastPeriod.' + i + 'p.state', {
                             ack: true,
                             val: body.forecast.txt_forecast.forecastday[i].fcttext_metric
                         });
                     }
-                    adapter.setState('forecastPeriod.' + i + 'p.precipitationChance', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.precipitationChance', {
                         ack: true,
                         val: body.forecast.txt_forecast.forecastday[i].pop
                     });
@@ -697,94 +704,94 @@ function parseLegacyResult(body, cb) {
             for (let i = 0; i < 4; i++) {
                 if (!body.forecast.simpleforecast.forecastday[i]) continue;
                 try {
-                    adapter.setState('forecast.' + i + 'd.date', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.date', {
                         ack: true,
                         val: new Date(parseInt(body.forecast.simpleforecast.forecastday[i].date.epoch, 10) * 1000).toLocaleDateString()
                     });
-                    adapter.setState('forecast.' + i + 'd.tempMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.tempMax', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].high.fahrenheit) : parseFloat(body.forecast.simpleforecast.forecastday[i].high.celsius)
                     });
-                    adapter.setState('forecast.' + i + 'd.tempMin', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.tempMin', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].low.fahrenheit) : parseFloat(body.forecast.simpleforecast.forecastday[i].low.celsius)
                     });
-                    adapter.setState('forecast.' + i + 'd.icon', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.icon', {
                         ack: true,
                         val: body.forecast.simpleforecast.forecastday[i].icon
                     });
-                    adapter.setState('forecast.' + i + 'd.state', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.state', {
                         ack: true,
                         val: _('state_' + body.forecast.simpleforecast.forecastday[i].icon)
                     });
-                    adapter.setState('forecast.' + i + 'd.iconURL', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.iconURL', {
                         ack: true,
                         val: handleIconUrl(body.forecast.simpleforecast.forecastday[i].icon_url)
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationChance', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationChance', {
                         ack: true,
                         val: body.forecast.simpleforecast.forecastday[i].pop
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationAllDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationAllDay', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_allday.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_allday.mm)
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationDay', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_day.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_day.mm)
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationNight', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationNight', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_night.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_night.mm)
                     });
-                    adapter.setState('forecast.' + i + 'd.snowAllDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowAllDay', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_allday.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_allday.cm)
                     });
-                    adapter.setState('forecast.' + i + 'd.snowDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowDay', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_day.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_day.cm)
                     });
-                    adapter.setState('forecast.' + i + 'd.snowNight', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowNight', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_night.in) : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_night.cm)
                     });
 
-                    adapter.setState('forecast.' + i + 'd.windSpeedMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windSpeedMax', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.mph) : parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.kph)
                     });
-                    adapter.setState('forecast.' + i + 'd.windDirectionMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDirectionMax', {
                         ack: true,
                         val: body.forecast.simpleforecast.forecastday[i].maxwind.dir
                     });
-                    adapter.setState('forecast.' + i + 'd.windDegreesMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDegreesMax', {
                         ack: true,
                         val: parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.degrees)
                     });
 
-                    adapter.setState('forecast.' + i + 'd.windSpeed', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windSpeed', {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.mph) : parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.kph)
                     });
-                    adapter.setState('forecast.' + i + 'd.windDirection', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDirection', {
                         ack: true,
                         val: body.forecast.simpleforecast.forecastday[i].avewind.dir
                     });
-                    adapter.setState('forecast.' + i + 'd.windDegrees', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDegrees', {
                         ack: true,
                         val: parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.degrees)
                     });
 
-                    adapter.setState('forecast.' + i + 'd.humidity', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidity', {
                         ack: true,
                         val: parseFloat(body.forecast.simpleforecast.forecastday[i].avehumidity)
                     });
-                    adapter.setState('forecast.' + i + 'd.humidityMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidityMax', {
                         ack: true,
                         val: parseFloat(body.forecast.simpleforecast.forecastday[i].maxhumidity)
                     });
-                    adapter.setState('forecast.' + i + 'd.humidityMin', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidityMin', {
                         ack: true,
                         val: parseFloat(body.forecast.simpleforecast.forecastday[i].minhumidity)
                     });
@@ -804,57 +811,57 @@ function parseLegacyResult(body, cb) {
                 //if (!body.hourly_forecast[i]) continue;
                 try {
                     // see http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary for infos about properties and codes
-                    adapter.setState('forecastHourly.' + i + 'h.time', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.time', {
                         ack: true,
                         val: new Date(parseInt(body.hourly_forecast.validTimeUtc[i], 10) * 1000).toString()
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.temp', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.temp', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.temperature[i])
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.fctcode', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.fctcode', {
                         ack: true,
                         val: body.hourly_forecast.iconCode[i]
                     }); //forecast description number -> see link above
-                    adapter.setState('forecastHourly.' + i + 'h.sky', {ack: true, val: body.hourly_forecast.cloudCover[i]}); //?
-                    adapter.setState('forecastHourly.' + i + 'h.windSpeed', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.sky', {ack: true, val: body.hourly_forecast.cloudCover[i]}); //?
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.windSpeed', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.windSpeed[i])
                     }); // windspeed in kmh
-                    adapter.setState('forecastHourly.' + i + 'h.windDirection', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.windDirection', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.windDirection[i])
                     }); //wind dir in degrees
-                    adapter.setState('forecastHourly.' + i + 'h.uv', {ack: true, val: parseFloat(body.hourly_forecast.uvIndex[i])}); //UV Index -> wikipedia
-                    adapter.setState('forecastHourly.' + i + 'h.humidity', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.uv', {ack: true, val: parseFloat(body.hourly_forecast.uvIndex[i])}); //UV Index -> wikipedia
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.humidity', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.relativeHumidity[i])
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.heatIndex', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.heatIndex', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.temperatureHeatIndex[i])
                     }); // -> wikipedia
-                    adapter.setState('forecastHourly.' + i + 'h.feelsLike', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.feelsLike', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.temperatureFeelsLike[i])
                     }); // -> wikipedia
-                    adapter.setState('forecastHourly.' + i + 'h.precipitation', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.precipitation', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.qpf[i])
                     }); // Quantitative precipitation forecast
-                    adapter.setState('forecastHourly.' + i + 'h.snow', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.snow', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.qpfSnow[i])
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.precipitationChance', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.precipitationChance', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.precipChance[i])
                     }); // probability of Precipitation
-                    adapter.setState('forecastHourly.' + i + 'h.mslp', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.mslp', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.pressureMeanSeaLevel[i])
                     }); // mean sea level pressure
-                    adapter.setState('forecastHourly.' + i + 'h.visibility', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.visibility', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.visibility[i])
                     });
@@ -867,21 +874,21 @@ function parseLegacyResult(body, cb) {
 
                     // 6h
                     if (i === 5) {
-                        adapter.setState('forecastHourly.6h.sum.precipitation', {ack: true, val: qpfMax});
-                        adapter.setState('forecastHourly.6h.sum.precipitationChance', {ack: true, val: popMax});
-                        adapter.setState('forecastHourly.6h.sum.uv', {ack: true, val: uviSum / 6});
+                        await adapter.setStateAsync('forecastHourly.6h.sum.precipitation', {ack: true, val: qpfMax});
+                        await adapter.setStateAsync('forecastHourly.6h.sum.precipitationChance', {ack: true, val: popMax});
+                        await adapter.setStateAsync('forecastHourly.6h.sum.uv', {ack: true, val: uviSum / 6});
                     }
                     // 12h
                     if (i === 11) {
-                        adapter.setState('forecastHourly.12h.sum.precipitation', {ack: true, val: qpfMax});
-                        adapter.setState('forecastHourly.12h.sum.precipitationChance', {ack: true, val: popMax});
-                        adapter.setState('forecastHourly.12h.sum.uv', {ack: true, val: uviSum / 12});
+                        await adapter.setStateAsync('forecastHourly.12h.sum.precipitation', {ack: true, val: qpfMax});
+                        await adapter.setStateAsync('forecastHourly.12h.sum.precipitationChance', {ack: true, val: popMax});
+                        await adapter.setStateAsync('forecastHourly.12h.sum.uv', {ack: true, val: uviSum / 12});
                     }
                     // 24h
                     if (i === 23) {
-                        adapter.setState('forecastHourly.24h.sum.precipitation', {ack: true, val: qpfMax});
-                        adapter.setState('forecastHourly.24h.sum.precipitationChance', {ack: true, val: popMax});
-                        adapter.setState('forecastHourly.24h.sum.uv', {ack: true, val: uviSum / 24});
+                        await adapter.setStateAsync('forecastHourly.24h.sum.precipitation', {ack: true, val: qpfMax});
+                        await adapter.setStateAsync('forecastHourly.24h.sum.precipitationChance', {ack: true, val: popMax});
+                        await adapter.setStateAsync('forecastHourly.24h.sum.uv', {ack: true, val: uviSum / 24});
                     }
                 } catch (error) {
                     adapter.log.error('Could not parse Forecast-Data: ' + error);
@@ -900,7 +907,7 @@ function parseLegacyResult(body, cb) {
     cb && cb();
 }
 
-function parseNewResult(body, cb) {
+async function parseNewResult(body, cb) {
     let qpfMax = 0;
     let popMax = 0;
     let uviSum = 0;
@@ -915,134 +922,134 @@ function parseNewResult(body, cb) {
                 body.current_observation.metric = body.current_observation.imperial;
             }
             try {
-                adapter.setState('forecast.current.displayLocationFull', {
+                await adapter.setStateAsync('forecast.current.displayLocationFull', {
                     ack: true,
                     val: body.current_observation.neighborhood
                 });
-                adapter.setState('forecast.current.displayLocationLatitude', {
+                await adapter.setStateAsync('forecast.current.displayLocationLatitude', {
                     ack: true,
                     val: body.current_observation.lat
                 });
-                adapter.setState('forecast.current.displayLocationLongitude', {
+                await adapter.setStateAsync('forecast.current.displayLocationLongitude', {
                     ack: true,
                     val: body.current_observation.lon
                 });
-                adapter.setState('forecast.current.displayLocationElevation', {
+                await adapter.setStateAsync('forecast.current.displayLocationElevation', {
                     ack: true,
                     val: body.current_observation.metric.elev
                 });
 
-                adapter.setState('forecast.current.observationLocationFull', {
+                await adapter.setStateAsync('forecast.current.observationLocationFull', {
                     ack: true,
                     val: body.current_observation.neighborhood
                 });
-                adapter.setState('forecast.current.observationLocationLatitude', {
+                await adapter.setStateAsync('forecast.current.observationLocationLatitude', {
                     ack: true,
                     val: body.current_observation.lat
                 });
-                adapter.setState('forecast.current.observationLocationLongitude', {
+                await adapter.setStateAsync('forecast.current.observationLocationLongitude', {
                     ack: true,
                     val: body.current_observation.lon
                 });
-                adapter.setState('forecast.current.observationLocationElevation', {
+                await adapter.setStateAsync('forecast.current.observationLocationElevation', {
                     ack: true,
                     val: body.current_observation.metric.elev
                 });
 
-                adapter.setState('forecast.current.observationLocationStationID', {
+                await adapter.setStateAsync('forecast.current.observationLocationStationID', {
                     ack: true,
                     val: body.current_observation.stationID
                 });
-                adapter.setState('forecast.current.localTimeRFC822', {
+                await adapter.setStateAsync('forecast.current.localTimeRFC822', {
                     ack: true,
                     val: body.current_observation.obsTimeLocal
                 });
-                adapter.setState('forecast.current.observationTimeRFC822', {
+                await adapter.setStateAsync('forecast.current.observationTimeRFC822', {
                     ack: true,
                     val: body.current_observation.obsTimeLocal
                 }); // PDE
-                adapter.setState('forecast.current.observationTime', {
+                await adapter.setStateAsync('forecast.current.observationTime', {
                     ack: true,
                     val: new Date(body.current_observation.obsTimeUtc).toLocaleString()
                 }); // PDE
 
-                adapter.setState('forecast.current.weather', {
+                await adapter.setStateAsync('forecast.current.weather', {
                     ack: true,
                     val: null
                 });
-                adapter.setState('forecast.current.temp', {
+                await adapter.setStateAsync('forecast.current.temp', {
                     ack: true,
                     val: body.current_observation.metric.temp
                 });
 
-                adapter.setState('forecast.current.relativeHumidity', {
+                await adapter.setStateAsync('forecast.current.relativeHumidity', {
                     ack: true,
                     val: body.current_observation.humidity
                 });
-                adapter.setState('forecast.current.windDegrees', {
+                await adapter.setStateAsync('forecast.current.windDegrees', {
                     ack: true,
                     val: body.current_observation.winddir
                 });
-                adapter.setState('forecast.current.windDirection', {
+                await adapter.setStateAsync('forecast.current.windDirection', {
                     ack: true,
                     val: windDirections[Math.floor((body.current_observation.winddir + 11.25) / 22.5)]
                 });
-                adapter.setState('forecast.current.wind', {
+                await adapter.setStateAsync('forecast.current.wind', {
                     ack: true,
                     val: body.current_observation.metric.windSpeed
                 });
-                adapter.setState('forecast.current.windGust', {
+                await adapter.setStateAsync('forecast.current.windGust', {
                     ack: true,
                     val: body.current_observation.metric.windGust
                 });
 
-                adapter.setState('forecast.current.pressure', {
+                await adapter.setStateAsync('forecast.current.pressure', {
                     ack: true,
                     val: body.current_observation.metric.pressure
                 }); //PDE
-                adapter.setState('forecast.current.dewPoint', {
+                await adapter.setStateAsync('forecast.current.dewPoint', {
                     ack: true,
                     val: body.current_observation.metric.dewpt
                 });
-                adapter.setState('forecast.current.windChill', {
+                await adapter.setStateAsync('forecast.current.windChill', {
                     ack: true,
                     val: body.current_observation.metric.windChill
                 });
-                adapter.setState('forecast.current.feelsLike', {
+                await adapter.setStateAsync('forecast.current.feelsLike', {
                     ack: true,
                     val: body.current_observation.metric.heatIndex
                 });
-                adapter.setState('forecast.current.visibility', {
+                await adapter.setStateAsync('forecast.current.visibility', {
                     ack: true,
                     val: null
                 });
-                adapter.setState('forecast.current.solarRadiation', {
+                await adapter.setStateAsync('forecast.current.solarRadiation', {
                     ack: true,
                     val: body.current_observation.solarRadiation
                 });
-                adapter.setState('forecast.current.UV', {
+                await adapter.setStateAsync('forecast.current.UV', {
                     ack: true,
                     val: body.current_observation.uv
                 });
 
-                adapter.setState('forecast.current.precipitationHour', {
+                await adapter.setStateAsync('forecast.current.precipitationHour', {
                     ack: true,
                     val: body.current_observation.metric.precipRate
                 });
-                adapter.setState('forecast.current.precipitationDay', {
+                await adapter.setStateAsync('forecast.current.precipitationDay', {
                     ack: true,
                     val: body.current_observation.metric.precipTotal
                 });
 
-                adapter.setState('forecast.current.iconURL', {
+                await adapter.setStateAsync('forecast.current.iconURL', {
                     ack: true,
                     val: null
                 });
-                adapter.setState('forecast.current.forecastURL', {
+                await adapter.setStateAsync('forecast.current.forecastURL', {
                     ack: true,
                     val: null
                 });
-                adapter.setState('forecast.current.historyURL', {
+                await adapter.setStateAsync('forecast.current.historyURL', {
                     ack: true,
                     val: null
                 });
@@ -1065,27 +1072,27 @@ function parseNewResult(body, cb) {
                     const now = new Date();
                     now.setHours(7 + idx * 12);
 
-                    adapter.setState('forecastPeriod.' + i + 'p.date', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.date', {
                         ack: true,
                         val: now.toLocaleDateString()
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.icon', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.icon', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].iconCode[idx]
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.iconURL', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.iconURL', {
                         ack: true,
                         val: handleIconUrl(body.daily_forecast.daypart[0].iconCode[idx])
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.title', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.title', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].daypartName[idx]
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.state', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.state', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].narrative[idx]
                     });
-                    adapter.setState('forecastPeriod.' + i + 'p.precipitationChance', {
+                    await adapter.setStateAsync('forecastPeriod.' + i + 'p.precipitationChance', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].precipChance[idx]
                     });
@@ -1100,27 +1107,27 @@ function parseNewResult(body, cb) {
             for (let i = 0; i < 5; i++) {
                 try {
                     if (body.daily_forecast2[i].day) {
-                        adapter.setState('forecastPeriod.' + idx + 'p.date', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.date', {
                             ack: true,
                             val: new Date(body.daily_forecast2[i].day.fcst_valid_local).toLocaleDateString()
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.icon', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.icon', {
                             ack: true,
                             val: body.daily_forecast2[i].day.icon_code
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.iconURL', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.iconURL', {
                             ack: true,
                             val: handleIconUrl(body.daily_forecast2[i].day.icon_code)
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.title', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.title', {
                             ack: true,
                             val: body.daily_forecast2[i].day.daypart_name
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.state', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.state', {
                             ack: true,
                             val: body.daily_forecast2[i].day.narrative
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.precipitationChance', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.precipitationChance', {
                             ack: true,
                             val: body.daily_forecast2[i].day.pop
                         });
@@ -1128,27 +1135,27 @@ function parseNewResult(body, cb) {
                         if (idx === 8) break;
                     }
                     if (body.daily_forecast2[i].night) {
-                        adapter.setState('forecastPeriod.' + idx + 'p.date', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.date', {
                             ack: true,
                             val: new Date(body.daily_forecast2[i].night.fcst_valid_local).toLocaleDateString()
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.icon', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.icon', {
                             ack: true,
                             val: body.daily_forecast2[i].night.icon_code
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.iconURL', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.iconURL', {
                             ack: true,
                             val: handleIconUrl(body.daily_forecast2[i].night.icon_code)
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.title', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.title', {
                             ack: true,
                             val: body.daily_forecast2[i].night.daypart_name
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.state', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.state', {
                             ack: true,
                             val: body.daily_forecast2[i].night.narrative
                         });
-                        adapter.setState('forecastPeriod.' + idx + 'p.precipitationChance', {
+                        await adapter.setStateAsync('forecastPeriod.' + idx + 'p.precipitationChance', {
                             ack: true,
                             val: body.daily_forecast2[i].night.pop
                         });
@@ -1169,94 +1176,94 @@ function parseNewResult(body, cb) {
         if (body.daily_forecast) {
             for (let i = 0; i < 4; i++) {
                 try {
-                    adapter.setState('forecast.' + i + 'd.date', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.date', {
                         ack: true,
                         val: new Date(body.daily_forecast.validTimeLocal[i]).toLocaleDateString()
                     });
-                    adapter.setState('forecast.' + i + 'd.tempMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.tempMax', {
                         ack: true,
                         val: body.daily_forecast.temperatureMax[i]
                     });
-                    adapter.setState('forecast.' + i + 'd.tempMin', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.tempMin', {
                         ack: true,
                         val: body.daily_forecast.temperatureMin[i]
                     });
-                    adapter.setState('forecast.' + i + 'd.icon', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.icon', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].iconCode[i * 2]
                     });
-                    adapter.setState('forecast.' + i + 'd.state', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.state', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].narrative[i * 2]
                     });
-                    adapter.setState('forecast.' + i + 'd.iconURL', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.iconURL', {
                         ack: true,
                         val: handleIconUrl(body.daily_forecast.daypart[0].iconCode[i * 2])
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationChance', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationChance', {
                         ack: true,
                         val: Math.max(body.daily_forecast.daypart[0].precipChance[i * 2], body.daily_forecast.daypart[0].precipChance[1 + (i * 2)])
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationAllDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationAllDay', {
                         ack: true,
                         val: body.daily_forecast.qpf[i]
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationDay', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].qpf[i * 2]
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationNight', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationNight', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].qpf[1 + (i * 2)]
                     });
-                    adapter.setState('forecast.' + i + 'd.snowAllDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowAllDay', {
                         ack: true,
                         val: body.daily_forecast.qpfSnow[i]
                     });
-                    adapter.setState('forecast.' + i + 'd.snowDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowDay', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].qpfSnow[i * 2]
                     });
-                    adapter.setState('forecast.' + i + 'd.snowNight', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowNight', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].qpfSnow[1 + (i * 2)]
                     });
 
-                    adapter.setState('forecast.' + i + 'd.windSpeedMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windSpeedMax', {
                         ack: true,
                         val: Math.max(body.daily_forecast.daypart[0].windSpeed[i * 2], body.daily_forecast.daypart[0].windSpeed[1 + (i * 2)])
                     });
-                    adapter.setState('forecast.' + i + 'd.windDirectionMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDirectionMax', {
                         ack: true,
                         val: Math.max(body.daily_forecast.daypart[0].windDirection[i * 2], body.daily_forecast.daypart[0].windDirection[1 + (i * 2)])
                     });
-                    adapter.setState('forecast.' + i + 'd.windDegreesMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDegreesMax', {
                         ack: true,
                         val: null
                     });
 
-                    adapter.setState('forecast.' + i + 'd.windSpeed', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windSpeed', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].windSpeed[i * 2]
                     });
-                    adapter.setState('forecast.' + i + 'd.windDirection', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDirection', {
                         ack: true,
                         val: windDirections[Math.floor((body.daily_forecast.daypart[0].windDirection[i * 2] + 11.25) / 22.5)]
                     });
-                    adapter.setState('forecast.' + i + 'd.windDegrees', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDegrees', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].windDirection[i * 2]
                     });
 
-                    adapter.setState('forecast.' + i + 'd.humidity', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidity', {
                         ack: true,
                         val: body.daily_forecast.daypart[0].relativeHumidity[i * 2]
                     });
-                    adapter.setState('forecast.' + i + 'd.humidityMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidityMax', {
                         ack: true,
                         val: Math.max(body.daily_forecast.daypart[0].relativeHumidity[i * 2], body.daily_forecast.daypart[0].relativeHumidity[1 + (i * 2)])
                     });
-                    adapter.setState('forecast.' + i + 'd.humidityMin', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidityMin', {
                         ack: true,
                         val: Math.min(body.daily_forecast.daypart[0].relativeHumidity[i * 2], body.daily_forecast.daypart[0].relativeHumidity[1 + (i * 2)])
                     });
@@ -1269,94 +1276,94 @@ function parseNewResult(body, cb) {
         else if (body.daily_forecast2) {
             for (let i = 0; i < 4; i++) {
                 try {
-                    adapter.setState('forecast.' + i + 'd.date', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.date', {
                         ack: true,
                         val: new Date(body.daily_forecast2[i].fcst_valid_local).toLocaleDateString()
                     });
-                    adapter.setState('forecast.' + i + 'd.tempMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.tempMax', {
                         ack: true,
                         val: body.daily_forecast2[i].max_temp
                     });
-                    adapter.setState('forecast.' + i + 'd.tempMin', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.tempMin', {
                         ack: true,
                         val: body.daily_forecast2[i].min_temp
                     });
-                    adapter.setState('forecast.' + i + 'd.icon', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.icon', {
                         ack: true,
                         val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code
                     });
-                    adapter.setState('forecast.' + i + 'd.state', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.state', {
                         ack: true,
                         val: body.daily_forecast2[i].narrative
                     });
-                    adapter.setState('forecast.' + i + 'd.iconURL', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.iconURL', {
                         ack: true,
                         val: handleIconUrl(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code)
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationChance', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationChance', {
                         ack: true,
                         val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.pop : 0, body.daily_forecast2[i].night.pop)
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationAllDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationAllDay', {
                         ack: true,
                         val: body.daily_forecast2[i].qpf
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationDay', {
                         ack: true,
                         val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.qpf : null
                     });
-                    adapter.setState('forecast.' + i + 'd.precipitationNight', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.precipitationNight', {
                         ack: true,
                         val: body.daily_forecast2[i].night.qpf
                     });
-                    adapter.setState('forecast.' + i + 'd.snowAllDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowAllDay', {
                         ack: true,
                         val: body.daily_forecast2[i].snow_qpf
                     });
-                    adapter.setState('forecast.' + i + 'd.snowDay', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowDay', {
                         ack: true,
                         val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.snow_qpf : null
                     });
-                    adapter.setState('forecast.' + i + 'd.snowNight', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.snowNight', {
                         ack: true,
                         val: body.daily_forecast2[i].night.snow_qpf
                     });
 
-                    adapter.setState('forecast.' + i + 'd.windSpeedMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windSpeedMax', {
                         ack: true,
                         val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wspd : 0, body.daily_forecast2[i].night.wspd)
                     });
-                    adapter.setState('forecast.' + i + 'd.windDirectionMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDirectionMax', {
                         ack: true,
                         val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wdir : 0, body.daily_forecast2[i].night.wdir)
                     });
-                    adapter.setState('forecast.' + i + 'd.windDegreesMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDegreesMax', {
                         ack: true,
                         val: null
                     });
 
-                    adapter.setState('forecast.' + i + 'd.windSpeed', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windSpeed', {
                         ack: true,
                         val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wspd : body.daily_forecast2[i].night.wspd
                     });
-                    adapter.setState('forecast.' + i + 'd.windDirection', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDirection', {
                         ack: true,
                         val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.wdir : body.daily_forecast2[i].night.wdir
                     });
-                    adapter.setState('forecast.' + i + 'd.windDegrees', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.windDegrees', {
                         ack: true,
                         val: null
                     });
 
-                    adapter.setState('forecast.' + i + 'd.humidity', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidity', {
                         ack: true,
                         val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.rh : body.daily_forecast2[i].night.rh
                     });
-                    adapter.setState('forecast.' + i + 'd.humidityMax', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidityMax', {
                         ack: true,
                         val: Math.max(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.rh : 0, body.daily_forecast2[i].night.rh)
                     });
-                    adapter.setState('forecast.' + i + 'd.humidityMin', {
+                    await adapter.setStateAsync('forecast.' + i + 'd.humidityMin', {
                         ack: true,
                         val: Math.min(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.rh : 100, body.daily_forecast2[i].night.rh)
                     });
@@ -1373,63 +1380,63 @@ function parseNewResult(body, cb) {
         if (body.hourly_forecast) {
             for (let i = 0; i < 36; i++) {
                 try {
-                    adapter.setState('forecastHourly.' + i + 'h.time', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.time', {
                         ack: true,
                         val: new Date(body.hourly_forecast.validTimeUtc[i] * 1000).toString()
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.temp', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.temp', {
                         ack: true,
                         val: body.hourly_forecast.temperature[i]
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.fctcode', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.fctcode', {
                         ack: true,
                         val: null
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.sky', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.sky', {
                         ack: true,
                         val: body.hourly_forecast.cloudCover[i]
                     }); //?
-                    adapter.setState('forecastHourly.' + i + 'h.windSpeed', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.windSpeed', {
                         ack: true,
                         val: body.hourly_forecast.windSpeed[i]
                     }); // windspeed in kmh
-                    adapter.setState('forecastHourly.' + i + 'h.windDirection', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.windDirection', {
                         ack: true,
                         val: body.hourly_forecast.windDirection[i]
                     }); //wind dir in degrees
-                    adapter.setState('forecastHourly.' + i + 'h.uv', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.uv', {
                         ack: true,
                         val: body.hourly_forecast.uvIndex[i]
                     }); //UV Index -> wikipedia
-                    adapter.setState('forecastHourly.' + i + 'h.humidity', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.humidity', {
                         ack: true,
                         val: body.hourly_forecast.relativeHumidity[i]
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.heatIndex', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.heatIndex', {
                         ack: true,
                         val: body.hourly_forecast.temperatureHeatIndex[i]
                     }); // -> wikipedia
-                    adapter.setState('forecastHourly.' + i + 'h.feelsLike', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.feelsLike', {
                         ack: true,
                         val: body.hourly_forecast.temperatureFeelsLike[i]
                     }); // -> wikipedia
-                    adapter.setState('forecastHourly.' + i + 'h.precipitation', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.precipitation', {
                         ack: true,
                         val: body.hourly_forecast.qpf[i]
                     }); // Quantitative precipitation forecast
-                    adapter.setState('forecastHourly.' + i + 'h.snow', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.snow', {
                         ack: true,
                         val: body.hourly_forecast.qpfSnow[i]
                     });
-                    adapter.setState('forecastHourly.' + i + 'h.precipitationChance', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.precipitationChance', {
                         ack: true,
                         val: body.hourly_forecast.precipChance[i]
                     }); // probability of Precipitation
-                    adapter.setState('forecastHourly.' + i + 'h.mslp', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.mslp', {
                         ack: true,
                         val: body.hourly_forecast.pressureMeanSeaLevel[i]
                     }); // mean sea level pressure
-                    adapter.setState('forecastHourly.' + i + 'h.visibility', {
+                    await adapter.setStateAsync('forecastHourly.' + i + 'h.visibility', {
                         ack: true,
                         val: parseFloat(body.hourly_forecast.visibility[i])
                     });
@@ -1442,21 +1449,21 @@ function parseNewResult(body, cb) {
 
                     // 6h
                     if (i === 5) {
-                        adapter.setState('forecastHourly.6h.sum.precipitation', {ack: true, val: qpfMax});
-                        adapter.setState('forecastHourly.6h.sum.precipitationChance', {ack: true, val: popMax});
-                        adapter.setState('forecastHourly.6h.sum.uv', {ack: true, val: uviSum / 6});
+                        await adapter.setStateAsync('forecastHourly.6h.sum.precipitation', {ack: true, val: qpfMax});
+                        await adapter.setStateAsync('forecastHourly.6h.sum.precipitationChance', {ack: true, val: popMax});
+                        await adapter.setStateAsync('forecastHourly.6h.sum.uv', {ack: true, val: uviSum / 6});
                     }
                     // 12h
                     if (i === 11) {
-                        adapter.setState('forecastHourly.12h.sum.precipitation', {ack: true, val: qpfMax});
-                        adapter.setState('forecastHourly.12h.sum.precipitationChance', {ack: true, val: popMax});
-                        adapter.setState('forecastHourly.12h.sum.uv', {ack: true, val: uviSum / 12});
+                        await adapter.setStateAsync('forecastHourly.12h.sum.precipitation', {ack: true, val: qpfMax});
+                        await adapter.setStateAsync('forecastHourly.12h.sum.precipitationChance', {ack: true, val: popMax});
+                        await adapter.setStateAsync('forecastHourly.12h.sum.uv', {ack: true, val: uviSum / 12});
                     }
                     // 24h
                     if (i === 23) {
-                        adapter.setState('forecastHourly.24h.sum.precipitation', {ack: true, val: qpfMax});
-                        adapter.setState('forecastHourly.24h.sum.precipitationChance', {ack: true, val: popMax});
-                        adapter.setState('forecastHourly.24h.sum.uv', {ack: true, val: uviSum / 24});
+                        await adapter.setStateAsync('forecastHourly.24h.sum.precipitation', {ack: true, val: qpfMax});
+                        await adapter.setStateAsync('forecastHourly.24h.sum.precipitationChance', {ack: true, val: popMax});
+                        await adapter.setStateAsync('forecastHourly.24h.sum.uv', {ack: true, val: uviSum / 24});
                     }
                 } catch (error) {
                     adapter.log.error('Could not parse hourly Forecast-Data: ' + error);
@@ -1514,6 +1521,7 @@ function getLegacyWuData(cb) {
         followAllRedirects: true,
         headers: requestHeaders
     }, (error, response, body) => {
+        if (stopInProgress) return;
         if (!error && response && response.statusCode === 200) {
             if (body && body.response && body.response.error) {
                 adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Resetting Station Key');
@@ -1569,6 +1577,7 @@ function getNewWuDataCurrentObservations(cb) {
         encoding: null,
         headers: requestHeaders
     }, (error, response, body) => {
+        if (stopInProgress) return;
         if (!error && response && response.statusCode === 200) {
             if (!body || !body.observations) {
                 adapter.log.error('no observations in response from ' + url);
@@ -1613,6 +1622,7 @@ function getNewWuDataDailyForcast(weatherData, cb) {
             encoding: null,
             headers: requestHeaders
         }, (error, response, body) => {
+            if (stopInProgress) return;
             if (!error && response && response.statusCode === 200) {
                 if (!body || !body.dayOfWeek) {
                     if (body && body.forecasts) {
@@ -1660,6 +1670,7 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
             encoding: null,
             headers: requestHeaders
         }, (error, response, body) => {
+            if (stopInProgress) return;
             if (!error && response && response.statusCode === 200) {
                 try {
                     weatherData.hourly_forecast = body;
@@ -1690,11 +1701,11 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
     }
 }
 
-function checkWeatherVariables() {
+async function checkWeatherVariables() {
     let id;
     if (adapter.config.current) {
         adapter.log.debug('init conditions objects');
-        adapter.setObjectNotExists('forecast', {
+        await adapter.setObjectNotExistsAsync('forecast', {
             type: 'device',
             role: 'forecast',
             common: {
@@ -1702,7 +1713,7 @@ function checkWeatherVariables() {
             },
             native: {location: adapter.config.location}
         });
-        adapter.setObjectNotExists('forecast.current', {
+        await adapter.setObjectNotExistsAsync('forecast.current', {
             type: 'channel',
             common: {
                 name: 'Current conditions',
@@ -1711,7 +1722,7 @@ function checkWeatherVariables() {
             native: {location: adapter.config.location}
         });
 
-        adapter.setObjectNotExists('forecast.current.displayLocationFull', {
+        await adapter.setObjectNotExistsAsync('forecast.current.displayLocationFull', {
             type: 'state',
             common: {
                 name: 'Display location full name',
@@ -1720,7 +1731,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.display_location.full'}
         });
-        adapter.setObjectNotExists('forecast.current.displayLocationLatitude', {
+        await adapter.setObjectNotExistsAsync('forecast.current.displayLocationLatitude', {
             type: 'state',
             common: {
                 name: 'Display location latitude',
@@ -1732,7 +1743,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.display_location.latitude'}
         });
-        adapter.setObjectNotExists('forecast.current.displayLocationLongitude', {
+        await adapter.setObjectNotExistsAsync('forecast.current.displayLocationLongitude', {
             type: 'state',
             common: {
                 name: 'Display location longitude',
@@ -1744,7 +1755,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.display_location.longitude'}
         });
-        adapter.setObjectNotExists('forecast.current.displayLocationElevation', {
+        await adapter.setObjectNotExistsAsync('forecast.current.displayLocationElevation', {
             type: 'state',
             common: {
                 name: 'Display location elevation',
@@ -1757,7 +1768,7 @@ function checkWeatherVariables() {
             native: {id: 'current_observation.display_location.elevation'}
         });
 
-        adapter.setObjectNotExists('forecast.current.observationLocationFull', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationLocationFull', {
             type: 'state',
             common: {
                 name: 'Observation location full name',
@@ -1766,7 +1777,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.observation_location.full'}
         });
-        adapter.setObjectNotExists('forecast.current.observationLocationLatitude', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationLocationLatitude', {
             type: 'state',
             common: {
                 name: 'Observation location latitude',
@@ -1778,7 +1789,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.observation_location.latitude'}
         });
-        adapter.setObjectNotExists('forecast.current.observationLocationLongitude', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationLocationLongitude', {
             type: 'state',
             common: {
                 name: 'Observation location longitude',
@@ -1790,7 +1801,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.observation_location.longitude'}
         });
-        adapter.setObjectNotExists('forecast.current.observationLocationElevation', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationLocationElevation', {
             type: 'state',
             common: {
                 name: 'Observation location elevation',
@@ -1802,34 +1813,34 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.observation_location.elevation'}
         });
-        adapter.setObjectNotExists('forecast.current.observationLocationStationID', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationLocationStationID', {
             type: 'state',
             common: {name: 'WU station ID', role: 'state', type: 'string', read: true, write: false},
             native: {id: 'current_observation.observation_location.station_id'}
         });
 
-        adapter.setObjectNotExists('forecast.current.localTimeRFC822', {
+        await adapter.setObjectNotExistsAsync('forecast.current.localTimeRFC822', {
             type: 'state',
             common: {name: 'Local time (rfc822)', role: 'state', type: 'string', read: true, write: false},
             native: {id: 'current_observation.local_time_rfc822'}
         });
-        adapter.setObjectNotExists('forecast.current.observationTimeRFC822', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationTimeRFC822', {
             type: 'state',
             common: {name: 'Observation time (rfc822)', role: 'state', type: 'string', read: true, write: false},
             native: {id: 'current_observation.observation_time_rfc822'}
         });
-        adapter.setObjectNotExists('forecast.current.observationTime', {
+        await adapter.setObjectNotExistsAsync('forecast.current.observationTime', {
             type: 'state',
             common: {name: 'Observation time (rfc822)', role: 'date', type: 'string', read: true, write: false},
             native: {id: 'current_observation.local_epoch'}
         });
-        adapter.setObjectNotExists('forecast.current.weather', {
+        await adapter.setObjectNotExistsAsync('forecast.current.weather', {
             type: 'state',
             common: {name: 'Weather (engl.)', role: 'weather.state', type: 'string', read: true, write: false},
             native: {id: 'current_observation.weather'}
         });
         if (nonMetric) {
-            adapter.setObjectNotExists('forecast.current.temp', {
+            await adapter.setObjectNotExistsAsync('forecast.current.temp', {
                 type: 'state',
                 common: {
                     name: 'Temperature',
@@ -1841,7 +1852,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.temp_f'}
             });
-            adapter.setObjectNotExists('forecast.current.dewPoint', {
+            await adapter.setObjectNotExistsAsync('forecast.current.dewPoint', {
                 type: 'state',
                 common: {
                     name: 'Dewpoint',
@@ -1853,7 +1864,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.dewpoint_f'}
             });
-            adapter.setObjectNotExists('forecast.current.windChill', {
+            await adapter.setObjectNotExistsAsync('forecast.current.windChill', {
                 type: 'state',
                 common: {
                     name: 'Windchill',
@@ -1865,7 +1876,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.windchill_f'}
             });
-            adapter.setObjectNotExists('forecast.current.feelsLike', {
+            await adapter.setObjectNotExistsAsync('forecast.current.feelsLike', {
                 type: 'state',
                 common: {
                     name: 'Temperature feels like',
@@ -1877,7 +1888,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.feelslike_f'}
             });
-            adapter.setObjectNotExists('forecast.current.visibility', {
+            await adapter.setObjectNotExistsAsync('forecast.current.visibility', {
                 type: 'state',
                 common: {
                     name: 'Visibility',
@@ -1890,7 +1901,7 @@ function checkWeatherVariables() {
                 native: {id: 'current_observation.visibility_mi'}
             });
         } else {
-            adapter.setObjectNotExists('forecast.current.temp', {
+            await adapter.setObjectNotExistsAsync('forecast.current.temp', {
                 type: 'state',
                 common: {
                     name: 'Temperature',
@@ -1902,7 +1913,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.temp_c'}
             });
-            adapter.setObjectNotExists('forecast.current.dewPoint', {
+            await adapter.setObjectNotExistsAsync('forecast.current.dewPoint', {
                 type: 'state',
                 common: {
                     name: 'Dewpoint',
@@ -1914,7 +1925,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.dewpoint_c'}
             });
-            adapter.setObjectNotExists('forecast.current.windChill', {
+            await adapter.setObjectNotExistsAsync('forecast.current.windChill', {
                 type: 'state',
                 common: {
                     name: 'Windchill',
@@ -1926,7 +1937,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.windchill_c'}
             });
-            adapter.setObjectNotExists('forecast.current.feelsLike', {
+            await adapter.setObjectNotExistsAsync('forecast.current.feelsLike', {
                 type: 'state',
                 common: {
                     name: 'Temperature feels like',
@@ -1938,7 +1949,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.feelslike_c'}
             });
-            adapter.setObjectNotExists('forecast.current.visibility', {
+            await adapter.setObjectNotExistsAsync('forecast.current.visibility', {
                 type: 'state',
                 common: {
                     name: 'Visibility',
@@ -1952,7 +1963,7 @@ function checkWeatherVariables() {
             });
         }
 
-        adapter.setObjectNotExists('forecast.current.relativeHumidity', {
+        await adapter.setObjectNotExistsAsync('forecast.current.relativeHumidity', {
             type: 'state',
             common: {
                 name: 'Relative humidity',
@@ -1964,7 +1975,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.relative_humidity'}
         });
-        adapter.setObjectNotExists('forecast.current.windDegrees', {
+        await adapter.setObjectNotExistsAsync('forecast.current.windDegrees', {
             type: 'state',
             common: {
                 name: 'Wind direction Degrees',
@@ -1976,7 +1987,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.wind_degrees'}
         });
-        adapter.setObjectNotExists('forecast.current.windDirection', {
+        await adapter.setObjectNotExistsAsync('forecast.current.windDirection', {
             type: 'state',
             common: {
                 name: 'Wind direction',
@@ -1990,7 +2001,7 @@ function checkWeatherVariables() {
         });
 
         if (nonMetric) {
-            adapter.setObjectNotExists('forecast.current.wind', {
+            await adapter.setObjectNotExistsAsync('forecast.current.wind', {
                 type: 'state',
                 common: {
                     name: 'Wind speed',
@@ -2002,7 +2013,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.wind_mph'}
             });
-            adapter.setObjectNotExists('forecast.current.windGust', {
+            await adapter.setObjectNotExistsAsync('forecast.current.windGust', {
                 type: 'state',
                 common: {
                     name: 'Wind gust',
@@ -2015,7 +2026,7 @@ function checkWeatherVariables() {
                 native: {id: 'current_observation.wind_gust_mph'}
             });
         } else {
-            adapter.setObjectNotExists('forecast.current.wind', {
+            await adapter.setObjectNotExistsAsync('forecast.current.wind', {
                 type: 'state',
                 common: {
                     name: 'Wind speed',
@@ -2027,7 +2038,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.wind_kph'}
             });
-            adapter.setObjectNotExists('forecast.current.windGust', {
+            await adapter.setObjectNotExistsAsync('forecast.current.windGust', {
                 type: 'state',
                 common: {
                     name: 'Wind gust',
@@ -2041,7 +2052,7 @@ function checkWeatherVariables() {
             });
         }
 
-        adapter.setObjectNotExists('forecast.current.pressure', { //PDE
+        await adapter.setObjectNotExistsAsync('forecast.current.pressure', { //PDE
             type: 'state',
             common: {
                 name: 'Air pressure (mbar)',
@@ -2053,7 +2064,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.pressure_mb'}
         });
-        adapter.setObjectNotExists('forecast.current.solarRadiation', {
+        await adapter.setObjectNotExistsAsync('forecast.current.solarRadiation', {
             type: 'state',
             common: {
                 name: 'Solar radiation',
@@ -2065,13 +2076,13 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.solarradiation'}
         });
-        adapter.setObjectNotExists('forecast.current.UV', {
+        await adapter.setObjectNotExistsAsync('forecast.current.UV', {
             type: 'state',
             common: {name: 'UV-Index', role: 'value.uv', type: 'number', read: true, write: false},
             native: {id: 'current.UV'}
         });
         if (nonMetric) {
-            adapter.setObjectNotExists('forecast.current.precipitationHour', {
+            await adapter.setObjectNotExistsAsync('forecast.current.precipitationHour', {
                 type: 'state',
                 common: {
                     name: 'Precipitation (last 1h)',
@@ -2083,7 +2094,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.precip_1hr_in'}
             });
-            adapter.setObjectNotExists('forecast.current.precipitationDay', {
+            await adapter.setObjectNotExistsAsync('forecast.current.precipitationDay', {
                 type: 'state',
                 common: {
                     name: 'Precipitation (today)',
@@ -2096,7 +2107,7 @@ function checkWeatherVariables() {
                 native: {id: 'current_observation.precip_today_in'}
             });
         } else {
-            adapter.setObjectNotExists('forecast.current.precipitationHour', {
+            await adapter.setObjectNotExistsAsync('forecast.current.precipitationHour', {
                 type: 'state',
                 common: {
                     name: 'Precipitation (last 1h)',
@@ -2108,7 +2119,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: 'current_observation.precip_1hr_metric'}
             });
-            adapter.setObjectNotExists('forecast.current.precipitationDay', {
+            await adapter.setObjectNotExistsAsync('forecast.current.precipitationDay', {
                 type: 'state',
                 common: {
                     name: 'Precipitation (today)',
@@ -2122,7 +2133,7 @@ function checkWeatherVariables() {
             });
 
         }
-        adapter.setObjectNotExists('forecast.current.iconURL', {
+        await adapter.setObjectNotExistsAsync('forecast.current.iconURL', {
             type: 'state',
             common: {
                 name: 'URL to current weather icon',
@@ -2133,7 +2144,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.icon_url'}
         });
-        adapter.setObjectNotExists('forecast.current.forecastURL', {
+        await adapter.setObjectNotExistsAsync('forecast.current.forecastURL', {
             type: 'state',
             common: {
                 name: 'URL to wu-forecast page',
@@ -2144,7 +2155,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'current_observation.forecast_url'}
         });
-        adapter.setObjectNotExists('forecast.current.historyURL', {
+        await adapter.setObjectNotExistsAsync('forecast.current.historyURL', {
             type: 'state',
             common: {
                 name: 'URL to wu-history page',
@@ -2160,7 +2171,7 @@ function checkWeatherVariables() {
     adapter.log.debug('init forecast objects');
 
     if (adapter.config.forecast_periods_txt) {
-        adapter.setObjectNotExists('forecastPeriod', {
+        await adapter.setObjectNotExistsAsync('forecastPeriod', {
             type: 'device',
             role: 'forecast',
             common: {name: 'next 8 day / night periods forecast with icon and text'},
@@ -2169,18 +2180,18 @@ function checkWeatherVariables() {
 
         for (let d = 0; d < 8; d++) {
             id = 'forecastPeriod.' + d + 'p.';
-            adapter.setObjectNotExists('forecastPeriod.' + d + 'p', {
+            await adapter.setObjectNotExistsAsync('forecastPeriod.' + d + 'p', {
                 type: 'channel',
                 role: 'weather.forecast.' + d,
                 common: {name: 'in ' + d + 'periods'},
                 native: {location: adapter.config.location}
             });
-            adapter.setObjectNotExists(id + 'date', {
+            await adapter.setObjectNotExistsAsync(id + 'date', {
                 type: 'state',
                 common: {name: 'forecast for', type: 'string', role: 'date.forecast.' + d, read: true, write: false},
                 native: {id: id + 'period'}
             });
-            adapter.setObjectNotExists(id + 'icon', {
+            await adapter.setObjectNotExistsAsync(id + 'icon', {
                 type: 'state',
                 common: {
                     name: 'icon',
@@ -2191,7 +2202,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'icon'}
             });
-            adapter.setObjectNotExists(id + 'iconURL', {
+            await adapter.setObjectNotExistsAsync(id + 'iconURL', {
                 type: 'state',
                 common: {
                     name: 'icon URL',
@@ -2202,17 +2213,17 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'icon_URL'}
             });
-            adapter.setObjectNotExists(id + 'title', {
+            await adapter.setObjectNotExistsAsync(id + 'title', {
                 type: 'state',
                 common: {name: 'title', type: 'string', role: 'weather.title.forecast.' + d, read: true, write: false},
                 native: {id: id + 'title'}
             });
-            adapter.setObjectNotExists(id + 'state', {
+            await adapter.setObjectNotExistsAsync(id + 'state', {
                 type: 'state',
                 common: {name: 'state', type: 'string', role: 'weather.state.forecast.' + d, read: true, write: false},
                 native: {id: id + 'fcttext'}
             });
-            adapter.setObjectNotExists(id + 'precipitationChance', {
+            await adapter.setObjectNotExistsAsync(id + 'precipitationChance', {
                 type: 'state',
                 common: {
                     name: 'Precipitation chance',
@@ -2228,7 +2239,7 @@ function checkWeatherVariables() {
     }
 
     if (adapter.config.forecast_periods) {
-        adapter.setObjectNotExists('forecast', {
+        await adapter.setObjectNotExistsAsync('forecast', {
             type: 'device',
             role: 'forecast',
             common: {name: 'Forecast for next 4 days days and current conditions'},
@@ -2237,19 +2248,19 @@ function checkWeatherVariables() {
 
         for (let p = 0; p < 4; p++) {
             id = 'forecast.' + p + 'd.';
-            adapter.setObjectNotExists('forecast.' + p + 'd', {
+            await adapter.setObjectNotExistsAsync('forecast.' + p + 'd', {
                 type: 'channel',
                 role: 'forecast',
                 common: {name: 'in ' + p + 'days'},
                 native: {location: adapter.config.location}
             });
-            adapter.setObjectNotExists(id + 'date', {
+            await adapter.setObjectNotExistsAsync(id + 'date', {
                 type: 'state',
                 common: {name: 'forecast for', type: 'string', role: 'date.forecast.' + p, read: true, write: false},
                 native: {id: id + 'date'}
             });
             if (nonMetric) {
-                adapter.setObjectNotExists(id + 'tempMax', {
+                await adapter.setObjectNotExistsAsync(id + 'tempMax', {
                     type: 'state',
                     common: {
                         name: 'high temperature',
@@ -2261,7 +2272,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'high.fahrenheit'}
                 });
-                adapter.setObjectNotExists(id + 'tempMin', {
+                await adapter.setObjectNotExistsAsync(id + 'tempMin', {
                     type: 'state',
                     common: {
                         name: 'low temperature',
@@ -2273,7 +2284,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'low.fahrenheit'}
                 });
-                adapter.setObjectNotExists(id + 'precipitationAllDay', {
+                await adapter.setObjectNotExistsAsync(id + 'precipitationAllDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation all day forecast',
@@ -2285,7 +2296,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'qpf_allday.in'}
                 });
-                adapter.setObjectNotExists(id + 'precipitationDay', {
+                await adapter.setObjectNotExistsAsync(id + 'precipitationDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation day forecast',
@@ -2297,7 +2308,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'qpf_day.in'}
                 });
-                adapter.setObjectNotExists(id + 'precipitationNight', {
+                await adapter.setObjectNotExistsAsync(id + 'precipitationNight', {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation night forecast',
@@ -2310,7 +2321,7 @@ function checkWeatherVariables() {
                     native: {id: id + 'qpf.night'}
                 });
 
-                adapter.setObjectNotExists(id + 'snowAllDay', {
+                await adapter.setObjectNotExistsAsync(id + 'snowAllDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow all day forecast',
@@ -2322,7 +2333,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'snow_allday.in'}
                 });
-                adapter.setObjectNotExists(id + 'snowDay', {
+                await adapter.setObjectNotExistsAsync(id + 'snowDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow day forecast',
@@ -2334,7 +2345,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'snow_day.in'}
                 });
-                adapter.setObjectNotExists(id + 'snowNight', {
+                await adapter.setObjectNotExistsAsync(id + 'snowNight', {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow night forecast',
@@ -2347,7 +2358,7 @@ function checkWeatherVariables() {
                     native: {id: id + 'snow_night.in'}
                 });
 
-                adapter.setObjectNotExists(id + 'windSpeedMax', {
+                await adapter.setObjectNotExistsAsync(id + 'windSpeedMax', {
                     type: 'state',
                     common: {
                         name: 'max. wind speed',
@@ -2359,7 +2370,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'maxwind.kph'}
                 });
-                adapter.setObjectNotExists(id + 'windSpeed', {
+                await adapter.setObjectNotExistsAsync(id + 'windSpeed', {
                     type: 'state',
                     common: {
                         name: 'average wind speed',
@@ -2372,7 +2383,7 @@ function checkWeatherVariables() {
                     native: {id: id + 'avewind.mph'}
                 });
             } else {
-                adapter.setObjectNotExists(id + 'tempMax', {
+                await adapter.setObjectNotExistsAsync(id + 'tempMax', {
                     type: 'state',
                     common: {
                         name: 'high temperature',
@@ -2384,7 +2395,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'high.celsius'}
                 });
-                adapter.setObjectNotExists(id + 'tempMin', {
+                await adapter.setObjectNotExistsAsync(id + 'tempMin', {
                     type: 'state',
                     common: {
                         name: 'low temperature',
@@ -2396,7 +2407,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'low.celsius'}
                 });
-                adapter.setObjectNotExists(id + 'precipitationAllDay', {
+                await adapter.setObjectNotExistsAsync(id + 'precipitationAllDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation all day forecast',
@@ -2408,7 +2419,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'qpf_allday.mm'}
                 });
-                adapter.setObjectNotExists(id + 'precipitationDay', {
+                await adapter.setObjectNotExistsAsync(id + 'precipitationDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation day forecast',
@@ -2420,7 +2431,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'qpf_day.mm'}
                 });
-                adapter.setObjectNotExists(id + 'precipitationNight', {
+                await adapter.setObjectNotExistsAsync(id + 'precipitationNight', {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation night forecast',
@@ -2433,7 +2444,7 @@ function checkWeatherVariables() {
                     native: {id: id + 'qpf_night.mm'}
                 });
 
-                adapter.setObjectNotExists(id + 'snowAllDay', {
+                await adapter.setObjectNotExistsAsync(id + 'snowAllDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow all day forecast',
@@ -2445,7 +2456,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'snow_allday.cm'}
                 });
-                adapter.setObjectNotExists(id + 'snowDay', {
+                await adapter.setObjectNotExistsAsync(id + 'snowDay', {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow day forecast',
@@ -2457,7 +2468,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'snow_day.cm'}
                 });
-                adapter.setObjectNotExists(id + 'snowNight', {
+                await adapter.setObjectNotExistsAsync(id + 'snowNight', {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow night forecast',
@@ -2470,7 +2481,7 @@ function checkWeatherVariables() {
                     native: {id: id + 'snow_night.cm'}
                 });
 
-                adapter.setObjectNotExists(id + 'windSpeedMax', {
+                await adapter.setObjectNotExistsAsync(id + 'windSpeedMax', {
                     type: 'state',
                     common: {
                         name: 'max. wind speed',
@@ -2482,7 +2493,7 @@ function checkWeatherVariables() {
                     },
                     native: {id: id + 'maxwind.kph'}
                 });
-                adapter.setObjectNotExists(id + 'windSpeed', {
+                await adapter.setObjectNotExistsAsync(id + 'windSpeed', {
                     type: 'state',
                     common: {
                         name: 'average wind speed',
@@ -2495,7 +2506,7 @@ function checkWeatherVariables() {
                     native: {id: id + 'avewind.kph'}
                 });
             }
-            adapter.setObjectNotExists(id + 'icon', {
+            await adapter.setObjectNotExistsAsync(id + 'icon', {
                 type: 'state',
                 common: {
                     name: 'forecast icon',
@@ -2506,7 +2517,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'icon'}
             });
-            adapter.setObjectNotExists(id + 'state', {
+            await adapter.setObjectNotExistsAsync(id + 'state', {
                 type: 'state',
                 common: {
                     name: 'forecast state',
@@ -2517,7 +2528,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'icon'}
             });
-            adapter.setObjectNotExists(id + 'iconURL', {
+            await adapter.setObjectNotExistsAsync(id + 'iconURL', {
                 type: 'state',
                 common: {
                     name: 'forecast icon url',
@@ -2528,7 +2539,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'icon_url'}
             });
-            adapter.setObjectNotExists(id + 'precipitationChance', {
+            await adapter.setObjectNotExistsAsync(id + 'precipitationChance', {
                 type: 'state',
                 common: {
                     name: 'Percentage of precipitation',
@@ -2541,7 +2552,7 @@ function checkWeatherVariables() {
                 native: {id: id + 'pop'}
             });
 
-            adapter.setObjectNotExists(id + 'windDirectionMax', {
+            await adapter.setObjectNotExistsAsync(id + 'windDirectionMax', {
                 type: 'state',
                 common: {
                     name: 'max. wind direction',
@@ -2552,7 +2563,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'maxwind.dir'}
             });
-            adapter.setObjectNotExists(id + 'windDegreesMax', {
+            await adapter.setObjectNotExistsAsync(id + 'windDegreesMax', {
                 type: 'state',
                 common: {
                     name: 'max. wind direction',
@@ -2564,7 +2575,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'maxwind.degrees'}
             });
-            adapter.setObjectNotExists(id + 'windDirection', {
+            await adapter.setObjectNotExistsAsync(id + 'windDirection', {
                 type: 'state',
                 common: {
                     name: 'average wind direction',
@@ -2575,7 +2586,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'avewind.dir'}
             });
-            adapter.setObjectNotExists(id + 'windDegrees', {
+            await adapter.setObjectNotExistsAsync(id + 'windDegrees', {
                 type: 'state',
                 common: {
                     name: 'average wind direction degrees',
@@ -2587,7 +2598,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'avewind.degrees'}
             });
-            adapter.setObjectNotExists(id + 'windDirection', {
+            await adapter.setObjectNotExistsAsync(id + 'windDirection', {
                 type: 'state',
                 common: {
                     name: 'average wind direction',
@@ -2600,7 +2611,7 @@ function checkWeatherVariables() {
                 native: {id: id + 'avewind.direction'}
             });
 
-            adapter.setObjectNotExists(id + 'humidity', {
+            await adapter.setObjectNotExistsAsync(id + 'humidity', {
                 type: 'state',
                 common: {
                     name: 'average humidity',
@@ -2612,7 +2623,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'avehumidity'}
             });
-            adapter.setObjectNotExists(id + 'humidityMax', {
+            await adapter.setObjectNotExistsAsync(id + 'humidityMax', {
                 type: 'state',
                 common: {
                     name: 'maximum humidity',
@@ -2624,7 +2635,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'maxhumidity'}
             });
-            adapter.setObjectNotExists(id + 'humidityMin', {
+            await adapter.setObjectNotExistsAsync(id + 'humidityMin', {
                 type: 'state',
                 common: {
                     name: 'minimum humidity',
@@ -2640,7 +2651,7 @@ function checkWeatherVariables() {
     }
 
     if (adapter.config.forecast_hourly) {
-        adapter.setObjectNotExists('forecastHourly', {
+        await adapter.setObjectNotExistsAsync('forecastHourly', {
             type: 'device',
             role: 'forecast',
             common: {name: 'next 36h forecast'},
@@ -2649,18 +2660,18 @@ function checkWeatherVariables() {
 
         for (let h = 0; h < 36; h++) {
             id = 'forecastHourly.' + h + 'h.';
-            adapter.setObjectNotExists('forecastHourly.' + h + 'h', {
+            await adapter.setObjectNotExistsAsync('forecastHourly.' + h + 'h', {
                 type: 'channel',
                 role: 'forecast',
                 common: {name: 'in ' + h + 'h'},
                 native: {location: adapter.config.location}
             });
-            adapter.setObjectNotExists(id + 'time', {
+            await adapter.setObjectNotExistsAsync(id + 'time', {
                 type: 'state',
                 common: {name: 'forecast for', role: 'date', type: 'string', read: true, write: false},
                 native: {id: id + 'time'}
             });
-            adapter.setObjectNotExists(id + 'temp', {
+            await adapter.setObjectNotExistsAsync(id + 'temp', {
                 type: 'state',
                 common: {
                     name: 'Temperature',
@@ -2672,22 +2683,22 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'temp'}
             });
-            adapter.setObjectNotExists(id + 'fctcode', {
+            await adapter.setObjectNotExistsAsync(id + 'fctcode', {
                 type: 'state',
                 common: {name: 'forecast description code', type: 'number', read: true, write: false},
                 native: {id: id + 'fctcode'}
             });
-            adapter.setObjectNotExists(id + 'sky', {
+            await adapter.setObjectNotExistsAsync(id + 'sky', {
                 type: 'state',
                 common: {name: 'Sky (clear..covered)', type: 'number', unit: '%', role: 'value.clouds', read: true, write: false},
                 native: {id: id + 'sky'}
             });
-            adapter.setObjectNotExists(id + 'windSpeed', {
+            await adapter.setObjectNotExistsAsync(id + 'windSpeed', {
                 type: 'state',
                 common: {name: 'Windspeed', type: 'number', role: 'value.wind', unit: nonMetric ? 'm/h' : 'km/h', read: true, write: false},
                 native: {id: id + 'wspd'}
             });
-            adapter.setObjectNotExists(id + 'windDirection', {
+            await adapter.setObjectNotExistsAsync(id + 'windDirection', {
                 type: 'state',
                 common: {
                     name: 'Wind direction',
@@ -2699,17 +2710,17 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'wdir'}
             });
-            adapter.setObjectNotExists(id + 'uv', {
+            await adapter.setObjectNotExistsAsync(id + 'uv', {
                 type: 'state',
                 common: {name: 'UV Index (0..~10)', type: 'number', role: 'value.uv', read: true, write: false},
                 native: {id: id + 'uvi'}
             });
-            adapter.setObjectNotExists(id + 'humidity', {
+            await adapter.setObjectNotExistsAsync(id + 'humidity', {
                 type: 'state',
                 common: {name: 'Humidity', type: 'number', role: 'value.humidity', unit: '%', read: true, write: false},
                 native: {id: id + 'humidity'}
             });
-            adapter.setObjectNotExists(id + 'heatIndex', {
+            await adapter.setObjectNotExistsAsync(id + 'heatIndex', {
                 type: 'state',
                 common: {
                     name: 'Heat index',
@@ -2721,7 +2732,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'heatindex.' + nonMetric ? 'metric' : 'english'}
             });
-            adapter.setObjectNotExists(id + 'feelsLike', {
+            await adapter.setObjectNotExistsAsync(id + 'feelsLike', {
                 type: 'state',
                 common: {
                     name: 'Feels like',
@@ -2733,7 +2744,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'feelslike.' + nonMetric ? 'metric' : 'english'}
             });
-            adapter.setObjectNotExists(id + 'precipitation', {
+            await adapter.setObjectNotExistsAsync(id + 'precipitation', {
                 type: 'state',
                 common: {
                     name: 'Quantitative precipitation forecast',
@@ -2745,7 +2756,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'qpf.' + nonMetric ? 'metric' : 'english'}
             });
-            adapter.setObjectNotExists(id + 'snow', {
+            await adapter.setObjectNotExistsAsync(id + 'snow', {
                 type: 'state',
                 common: {
                     name: 'Snow precipitation',
@@ -2757,7 +2768,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'snow.' + nonMetric ? 'metric' : 'english'}
             });
-            adapter.setObjectNotExists(id + 'precipitationChance', {
+            await adapter.setObjectNotExistsAsync(id + 'precipitationChance', {
                 type: 'state',
                 common: {
                     name: 'Percentage of precipitation',
@@ -2769,7 +2780,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'pop'}
             });
-            adapter.setObjectNotExists(id + 'mslp', {
+            await adapter.setObjectNotExistsAsync(id + 'mslp', {
                 type: 'state',
                 common: {
                     name: 'Mean sea level pressure',
@@ -2781,7 +2792,7 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'mslp.' + nonMetric ? 'metric' : 'english'}
             });
-            adapter.setObjectNotExists(id + 'visibility', {
+            await adapter.setObjectNotExistsAsync(id + 'visibility', {
                 type: 'state',
                 common: {
                     name: 'Visibility',
@@ -2793,26 +2804,26 @@ function checkWeatherVariables() {
                 },
                 native: {id: id + 'visibility'}
             });
-            
+
         }
 
-        adapter.setObjectNotExists('forecastHourly.6h.sum.precipitation', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.6h.sum.precipitation', {
             type: 'state',
             common: {name: 'sum of qpf', type: 'number', role: 'value.rain', unit: nonMetric ? 'in' : 'mm', read: true, write: false},
             native: {id: 'forecast.6h.sum.qpf.' + nonMetric ? 'metric' : 'english'}
         });
-        adapter.setObjectNotExists('forecastHourly.12h.sum.precipitation', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.12h.sum.precipitation', {
             type: 'state',
             common: {name: 'sum of qpf', type: 'number', role: 'value.rain', unit: nonMetric ? 'in' : 'mm', read: true, write: false},
             native: {id: 'forecast.12h.sum.qpf.' + nonMetric ? 'metric' : 'english'}
         });
-        adapter.setObjectNotExists('forecastHourly.24h.sum.precipitation', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.24h.sum.precipitation', {
             type: 'state',
             common: {name: 'sum of qpf', type: 'number', role: 'value.rain', unit: nonMetric ? 'in' : 'mm', read: true, write: false},
             native: {id: 'forecast.24h.sum.qpf.' + nonMetric ? 'metric' : 'english'}
         });
 
-        adapter.setObjectNotExists('forecastHourly.6h.sum.precipitationChance', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.6h.sum.precipitationChance', {
             type: 'state',
             common: {
                 name: 'max of precipitation chance',
@@ -2824,7 +2835,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'forecast.6h.sum.pop'}
         });
-        adapter.setObjectNotExists('forecastHourly.12h.sum.precipitationChance', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.12h.sum.precipitationChance', {
             type: 'state',
             common: {
                 name: 'max of precipitation chance',
@@ -2836,7 +2847,7 @@ function checkWeatherVariables() {
             },
             native: {id: 'forecast.12h.sum.pop'}
         });
-        adapter.setObjectNotExists('forecastHourly.24h.sum.precipitationChance', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.24h.sum.precipitationChance', {
             type: 'state',
             common: {
                 name: 'max of precipitation chance',
@@ -2849,17 +2860,17 @@ function checkWeatherVariables() {
             native: {id: 'forecast.24h.sum.pop'}
         });
 
-        adapter.setObjectNotExists('forecastHourly.6h.sum.uv', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.6h.sum.uv', {
             type: 'state',
             common: {name: 'avg. uvi', type: 'number', role: 'value.uv', read: true, write: false},
             native: {id: 'forecast.6h.sum.uvi'}
         });
-        adapter.setObjectNotExists('forecastHourly.12h.sum.uv', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.12h.sum.uv', {
             type: 'state',
             common: {name: 'avg. uvi', type: 'number', role: 'value.uv', read: true, write: false},
             native: {id: 'forecast.12h.sum.uvi'}
         });
-        adapter.setObjectNotExists('forecastHourly.24h.sum.uv', {
+        await adapter.setObjectNotExistsAsync('forecastHourly.24h.sum.uv', {
             type: 'state',
             common: {name: 'avg. uvi', type: 'number', role: 'value.uv', read: true, write: false},
             native: {id: 'forecast.24h.sum.uvi'}
