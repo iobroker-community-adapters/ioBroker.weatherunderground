@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.2.5",
+        "version": "3.3.0",
         "news": {
+            "3.3.0": {
+                "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
+                "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
+                "ru": "Оптимизировать под js-controller 3.2\njs-controller 2.0 теперь требуется как минимум",
+                "pt": "Otimize para js-controller 3.2\njs-controller 2.0 agora é necessário pelo menos",
+                "nl": "Optimaliseren voor js-controller 3.2\njs-controller 2.0 is nu minimaal vereist",
+                "fr": "Optimiser pour js-controller 3.2\njs-controller 2.0 est maintenant requis au moins",
+                "it": "Ottimizza per js-controller 3.2\njs-controller 2.0 è ora almeno richiesto",
+                "es": "Optimizar para js-controller 3.2\njs-controller 2.0 ahora se requiere al menos",
+                "pl": "Optymalizacja pod kątem js-controller 3.2\njs-controller 2.0 jest teraz wymagany przynajmniej",
+                "zh-cn": "针对js-controller 3.2进行优化\n现在至少需要js-controller 2.0"
+            },
             "3.2.5": {
                 "en": "Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
                 "de": "Absturz verhindern (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
@@ -228,11 +240,6 @@
                 "it": "Avvertimento! Ultime modifiche!\nRefactoring di stati e ruoli",
                 "es": "¡Advertencia! ¡Rompiendo cambios!\nRefactorización de estados y roles",
                 "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról"
-            },
-            "1.1.2": {
-                "en": "Add option to specify image format for custom image urls",
-                "de": "Möglichkeit hinzugefügt das Bildformat für eigene URLs anzugeben",
-                "ru": "Add option to specify image format for custom image urls"
             }
         },
         "title": "weatherunderground forecast",

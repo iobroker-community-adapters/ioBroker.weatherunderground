@@ -71,7 +71,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.3.0 (2021-01-22)
 * (Apollon77) Optimize for js-controller 3.2
 * (Apollon77) js-controller 2.0 is now required at least
 
