@@ -2195,7 +2195,7 @@ async function checkWeatherVariables() {
                 type: 'state',
                 common: {
                     name: 'icon',
-                    type: 'string',
+                    type: 'number',
                     role: 'weather.icon.name.forecast.' + d,
                     read: true,
                     write: false
@@ -2748,7 +2748,7 @@ async function checkWeatherVariables() {
                 type: 'state',
                 common: {
                     name: 'Quantitative precipitation forecast',
-                    type: 'value.precipitation',
+                    type: 'number',
                     role: 'value.rain',
                     unit: nonMetric ? 'in' : 'mm',
                     read: true,
