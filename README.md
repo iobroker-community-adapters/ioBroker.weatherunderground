@@ -1,10 +1,13 @@
 ![Logo](admin/wu.png)
 # ioBroker.weatherunderground
 
-![Number of Installations](http://iobroker.live/badges/weatherunderground-installed.svg) ![Number of Installations](http://iobroker.live/badges/weatherunderground-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
+![Number of Installations](http://iobroker.live/badges/weatherunderground-installed.svg)
+![Number of Installations](http://iobroker.live/badges/weatherunderground-stable.svg)
+[![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
-[![NPM](https://nodei.co/npm/iobroker.weatherunderground.png?downloads=true)](https://nodei.co/npm/iobroker.weatherunderground/)
+![Test and Release](https://github.com/iobroker-community-adapters/iobroker.weatherunderground/workflows/Test%20and%20Release/badge.svg)
+[![Translation status](https://weblate.iobroker.net/widgets/adapters/-/weatherunderground/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
 **This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
