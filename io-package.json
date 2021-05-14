@@ -228,7 +228,8 @@
                 "fr": "des fautes de frappe fixes",
                 "it": "alcuni errori di battitura corretti",
                 "es": "algunos errores tipográficos arreglados",
-                "pl": "Naprawiono niektóre literówki"
+                "pl": "Naprawiono niektóre literówki",
+                "zh-cn": "修正了一些错别字"
             },
             "2.0.3": {
                 "en": "Warning! Breaking changes!\nRefactoring of states and roles",
@@ -239,7 +240,8 @@
                 "fr": "Attention! Briser les changements!\nRefactorisation des états et des rôles",
                 "it": "Avvertimento! Ultime modifiche!\nRefactoring di stati e ruoli",
                 "es": "¡Advertencia! ¡Rompiendo cambios!\nRefactorización de estados y roles",
-                "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról"
+                "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról",
+                "zh-cn": "警告！"
             }
         },
         "title": "weatherunderground forecast",
@@ -252,7 +254,8 @@
             "fr": "Météo Weatherunderground",
             "it": "Previsioni Weatherunderground",
             "es": "Previsión Weatherunderground",
-            "pl": "Prognoza Weatherunderground"
+            "pl": "Prognoza Weatherunderground",
+            "zh-cn": "地下天气预报"
         },
         "desc": {
             "en": "Loads Weatherunderground weather forecast for your location",
@@ -263,7 +266,8 @@
             "fr": "Charge Weatherunder météo Prévisions pour votre localité",
             "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
             "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
-            "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji"
+            "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji",
+            "zh-cn": "载入您所在位置的Weatherunderground天气预报"
         },
         "platform": "Javascript/Node.js",
         "mode": "schedule",
