@@ -306,7 +306,10 @@
             {
                 "js-controller": ">=2.0.0"
             }
-        ]
+        ],
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "tier": 2
     },
     "native": {
         "apikey": "",
