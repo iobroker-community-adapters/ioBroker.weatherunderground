@@ -663,9 +663,13 @@ async function parseLegacyResult(body, cb) {
                         ack: true,
                         val: now.toLocaleDateString()
                     });
+                    let iconId = parseInt(body.forecast.txt_forecast.forecastday[i].icon, 10);
+                    if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                        iconId = body.forecast.txt_forecast.forecastday[i].icon;
+                    }
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.icon', {
                         ack: true,
-                        val: body.forecast.txt_forecast.forecastday[i].icon
+                        val: iconId
                     });
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.iconURL', {
                         ack: true,
@@ -716,9 +720,13 @@ async function parseLegacyResult(body, cb) {
                         ack: true,
                         val: nonMetric ? parseFloat(body.forecast.simpleforecast.forecastday[i].low.fahrenheit) : parseFloat(body.forecast.simpleforecast.forecastday[i].low.celsius)
                     });
+                    let iconId = parseInt(body.forecast.simpleforecast.forecastday[i].icon, 10);
+                    if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                        iconId = body.forecast.simpleforecast.forecastday[i].icon;
+                    }
                     await adapter.setStateAsync('forecast.' + i + 'd.icon', {
                         ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].icon
+                        val: iconId
                     });
                     await adapter.setStateAsync('forecast.' + i + 'd.state', {
                         ack: true,
@@ -1076,13 +1084,17 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: now.toLocaleDateString()
                     });
+                    let iconId = parseInt(body.daily_forecast.daypart[0].iconCode[idx], 10);
+                    if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                        iconId = body.daily_forecast.daypart[0].iconCode[idx];
+                    }
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.icon', {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].iconCode[idx]
+                        val: iconId
                     });
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.iconURL', {
                         ack: true,
-                        val: handleIconUrl(body.daily_forecast.daypart[0].iconCode[idx])
+                        val: handleIconUrl(iconId)
                     });
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.title', {
                         ack: true,
@@ -1111,13 +1123,17 @@ async function parseNewResult(body, cb) {
                             ack: true,
                             val: new Date(body.daily_forecast2[i].day.fcst_valid_local).toLocaleDateString()
                         });
+                        let iconId = parseInt(body.daily_forecast2[i].day.icon_code, 10);
+                        if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                            iconId = body.daily_forecast2[i].day.icon_code;
+                        }
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.icon', {
                             ack: true,
-                            val: body.daily_forecast2[i].day.icon_code
+                            val: iconId
                         });
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.iconURL', {
                             ack: true,
-                            val: handleIconUrl(body.daily_forecast2[i].day.icon_code)
+                            val: handleIconUrl(iconId)
                         });
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.title', {
                             ack: true,
@@ -1139,9 +1155,13 @@ async function parseNewResult(body, cb) {
                             ack: true,
                             val: new Date(body.daily_forecast2[i].night.fcst_valid_local).toLocaleDateString()
                         });
+                        let iconId = parseInt(body.daily_forecast2[i].night.icon_code, 10);
+                        if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                            iconId = body.daily_forecast2[i].night.icon_code;
+                        }
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.icon', {
                             ack: true,
-                            val: body.daily_forecast2[i].night.icon_code
+                            val: iconId
                         });
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.iconURL', {
                             ack: true,
@@ -1188,9 +1208,13 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: body.daily_forecast.temperatureMin[i]
                     });
+                    let iconId = parseInt(body.daily_forecast.daypart[0].iconCode[i * 2], 10);
+                    if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                        iconId = body.daily_forecast.daypart[0].iconCode[i * 2];
+                    }
                     await adapter.setStateAsync('forecast.' + i + 'd.icon', {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].iconCode[i * 2]
+                        val: iconId
                     });
                     await adapter.setStateAsync('forecast.' + i + 'd.state', {
                         ack: true,
@@ -1288,9 +1312,13 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: body.daily_forecast2[i].min_temp
                     });
+                    let iconId = parseInt(body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code, 10);
+                    if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
+                        iconId = body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code;
+                    }
                     await adapter.setStateAsync('forecast.' + i + 'd.icon', {
                         ack: true,
-                        val: body.daily_forecast2[i].day ? body.daily_forecast2[i].day.icon_code : body.daily_forecast2[i].night.icon_code
+                        val: iconId
                     });
                     await adapter.setStateAsync('forecast.' + i + 'd.state', {
                         ack: true,
@@ -2138,7 +2166,7 @@ async function checkWeatherVariables() {
             common: {
                 name: 'URL to current weather icon',
                 role: 'weather.icon',
-                type: 'string',
+                type: 'number',
                 read: true,
                 write: false
             },
@@ -2510,7 +2538,7 @@ async function checkWeatherVariables() {
                 type: 'state',
                 common: {
                     name: 'forecast icon',
-                    type: 'string',
+                    type: 'number',
                     role: 'weather.icon.name.forecast.' + p,
                     read: true,
                     write: false
