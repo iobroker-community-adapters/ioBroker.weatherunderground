@@ -2749,7 +2749,7 @@ async function checkWeatherVariables() {
                 common: {
                     name: 'Quantitative precipitation forecast',
                     type: 'number',
-                    role: 'value.rain',
+                    role: 'value.precipitation',
                     unit: nonMetric ? 'in' : 'mm',
                     read: true,
                     write: false
