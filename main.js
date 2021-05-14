@@ -2554,7 +2554,7 @@ async function checkWeatherVariables() {
                     read: true,
                     write: false
                 },
-                native: {id: id + 'icon'}
+                native: {id: id + 'state'}
             });
             await adapter.setObjectNotExistsAsync(id + 'iconURL', {
                 type: 'state',
