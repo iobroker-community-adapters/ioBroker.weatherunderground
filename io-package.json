@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "weatherunderground",
-        "version": "3.3.0",
+        "version": "3.3.1",
         "news": {
+            "3.3.1": {
+                "en": "Optimize for js-controller 3.3",
+                "de": "Optimieren Sie für js-Controller 3.3",
+                "ru": "Оптимизировать под js-controller 3.3",
+                "pt": "Otimize para js-controller 3.3",
+                "nl": "Optimaliseren voor js-controller 3.3",
+                "fr": "Optimiser pour js-controller 3.3",
+                "it": "Ottimizza per js-controller 3.3",
+                "es": "Optimizar para js-controller 3.3",
+                "pl": "Optymalizacja dla kontrolera js 3.3",
+                "zh-cn": "针对 js-controller 3.3 优化"
+            },
             "3.3.0": {
                 "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
                 "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
@@ -230,18 +242,6 @@
                 "es": "algunos errores tipográficos arreglados",
                 "pl": "Naprawiono niektóre literówki",
                 "zh-cn": "修正了一些错别字"
-            },
-            "2.0.3": {
-                "en": "Warning! Breaking changes!\nRefactoring of states and roles",
-                "de": "Warnung! Breaking Änderungen!\nRefactoring von Zuständen und Rollen",
-                "ru": "Предупреждение! Нарушение изменений!\nРефакторинг состояний и ролей",
-                "pt": "Atenção! Quebrando mudanças!\nRefatoração de estados e papéis",
-                "nl": "Waarschuwing! Veranderingen doorbreken!\nRefactoring van staten en rollen",
-                "fr": "Attention! Briser les changements!\nRefactorisation des états et des rôles",
-                "it": "Avvertimento! Ultime modifiche!\nRefactoring di stati e ruoli",
-                "es": "¡Advertencia! ¡Rompiendo cambios!\nRefactorización de estados y roles",
-                "pl": "Ostrzeżenie! Łamanie zmian!\nRefaktoryzacja stanów i ról",
-                "zh-cn": "警告！"
             }
         },
         "title": "weatherunderground forecast",
