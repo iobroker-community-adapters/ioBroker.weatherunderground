@@ -2585,7 +2585,7 @@ async function checkWeatherVariables() {
                 common: {
                     name: 'max. wind direction',
                     role: 'weather.direction.max.wind.forecast.' + p,
-                    type: 'string',
+                    type: 'number',
                     read: true,
                     write: false
                 },
