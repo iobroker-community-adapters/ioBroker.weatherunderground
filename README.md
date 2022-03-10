@@ -74,6 +74,10 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) If no official API-Key is used: Move schedule if default is used to better spread the requests over time to prevent peaks; Additionally add a random delay in the start minute
+* (Apollon77) Further optimizations and additional logging
+
 ### 3.3.1 (2021-06-28)
 * (Apollon77) Optimize for js-controller 3.3
 
@@ -218,7 +222,7 @@ initial release with all basics to load WU-forecast data
 
 The MIT License (MIT)
 
-Copyright (c) 2015-2021 dschaedl <daniel.schaedler@gmail.com>
+Copyright (c) 2015-2022 dschaedl <daniel.schaedler@gmail.com>, iobroker-community
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -40,6 +40,7 @@ let currentObservationUrl;
 let forecastDailyUrl;
 let forecastHourlyUrl;
 let errorCounter = 0;
+let forceTimeout = null;
 
 let stopInProgress = false;
 
@@ -68,12 +69,47 @@ function _(text) {
     return text;
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(() => !stopInProgress && resolve(), ms));
+}
+
 function startAdapter(options) {
     options = options || {};
     Object.assign(options, {name: adapterName});
     adapter = new utils.Adapter(options);
 
+    adapter.on('unload', callback => {
+        stopInProgress = true;
+        forceTimeout && clearTimeout(forceTimeout);
+        callback && callback();
+    })
+
     adapter.on('ready', async () => {
+
+        officialApiKey = adapter.config.apikey;
+        if (officialApiKey && officialApiKey.length > 0 && officialApiKey.length !== 32) {
+            adapter.log.warn('API key invalid, please enter the new PWS owner API key or remove the key, ignoring it!');
+            officialApiKey = '';
+        }
+
+        if (!officialApiKey) {
+            try {
+                const instObj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
+                if (instObj && instObj.common && instObj.common.schedule && instObj.common.schedule === '12 * * * *') {
+                    instObj.common.schedule = `${Math.floor(Math.random() * 60)} * * * *`;
+                    this.log.info(`Default schedule found and adjusted to spread calls better over the full hour!`);
+                    await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, instObj);
+                    this.terminate ? this.terminate() : process.exit(0);
+                    return;
+                }
+            } catch (err) {
+                this.log.error(`Could not check or adjust the schedule: ${err.message}`);
+            }
+
+            const delay = Math.floor(Math.random() * 30000);
+            this.log.debug(`Delay execution by ${delay}ms to better spread API calls`);
+            await this.sleep(delay);
+        }
 
         adapter.config.language = adapter.config.language || 'DL';
 
@@ -136,45 +172,46 @@ function startAdapter(options) {
 
         nonMetric = !!adapter.config.nonMetric;
 
-        officialApiKey = adapter.config.apikey;
-
         await checkWeatherVariables();
-
-
 
         adapter.getState('currentStationKey', (err, state) => {
             if (!err && state && state.val) {
+                if (typeof state.val !== 'string') state.val = state.val.toString();
                 pwsStationKey = state.val;
                 adapter.log.debug('initialize PWS Station Key: ' + pwsStationKey);
             }
             adapter.getState('currentWebKey', (err, state) => {
                 if (!err && state && state.val) {
+                    if (typeof state.val !== 'string') state.val = state.val.toString();
                     newWebKey = state.val;
                     adapter.log.debug('initialize Web Key: ' + newWebKey);
                 }
 
                 adapter.getState('currentObservationUrl', (err, state) => {
                     if (!err && state && state.val) {
+                        if (typeof state.val !== 'string') state.val = state.val.toString();
                         currentObservationUrl = state.val;
                         adapter.log.debug('initialize Current Observation url: ' + currentObservationUrl);
                     }
 
                     adapter.getState('forecastDailyUrl', (err, state) => {
                         if (!err && state && state.val) {
+                            if (typeof state.val !== 'string') state.val = state.val.toString();
                             forecastDailyUrl = state.val;
                             adapter.log.debug('initialize Daily Forecast Url: ' + forecastDailyUrl);
                             if (forecastDailyUrl.includes('/v1/')) {
-                                adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
+                                adapter.log.debug('    Daily Forecast Url incompatible ... refetch');
                                 forecastDailyUrl = '';
                             }
                         }
 
                         adapter.getState('forecastHourlyUrl', (err, state) => {
                             if (!err && state && state.val) {
+                                if (typeof state.val !== 'string') state.val = state.val.toString();
                                 forecastHourlyUrl = state.val;
                                 adapter.log.debug('initialize Hourly Forecast Url: ' + forecastHourlyUrl);
                                 if (forecastHourlyUrl.includes('/v1/')) {
-                                    adapter.log.debug('    Daily Forecast Url incompatibe ... refetch');
+                                    adapter.log.debug('    Daily Forecast Url incompatible ... refetch');
                                     forecastHourlyUrl = '';
                                 }
                             }
@@ -200,8 +237,10 @@ function startAdapter(options) {
                                     }, () => adapter.setState('locationChecksum', {val: locationHash, ack: true}));
                                 }
 
-                                getKeysAndData(() =>
-                                    setTimeout(() => adapter.stop(), 2000));
+                                getKeysAndData(() => {
+                                    forceTimeout && clearTimeout(forceTimeout);
+                                    forceTimeout = setTimeout(() => adapter.stop(), 2000);
+                                });
                             });
                         });
                     });
@@ -211,7 +250,8 @@ function startAdapter(options) {
 
         // force terminate after 1min
         // don't know why it does not terminate by itself...
-        setTimeout(() => {
+        forceTimeout = setTimeout(() => {
+            forceTimeout = null;
             stopInProgress = true;
             adapter.log.warn('force terminate');
             adapter.terminate ? adapter.terminate() : process.exit(0);
@@ -270,11 +310,6 @@ function handleIconUrl(original) {
 }
 
 function getApiKey(cb) {
-    if (officialApiKey && officialApiKey.length > 0 && officialApiKey.length !== 32) {
-        adapter.log.warn('API key invalid, please enter the new PWS owner API key or remove the key, ignoring it!');
-        officialApiKey = '';
-    }
-
     getStationKey(() => getWebsiteKey( () => cb()));
 }
 
@@ -289,6 +324,9 @@ function getStationKey(cb) {
         adapter.config.station = adapter.config.station.trim();
         if (adapter.config.station.startsWith('pws:')) {
             adapter.config.station = adapter.config.station.substr(4).trim();
+        }
+        if (/[^A-Z0-9]/.test(adapter.config.station)) {
+            adapter.log.info(`Please check the configured station-id "${adapter.config.station}" if it do not work because usually station ids consist of capital letters and numbers only!`)
         }
         url = 'https://www.wunderground.com/dashboard/pws/' + encodeURIComponent(adapter.config.station);
     }
@@ -371,10 +409,13 @@ function getWebsiteKey(cb, tryQ) {
         return cb && cb();
     }
 
-    let url = 'https://www.wunderground.com/hourly/' + encodeURIComponent(adapter.config.country) + '/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
-    if (adapter.config.location.startsWith('pws:') || adapter.config.location.match(/^[A-Z]+[0-9]{1,4}$/) || adapter.config.location.match(/^[0-9]+\.[0-9]+,[0-9]+\.[0-9]+$/)) { // Geocode
+    let url;
+    if (adapter.config.location.startsWith('pws:') || adapter.config.location.match(/^[A-Z]+[0-9]{1,4}$/) || adapter.config.location.match(/^[0-9]+\.[0-9]+ *, *[0-9]+\.[0-9]+$/)) { // Geocode
         url = 'https://www.wunderground.com/hourly/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
+    } else {
+        url = 'https://www.wunderground.com/hourly/' + encodeURIComponent(adapter.config.country) + '/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
     }
+
 
     adapter.log.debug('get WU weather page: ' + url);
 
@@ -459,6 +500,8 @@ async function parseLegacyResult(body, cb) {
     let qpfMax = 0;
     let popMax = 0;
     let uviSum = 0;
+
+    adapter.log.debug(`Process legacy results: ${JSON.stringify(body)}`);
 
     if (adapter.config.current) {
         if (body.current_observation) {
@@ -919,6 +962,8 @@ async function parseNewResult(body, cb) {
     let qpfMax = 0;
     let popMax = 0;
     let uviSum = 0;
+
+    adapter.log.debug(`Process new results: ${JSON.stringify(body)}`);
 
     if (!body || !Object.keys(body).length) {
         adapter.log.error('No data received!');
@@ -1638,6 +1683,9 @@ function getNewWuDataDailyForcast(weatherData, cb) {
         if (adapter.config.station && officialApiKey && weatherData.current_observation && weatherData.current_observation.lon !== undefined && weatherData.current_observation.lat !== undefined ) {
             // https://api.weather.com/v3/wx/forecast/daily/5day?geocode=49.03578568,8.34588718&language=de&format=json&units=m&apiKey=712eb8d021404624aeb8d021402624d6
             url = 'https://api.weather.com/v3/wx/forecast/daily/5day?geocode=' + encodeURIComponent(weatherData.current_observation.lat + ',' + weatherData.current_observation.lon) + '&language=' + lang + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&apiKey=' + (officialApiKey || newWebKey);
+            if (weatherData.current_observation.lat === 0 && weatherData.current_observation.lon === 0) {
+                adapter.log.info('Location seems invalid (0,0), please check the stateion-id/city setting!');
+            }
         } else {
             url = modifyExtractedUrl(forecastDailyUrl);
             url = url.replace(/\/[0-9]+day/,'/5day');
