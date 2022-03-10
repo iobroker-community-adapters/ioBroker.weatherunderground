@@ -94,21 +94,21 @@ function startAdapter(options) {
 
         if (!officialApiKey) {
             try {
-                const instObj = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
+                const instObj = adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
                 if (instObj && instObj.common && instObj.common.schedule && instObj.common.schedule === '12 * * * *') {
                     instObj.common.schedule = `${Math.floor(Math.random() * 60)} * * * *`;
-                    this.log.info(`Default schedule found and adjusted to spread calls better over the full hour!`);
-                    await this.setForeignObjectAsync(`system.adapter.${this.namespace}`, instObj);
-                    this.terminate ? this.terminate() : process.exit(0);
+                    adapter.log.info(`Default schedule found and adjusted to spread calls better over the full hour!`);
+                    await adapter.setForeignObjectAsync(`system.adapter.${adapter.namespace}`, instObj);
+                    adapter.terminate ? adapter.terminate() : process.exit(0);
                     return;
                 }
             } catch (err) {
-                this.log.error(`Could not check or adjust the schedule: ${err.message}`);
+                adapter.log.error(`Could not check or adjust the schedule: ${err.message}`);
             }
 
             const delay = Math.floor(Math.random() * 30000);
-            this.log.debug(`Delay execution by ${delay}ms to better spread API calls`);
-            await this.sleep(delay);
+            adapter.log.debug(`Delay execution by ${delay}ms to better spread API calls`);
+            await sleep(delay);
         }
 
         adapter.config.language = adapter.config.language || 'DL';
