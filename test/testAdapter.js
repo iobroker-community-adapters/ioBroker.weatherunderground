@@ -84,6 +84,7 @@ describe('Test ' + adapterShortName + ' adapter', function() {
             config.common.loglevel = 'debug';
             config.native.location = 'Berlin';
             config.native.language = 'GE';
+            config.native.apikey = '12345678901234567890123456789012';
 
             await setup.setAdapterConfig(config.common, config.native);
 
