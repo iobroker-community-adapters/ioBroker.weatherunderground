@@ -94,7 +94,7 @@ function startAdapter(options) {
 
         if (!officialApiKey) {
             try {
-                const instObj = adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
+                const instObj = await adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
                 if (instObj && instObj.common && instObj.common.schedule && instObj.common.schedule === '12 * * * *') {
                     instObj.common.schedule = `${Math.floor(Math.random() * 60)} * * * *`;
                     adapter.log.info(`Default schedule found and adjusted to spread calls better over the full hour!`);
