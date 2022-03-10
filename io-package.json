@@ -1,330 +1,174 @@
 {
-    "common": {
-        "name": "weatherunderground",
-        "version": "3.3.1",
-        "news": {
-            "3.3.1": {
-                "en": "Optimize for js-controller 3.3",
-                "de": "Optimieren Sie für js-Controller 3.3",
-                "ru": "Оптимизировать под js-controller 3.3",
-                "pt": "Otimize para js-controller 3.3",
-                "nl": "Optimaliseren voor js-controller 3.3",
-                "fr": "Optimiser pour js-controller 3.3",
-                "it": "Ottimizza per js-controller 3.3",
-                "es": "Optimizar para js-controller 3.3",
-                "pl": "Optymalizacja dla kontrolera js 3.3",
-                "zh-cn": "针对 js-controller 3.3 优化"
-            },
-            "3.3.0": {
-                "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
-                "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
-                "ru": "Оптимизировать под js-controller 3.2\njs-controller 2.0 теперь требуется как минимум",
-                "pt": "Otimize para js-controller 3.2\njs-controller 2.0 agora é necessário pelo menos",
-                "nl": "Optimaliseren voor js-controller 3.2\njs-controller 2.0 is nu minimaal vereist",
-                "fr": "Optimiser pour js-controller 3.2\njs-controller 2.0 est maintenant requis au moins",
-                "it": "Ottimizza per js-controller 3.2\njs-controller 2.0 è ora almeno richiesto",
-                "es": "Optimizar para js-controller 3.2\njs-controller 2.0 ahora se requiere al menos",
-                "pl": "Optymalizacja pod kątem js-controller 3.2\njs-controller 2.0 jest teraz wymagany przynajmniej",
-                "zh-cn": "针对js-controller 3.2进行优化\n现在至少需要js-controller 2.0"
-            },
-            "3.2.5": {
-                "en": "Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "de": "Absturz verhindern (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "pt": "Evitar caso de colisão (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "nl": "Voorkom crashgeval (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "fr": "Prévenir les cas d'accident (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "it": "Prevenire il crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "es": "Caso de prevención de choque (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "pl": "Zapobiegaj przypadkowi awarii (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-                "zh-cn": "防止发生崩溃情况（哨兵IOBROKER-WEATHERUNDERGROUND-1，IOBROKER-WEATHERUNDERGROUND-2）"
-            },
-            "3.2.3": {
-                "en": "make sure adapter do not crash when no data could be read\nAdd Sentry error reporting",
-                "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt, wenn keine Daten gelesen werden konnten\nSentry-Fehlerberichterstattung hinzufügen",
-                "ru": "убедитесь, что адаптер не выйдет из строя, когда данные не могут быть прочитаны\nДобавить отчет об ошибках Sentry",
-                "pt": "certifique-se de que o adaptador não trave quando nenhum dado puder ser lido\nAdicionar relatório de erro de Sentry",
-                "nl": "zorg ervoor dat de adapter niet crasht als er geen gegevens kunnen worden gelezen\nVoeg Sentry-foutrapportage toe",
-                "fr": "assurez-vous que l'adaptateur ne plante pas lorsqu'aucune donnée ne peut être lue\nAjouter un rapport d'erreur Sentry",
-                "it": "assicurarsi che l'adattatore non si blocchi quando non è possibile leggere i dati\nAggiungi la segnalazione degli errori di Sentry",
-                "es": "asegúrese de que el adaptador no se bloquee cuando no se puedan leer datos\nAgregar informe de errores de Sentry",
-                "pl": "upewnij się, że adapter nie ulega awarii, gdy nie można odczytać żadnych danych\nDodaj raportowanie błędów Sentry",
-                "zh-cn": "确保在无法读取数据时适配器不会崩溃\n添加Sentry错误报告"
-            },
-            "3.2.2": {
-                "en": "icons sometimes did not had a correct extension\nCorrect some cases with different types of locations when reading data",
-                "de": "Symbole hatten manchmal keine korrekte Erweiterung\nKorrigieren Sie einige Fälle mit unterschiedlichen Speicherorten beim Lesen von Daten",
-                "ru": "значки иногда не имели правильного расширения\nИсправьте некоторые случаи с разными типами местоположений при чтении данных",
-                "pt": "os ícones às vezes não tinham uma extensão correta\nCorrija alguns casos com diferentes tipos de locais ao ler os dados",
-                "nl": "pictogrammen hadden soms geen juiste extensie\nCorrigeer enkele gevallen met verschillende soorten locaties bij het lezen van gegevens",
-                "fr": "les icônes n'avaient parfois pas une extension correcte\nCorrigez certains cas avec différents types d'emplacements lors de la lecture de données",
-                "it": "le icone a volte non avevano un'estensione corretta\nCorreggere alcuni casi con diversi tipi di posizioni durante la lettura dei dati",
-                "es": "los iconos a veces no tenían una extensión correcta\nCorrija algunos casos con diferentes tipos de ubicaciones al leer datos",
-                "pl": "ikony czasami nie miały poprawnego rozszerzenia\nPopraw niektóre przypadki z różnymi typami lokalizacji podczas odczytu danych",
-                "zh-cn": "图标有时没有正确的扩展名\n读取数据时更正具有不同类型位置的某些情况"
-            },
-            "3.2.1": {
-                "en": "Corrected 'Imperial' terminology",
-                "de": "Korrigierte 'imperiale' Terminologie",
-                "ru": "Исправленная «имперская» терминология",
-                "pt": "Terminologia 'Imperial' corrigida",
-                "nl": "Gecorrigeerde 'imperiale' terminologie",
-                "fr": "Terminologie «impériale» corrigée",
-                "it": "Terminologia \"imperiale\" corretta",
-                "es": "Terminología 'imperial' corregida",
-                "pl": "Poprawiona terminologia „imperialna”",
-                "zh-cn": "更正了“帝国”术语"
-            },
-            "3.2.0": {
-                "en": "forecast expiry time fixed, visibility index to objects on hourly forecast added",
-                "de": "Prognoseverfallzeit behoben, Sichtbarkeitsindex für Objekte in der stündlichen Prognose hinzugefügt",
-                "ru": "фиксированное время истечения прогноза, добавлен индекс видимости объектов на почасовом прогнозе",
-                "pt": "tempo de expiração da previsão fixo, índice de visibilidade dos objetos na previsão horária adicionada",
-                "nl": "voorspelde vervaltijd vast, zichtindex voor objecten op voorspelling per uur toegevoegd",
-                "fr": "heure d'expiration des prévisions fixée, indice de visibilité des objets sur les prévisions horaires ajouté",
-                "it": "tempo di scadenza della previsione fisso, indice di visibilità agli oggetti sulla previsione oraria aggiunta",
-                "es": "tiempo de vencimiento del pronóstico fijo, índice de visibilidad de los objetos en el pronóstico por hora agregado",
-                "pl": "ustalony czas wygaśnięcia prognozy, dodano wskaźnik widoczności obiektów na prognozie godzinowej",
-                "zh-cn": "固定的预测到期时间，添加了按小时预测的对象的可见性索引"
-            },
-            "3.1.6": {
-                "en": "run once after changes; adopt to changes by WU",
-                "de": "Nach Änderungen einmal ausführen; Änderungen von WU berücksichtigt",
-                "ru": "запустить один раз после изменений; принять к изменениям WU",
-                "pt": "executar uma vez após as alterações; adotar as mudanças por WU",
-                "nl": "eenmaal uitvoeren na wijzigingen; vast te stellen aan veranderingen door WU",
-                "fr": "exécuter une fois après les modifications; adopter les modifications par WU",
-                "it": "eseguire una volta dopo le modifiche; adottare le modifiche da WU",
-                "es": "correr una vez después de los cambios; adoptar a los cambios por WU",
-                "pl": "uruchom raz po zmianach; dostosować się do zmian przez WU",
-                "zh-cn": "更改后运行一次; 采纳吴的变化"
-            },
-            "3.1.3": {
-                "en": "text correction",
-                "de": "Textkorrektur",
-                "ru": "коррекция текста",
-                "pt": "correção de texto",
-                "nl": "tekstcorrectie",
-                "fr": "correction de texte",
-                "it": "correzione del testo",
-                "es": "corrección de texto",
-                "pl": "korekta tekstu",
-                "zh-cn": "文字修正"
-            },
-            "3.1.2": {
-                "en": "use new parameters to get decimal precision values",
-                "de": "Verwenden Sie neue Parameter, um dezimale Genauigkeitswerte zu erhalten",
-                "ru": "использовать новые параметры для получения значений десятичной точности",
-                "pt": "use novos parâmetros para obter valores de precisão decimais",
-                "nl": "gebruik nieuwe parameters om decimale precisiewaarden te krijgen",
-                "fr": "utiliser de nouveaux paramètres pour obtenir des valeurs de précision décimales",
-                "it": "utilizzare nuovi parametri per ottenere valori di precisione decimali",
-                "es": "Usa nuevos parámetros para obtener valores de precisión decimales.",
-                "pl": "użyj nowych parametrów, aby uzyskać wartości dokładności dziesiętnej",
-                "zh-cn": "使用新参数获取小数精度值"
-            },
-            "3.1.1": {
-                "en": "made wind direction as string additionally to degrees available",
-                "de": "Windrichtung als String zusätzlich zu Grad zur Verfügung gestellt",
-                "ru": "направление ветра в виде строки дополнительно к градусам",
-                "pt": "fez direção do vento como string adicionalmente aos graus disponíveis",
-                "nl": "maakte windrichting als een snaar extra graden beschikbaar",
-                "fr": "fait la direction du vent en tant que ficelle en plus des degrés disponibles",
-                "it": "ha reso la direzione del vento come stringa aggiuntiva ai gradi disponibili",
-                "es": "Dirección del viento hecha como cuerda adicionalmente a grados disponibles.",
-                "pl": "udostępniono kierunek wiatru jako ciąg dodatkowo do stopni",
-                "zh-cn": "除了可用的度数之外，还将风向作为弦"
-            },
-            "3.1.0": {
-                "en": "remove option for legacy API because disabled by WU",
-                "de": "Option für Legacy-API entfernen, da von WU deaktiviert",
-                "ru": "опция удаления для устаревшего API, потому что отключена WU",
-                "pt": "remover a opção da API legada porque desativada pelo WU",
-                "nl": "verwijder optie voor legacy API omdat uitgeschakeld door WU",
-                "fr": "option de suppression pour l'API héritée car désactivée par WU",
-                "it": "rimuovi l'opzione per l'API legacy perché disabilitata da WU",
-                "es": "eliminar la opción para la API heredada porque está deshabilitada por WU",
-                "pl": "usuń opcję starszego API, ponieważ została wyłączona przez WU",
-                "zh-cn": "删除遗留API的选项，因为WU禁用了该选项"
-            },
-            "3.0.14": {
-                "en": "optimize checking of pws station id",
-                "de": "Optimierung der Überprüfung der pws-Stations-ID",
-                "ru": "оптимизировать проверку идентификатора станции pws",
-                "pt": "otimizar a verificação do id da estação pws",
-                "nl": "optimalisatie van de controle van het pws-stations-ID",
-                "fr": "optimiser la vérification de l'identifiant de la station pws",
-                "it": "ottimizzare il controllo dell'id della stazione pws",
-                "es": "Optimiza la comprobación de la ID de la estación pws",
-                "pl": "optymalizacja sprawdzania identyfikatora stacji pws",
-                "zh-cn": "优化pws站id的检查"
-            },
-            "3.0.12": {
-                "en": "adopt to changes by WU",
-                "de": "Änderungen von WU berücksichtigt",
-                "ru": "принять к изменениям WU",
-                "pt": "adotar as mudanças por WU",
-                "nl": "vast te stellen aan veranderingen door WU",
-                "fr": "adopter les modifications par WU",
-                "it": "adottare le modifiche da WU",
-                "es": "adoptar a los cambios por WU",
-                "pl": "dostosować się do zmian przez WU",
-                "zh-cn": "采纳吴的变化"
-            },
-            "3.0.11": {
-                "en": "adopt to changes by WU",
-                "de": "Änderungen von WU berücksichtigt",
-                "ru": "принять к изменениям WU",
-                "pt": "adotar as mudanças por WU",
-                "nl": "vast te stellen aan veranderingen door WU",
-                "fr": "adopter les modifications par WU",
-                "it": "adottare le modifiche da WU",
-                "es": "adoptar a los cambios por WU",
-                "pl": "dostosować się do zmian przez WU",
-                "zh-cn": "采纳吴的变化"
-            },
-            "3.0.10": {
-                "en": "adopt to changes by WU",
-                "de": "Änderungen von WU berücksichtigt",
-                "ru": "принять к изменениям WU",
-                "pt": "adotar as mudanças por WU",
-                "nl": "vast te stellen aan veranderingen door WU",
-                "fr": "adopter les modifications par WU",
-                "it": "adottare le modifiche da WU",
-                "es": "adoptar a los cambios por WU",
-                "pl": "dostosować się do zmian przez WU",
-                "zh-cn": "采纳吴的变化"
-            },
-            "3.0.9": {
-                "en": "adopt to changes by WU",
-                "de": "Änderungen von WU berücksichtigt",
-                "ru": "принять к изменениям WU",
-                "pt": "adotar as mudanças por WU",
-                "nl": "vast te stellen aan veranderingen door WU",
-                "fr": "adopter les modifications par WU",
-                "it": "adottare le modifiche da WU",
-                "es": "adoptar a los cambios por WU",
-                "pl": "dostosować się do zmian przez WU",
-                "zh-cn": "采纳吴的变化"
-            },
-            "3.0.8": {
-                "en": "Add additional guidance in log if location is not found by WU",
-                "de": "Fügen Sie zusätzliche Anweisungen im Protokoll hinzu, wenn der Standort von der WU nicht gefunden wird",
-                "ru": "Добавьте дополнительное руководство в журнал, если местоположение не найдено WU",
-                "pt": "Adicionar orientação adicional no log se o local não for encontrado por WU",
-                "nl": "Voeg extra begeleiding toe in het log als locatie niet wordt gevonden door WU",
-                "fr": "Ajout de conseils supplémentaires dans le journal si l'emplacement n'est pas trouvé par WU",
-                "it": "Aggiungi ulteriori indicazioni nel registro se la posizione non viene trovata da WU",
-                "es": "Agregue orientación adicional en el registro si WU no encuentra la ubicación",
-                "pl": "Dodaj dodatkowe wskazówki w dzienniku, jeśli lokalizacja nie zostanie znaleziona przez WU",
-                "zh-cn": "如果WU找不到位置，请在日志中添加其他指南"
-            },
-            "3.0.7": {
-                "en": "Extracts API keys from WU webpage and allow usage of legacy and new APIs with and without a PWS owner key",
-                "de": "Extrahiert API-Schlüssel von der WU-Webseite und ermöglicht die Verwendung älterer und neuer APIs mit und ohne PWS-Besitzerschlüssel",
-                "ru": "Извлекает ключи API с веб-страницы WU и позволяет использовать устаревшие и новые API с ключом владельца PWS и без него.",
-                "pt": "Extrai chaves de API da página da Web do WU e permite o uso de APIs herdadas e novas com e sem uma chave de proprietário do PWS",
-                "nl": "Extracteert API-sleutels van de WU-webpagina en staat het gebruik van bestaande en nieuwe API's toe met en zonder een PWS-eigenaarsleutel",
-                "fr": "Extrait les clés API de la page Web WU et permet l'utilisation d'anciennes et de nouvelles API avec et sans clé de propriétaire PWS",
-                "it": "Estrae le chiavi API dalla pagina Web WU e consente l'utilizzo di legacy e nuove API con e senza chiave del proprietario PWS",
-                "es": "Extrae las claves de API de la página web de WU y permite el uso de las API heredadas y nuevas con y sin una clave de propietario de PWS",
-                "pl": "Wyodrębnia klucze API ze strony internetowej WU i zezwala na wykorzystanie starszych i nowych interfejsów API z kluczem właściciela PWS i bez niego",
-                "zh-cn": "从WU网页中提取API密钥，允许使用带有和不带PWS所有者密钥的旧API和新API"
-            },
-            "2.0.4": {
-                "en": "some typos fixed",
-                "de": "einige Tippfehler behoben",
-                "ru": "некоторые фиксированные опечатки",
-                "pt": "alguns erros corrigidos",
-                "nl": "sommige typefouten zijn verholpen",
-                "fr": "des fautes de frappe fixes",
-                "it": "alcuni errori di battitura corretti",
-                "es": "algunos errores tipográficos arreglados",
-                "pl": "Naprawiono niektóre literówki",
-                "zh-cn": "修正了一些错别字"
-            }
-        },
-        "title": "weatherunderground forecast",
-        "titleLang": {
-            "en": "Weatherunderground forecast",
-            "de": "Vorhersage Weatherunderground",
-            "ru": "Weatherunderground прогноз",
-            "pt": "Previsão do Weatherunderground",
-            "nl": "Weatherunderground voorspelling",
-            "fr": "Météo Weatherunderground",
-            "it": "Previsioni Weatherunderground",
-            "es": "Previsión Weatherunderground",
-            "pl": "Prognoza Weatherunderground",
-            "zh-cn": "地下天气预报"
-        },
-        "desc": {
-            "en": "Loads Weatherunderground weather forecast for your location",
-            "de": "Lädt Wetterwetterprognose für Ihren Standort",
-            "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
-            "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
-            "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
-            "fr": "Charge Weatherunder météo Prévisions pour votre localité",
-            "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
-            "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
-            "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji",
-            "zh-cn": "载入您所在位置的Weatherunderground天气预报"
-        },
-        "platform": "Javascript/Node.js",
-        "mode": "schedule",
-        "schedule": "12 * * * *",
-        "icon": "wu.png",
-        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.weatherunderground/master/admin/wu.png",
-        "readme": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/blob/master/README.md",
-        "license": "MIT",
-        "type": "weather",
-        "compact": true,
-        "materialize": true,
-        "keywords": [
-            "iobroker",
-            "weather",
-            "forecast",
-            "wu",
-            "weatherunderground"
-        ],
-        "loglevel": "info",
-        "enabled": true,
-        "allowInit": true,
-        "authors": [
-            "Daniel Schaedler <daniel.schaedler@gmail.com>",
-            "Ingo Fischer <iobroker@fischer-ka.de>"
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://eceef3154b014c2db3267875a45b6888@sentry.iobroker.net/112",
-                "errorBlacklist": [
-                    "SyntaxError"
-                ]
-            }
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "connectionType": "cloud",
-        "dataSource": "poll",
-        "tier": 2
+  "common": {
+    "name": "weatherunderground",
+    "version": "3.4.0",
+    "news": {
+      "3.4.0": {
+        "en": "If no official API-Key is used: Move schedule if default is used to better spread the requests over time to prevent peaks; Additionally add a random delay in the start minute\nFurther optimizations and additional logging",
+        "de": "Wenn kein offizieller API-Schlüssel verwendet wird: Zeitplan verschieben, wenn Standard verwendet wird, um die Anfragen besser über die Zeit zu verteilen, um Spitzen zu vermeiden; Fügen Sie zusätzlich eine zufällige Verzögerung in der Startminute hinzu\nWeitere Optimierungen und zusätzliches Logging",
+        "ru": "Если официальный API-ключ не используется: перенесите расписание, если используется значение по умолчанию, чтобы лучше распределить запросы по времени и предотвратить пики; Дополнительно добавить случайную задержку в стартовой минуте\nДальнейшая оптимизация и дополнительное ведение журнала",
+        "pt": "Se nenhuma API-Key oficial for usada: Mova o agendamento se o padrão for usado para distribuir melhor as solicitações ao longo do tempo para evitar picos; Além disso, adicione um atraso aleatório no minuto de início\nOutras otimizações e registros adicionais",
+        "nl": "Als er geen officiële API-Key wordt gebruikt: Verplaats schema als standaard wordt gebruikt om de verzoeken beter te spreiden over de tijd om pieken te voorkomen; Voeg bovendien een willekeurige vertraging toe aan de startminuut\nVerdere optimalisaties en extra logging",
+        "fr": "Si aucune clé API officielle n'est utilisée : déplacer le calendrier si la valeur par défaut est utilisée pour mieux répartir les demandes dans le temps afin d'éviter les pics ; Ajoutez également un délai aléatoire dans la minute de démarrage\nOptimisations supplémentaires et journalisation supplémentaire",
+        "it": "Se non viene utilizzata alcuna API-Key ufficiale: Sposta la pianificazione se viene utilizzata di default per distribuire meglio le richieste nel tempo ed evitare picchi; Aggiungi inoltre un ritardo casuale nel minuto di inizio\nUlteriori ottimizzazioni e registrazione aggiuntiva",
+        "es": "Si no se usa una clave de API oficial: Mover el cronograma si se usa el predeterminado para distribuir mejor las solicitudes a lo largo del tiempo para evitar picos; Además, agregue un retraso aleatorio en el minuto de inicio\nMás optimizaciones y registro adicional",
+        "pl": "Jeśli nie jest używany żaden oficjalny klucz API: Przenieś harmonogram, jeśli używany jest domyślny, aby lepiej rozłożyć żądania w czasie, aby zapobiec szczytom; Dodatkowo dodaj losowe opóźnienie w minucie startu\nDalsze optymalizacje i dodatkowe logowanie",
+        "zh-cn": "如果没有使用官方 API-Key：如果使用默认值，则移动计划以更好地随着时间的推移分散请求以防止峰值；另外在开始分钟添加随机延迟\n进一步的优化和额外的日志记录"
+      },
+      "3.3.1": {
+        "en": "Optimize for js-controller 3.3",
+        "de": "Optimieren Sie für js-Controller 3.3",
+        "ru": "Оптимизировать под js-controller 3.3",
+        "pt": "Otimize para js-controller 3.3",
+        "nl": "Optimaliseren voor js-controller 3.3",
+        "fr": "Optimiser pour js-controller 3.3",
+        "it": "Ottimizza per js-controller 3.3",
+        "es": "Optimizar para js-controller 3.3",
+        "pl": "Optymalizacja dla kontrolera js 3.3",
+        "zh-cn": "针对 js-controller 3.3 优化"
+      },
+      "3.3.0": {
+        "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
+        "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
+        "ru": "Оптимизировать под js-controller 3.2\njs-controller 2.0 теперь требуется как минимум",
+        "pt": "Otimize para js-controller 3.2\njs-controller 2.0 agora é necessário pelo menos",
+        "nl": "Optimaliseren voor js-controller 3.2\njs-controller 2.0 is nu minimaal vereist",
+        "fr": "Optimiser pour js-controller 3.2\njs-controller 2.0 est maintenant requis au moins",
+        "it": "Ottimizza per js-controller 3.2\njs-controller 2.0 è ora almeno richiesto",
+        "es": "Optimizar para js-controller 3.2\njs-controller 2.0 ahora se requiere al menos",
+        "pl": "Optymalizacja pod kątem js-controller 3.2\njs-controller 2.0 jest teraz wymagany przynajmniej",
+        "zh-cn": "针对js-controller 3.2进行优化\n现在至少需要js-controller 2.0"
+      },
+      "3.2.5": {
+        "en": "Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "de": "Absturz verhindern (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "ru": "Случай предотвращения сбоя (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "pt": "Evitar caso de colisão (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "nl": "Voorkom crashgeval (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "fr": "Prévenir les cas d'accident (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "it": "Prevenire il crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "es": "Caso de prevención de choque (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "pl": "Zapobiegaj przypadkowi awarii (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+        "zh-cn": "防止发生崩溃情况（哨兵IOBROKER-WEATHERUNDERGROUND-1，IOBROKER-WEATHERUNDERGROUND-2）"
+      },
+      "3.2.3": {
+        "en": "make sure adapter do not crash when no data could be read\nAdd Sentry error reporting",
+        "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt, wenn keine Daten gelesen werden konnten\nSentry-Fehlerberichterstattung hinzufügen",
+        "ru": "убедитесь, что адаптер не выйдет из строя, когда данные не могут быть прочитаны\nДобавить отчет об ошибках Sentry",
+        "pt": "certifique-se de que o adaptador não trave quando nenhum dado puder ser lido\nAdicionar relatório de erro de Sentry",
+        "nl": "zorg ervoor dat de adapter niet crasht als er geen gegevens kunnen worden gelezen\nVoeg Sentry-foutrapportage toe",
+        "fr": "assurez-vous que l'adaptateur ne plante pas lorsqu'aucune donnée ne peut être lue\nAjouter un rapport d'erreur Sentry",
+        "it": "assicurarsi che l'adattatore non si blocchi quando non è possibile leggere i dati\nAggiungi la segnalazione degli errori di Sentry",
+        "es": "asegúrese de que el adaptador no se bloquee cuando no se puedan leer datos\nAgregar informe de errores de Sentry",
+        "pl": "upewnij się, że adapter nie ulega awarii, gdy nie można odczytać żadnych danych\nDodaj raportowanie błędów Sentry",
+        "zh-cn": "确保在无法读取数据时适配器不会崩溃\n添加Sentry错误报告"
+      },
+      "3.2.2": {
+        "en": "icons sometimes did not had a correct extension\nCorrect some cases with different types of locations when reading data",
+        "de": "Symbole hatten manchmal keine korrekte Erweiterung\nKorrigieren Sie einige Fälle mit unterschiedlichen Speicherorten beim Lesen von Daten",
+        "ru": "значки иногда не имели правильного расширения\nИсправьте некоторые случаи с разными типами местоположений при чтении данных",
+        "pt": "os ícones às vezes não tinham uma extensão correta\nCorrija alguns casos com diferentes tipos de locais ao ler os dados",
+        "nl": "pictogrammen hadden soms geen juiste extensie\nCorrigeer enkele gevallen met verschillende soorten locaties bij het lezen van gegevens",
+        "fr": "les icônes n'avaient parfois pas une extension correcte\nCorrigez certains cas avec différents types d'emplacements lors de la lecture de données",
+        "it": "le icone a volte non avevano un'estensione corretta\nCorreggere alcuni casi con diversi tipi di posizioni durante la lettura dei dati",
+        "es": "los iconos a veces no tenían una extensión correcta\nCorrija algunos casos con diferentes tipos de ubicaciones al leer datos",
+        "pl": "ikony czasami nie miały poprawnego rozszerzenia\nPopraw niektóre przypadki z różnymi typami lokalizacji podczas odczytu danych",
+        "zh-cn": "图标有时没有正确的扩展名\n读取数据时更正具有不同类型位置的某些情况"
+      },
+      "3.2.1": {
+        "en": "Corrected 'Imperial' terminology",
+        "de": "Korrigierte 'imperiale' Terminologie",
+        "ru": "Исправленная «имперская» терминология",
+        "pt": "Terminologia 'Imperial' corrigida",
+        "nl": "Gecorrigeerde 'imperiale' terminologie",
+        "fr": "Terminologie «impériale» corrigée",
+        "it": "Terminologia \"imperiale\" corretta",
+        "es": "Terminología 'imperial' corregida",
+        "pl": "Poprawiona terminologia „imperialna”",
+        "zh-cn": "更正了“帝国”术语"
+      }
     },
-    "native": {
-        "apikey": "",
-        "location": "",
-        "station": "",
-        "language": "DL",
-        "forecast_periods_txt": true,
-        "forecast_periods": true,
-        "forecast_hourly": true,
-        "current": true,
-        "nonMetric": false,
-        "custom_icon_base_url": "",
-        "country": "DE",
-        "useLegacyApi": true,
-        "iconSet": "i"
+    "title": "weatherunderground forecast",
+    "titleLang": {
+      "en": "Weatherunderground forecast",
+      "de": "Vorhersage Weatherunderground",
+      "ru": "Weatherunderground прогноз",
+      "pt": "Previsão do Weatherunderground",
+      "nl": "Weatherunderground voorspelling",
+      "fr": "Météo Weatherunderground",
+      "it": "Previsioni Weatherunderground",
+      "es": "Previsión Weatherunderground",
+      "pl": "Prognoza Weatherunderground",
+      "zh-cn": "地下天气预报"
     },
-    "objects": [],
-    "instanceObjects": []
+    "desc": {
+      "en": "Loads Weatherunderground weather forecast for your location",
+      "de": "Lädt Wetterwetterprognose für Ihren Standort",
+      "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
+      "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
+      "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
+      "fr": "Charge Weatherunder météo Prévisions pour votre localité",
+      "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
+      "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
+      "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji",
+      "zh-cn": "载入您所在位置的Weatherunderground天气预报"
+    },
+    "platform": "Javascript/Node.js",
+    "mode": "schedule",
+    "schedule": "12 * * * *",
+    "icon": "wu.png",
+    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.weatherunderground/master/admin/wu.png",
+    "readme": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/blob/master/README.md",
+    "license": "MIT",
+    "type": "weather",
+    "compact": true,
+    "materialize": true,
+    "keywords": [
+      "iobroker",
+      "weather",
+      "forecast",
+      "wu",
+      "weatherunderground"
+    ],
+    "loglevel": "info",
+    "enabled": true,
+    "allowInit": true,
+    "authors": [
+      "Daniel Schaedler <daniel.schaedler@gmail.com>",
+      "Ingo Fischer <iobroker@fischer-ka.de>"
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://eceef3154b014c2db3267875a45b6888@sentry.iobroker.net/112",
+        "errorBlacklist": [
+          "SyntaxError"
+        ]
+      }
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "tier": 2
+  },
+  "native": {
+    "apikey": "",
+    "location": "",
+    "station": "",
+    "language": "DL",
+    "forecast_periods_txt": true,
+    "forecast_periods": true,
+    "forecast_hourly": true,
+    "current": true,
+    "nonMetric": false,
+    "custom_icon_base_url": "",
+    "country": "DE",
+    "useLegacyApi": true,
+    "iconSet": "i"
+  },
+  "objects": [],
+  "instanceObjects": []
 }
