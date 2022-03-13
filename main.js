@@ -275,7 +275,9 @@ function getKeysAndData(cb) {
         }
     }
     getApiKey(() => {
-        if (stopInProgress) return;
+        if (stopInProgress) {
+            return;
+        }
         if (adapter.config.useLegacyApi) {
             adapter.log.debug('Use Legacy API');
             getLegacyWuData(cb);
@@ -316,7 +318,8 @@ function handleIconUrl(original) {
 }
 
 function getApiKey(cb) {
-    getStationKey(() => getWebsiteKey( () => cb()));
+    getStationKey(() =>
+        getWebsiteKey( () => cb()));
 }
 
 function getStationKey(cb) {
@@ -366,19 +369,24 @@ function getStationKey(cb) {
                 });
 
                 return cb && cb();
-            }
-            if (scriptFile[1].startsWith('//')) {
-                scriptFile[1] = 'https:' + scriptFile[1];
-            }
+            } else {
+                if (scriptFile[1].startsWith('//')) {
+                    scriptFile[1] = 'https:' + scriptFile[1];
+                }
 
-            adapter.log.debug('get PWS dashboard script: ' + scriptFile[1]);
-            return axios.get(scriptFile[1], {
-                headers: requestHeaders,
-                timeout: 15000,
-                validateStatus: status => status === 200
-            });
+                adapter.log.debug('get PWS dashboard script: ' + scriptFile[1]);
+                return axios.get(scriptFile[1], {
+                    headers: requestHeaders,
+                    timeout: 15000,
+                    validateStatus: status => status === 200
+                });
+            }
         })
         .then(response => {
+            if (!response) {
+                // no request done
+                return;
+            }
             const body = response.data;
             if (stopInProgress) {
                 return;
