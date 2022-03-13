@@ -281,7 +281,7 @@ function getKeysAndData(cb) {
             getLegacyWuData(cb);
         } else {
             adapter.log.debug('Use New API');
-            getNewWuDataCurrentObservations(data => getNewWuDataDailyForecast(data, data => getNewWuDataHourlyForcast(data, data => parseNewResult(data, cb))));
+            getNewWuDataCurrentObservations(data => getNewWuDataDailyForecast(data, data => getNewWuDataHourlyForecast(data, data => parseNewResult(data, cb))));
         }
     });
 }
@@ -1725,6 +1725,7 @@ function getNewWuDataDailyForecast(weatherData, cb) {
                 } else {
                     weatherData.daily_forecast = body;
                 }
+                cb && cb(weatherData);
             })
             .catch(error => {
                 if (error.response && error.response.status === 401) {
@@ -1740,7 +1741,7 @@ function getNewWuDataDailyForecast(weatherData, cb) {
                 } else {
                     // ERROR
                     adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
-                    return cb && cb(weatherData);
+                    cb && cb(weatherData);
                 }
             });
     } else {
@@ -1748,7 +1749,7 @@ function getNewWuDataDailyForecast(weatherData, cb) {
     }
 }
 
-function getNewWuDataHourlyForcast(weatherData, cb) {
+function getNewWuDataHourlyForecast(weatherData, cb) {
     weatherData = weatherData || {};
     if (adapter.config.forecast_hourly) {
         let url = modifyExtractedUrl(forecastHourlyUrl);
@@ -1764,13 +1765,8 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
                 if (stopInProgress) {
                     return;
                 }
-                let body = response.data;
-                try {
-                    weatherData.hourly_forecast = body;
-
-                } catch (e) {
-                    adapter.log.error('no hourly forecast in response from ' + url);
-                }
+                weatherData.hourly_forecast = response.data;
+                cb && cb(weatherData);
             })
             .catch(error => {
                 if (error.response && error.response.status === 401) {
@@ -1786,7 +1782,7 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
                 } else {
                     // ERROR
                     adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
-                    return cb && cb(weatherData);
+                    cb && cb(weatherData);
                 }
             });
     } else {
