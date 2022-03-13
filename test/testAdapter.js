@@ -7,7 +7,6 @@ const setup  = require('./lib/setup');
 let objects = null;
 let states  = null;
 let onStateChanged = null;
-let onObjectChanged = null;
 let sendToID = 1;
 
 const adapterShortName = setup.adapterName.substring(setup.adapterName.indexOf('.')+1);
@@ -31,49 +30,8 @@ function checkConnectionOfAdapter(cb, counter) {
     });
 }
 
-function checkValueOfState(id, value, cb, counter) {
-    counter = counter || 0;
-    if (counter > 20) {
-        cb && cb('Cannot check value Of State ' + id);
-        return;
-    }
-
-    states.getState(id, function (err, state) {
-        err && console.error(err);
-        if (value === null && !state) {
-            cb && cb();
-        } else
-        if (state && (value === undefined || state.val === value)) {
-            cb && cb();
-        } else {
-            setTimeout(() =>
-                checkValueOfState(id, value, cb, counter + 1), 500);
-        }
-    });
-}
-
-function sendTo(target, command, message, callback) {
-    onStateChanged = function (id, state) {
-        if (id === 'messagebox.system.adapter.test.0') {
-            callback(state.message);
-        }
-    };
-
-    states.pushMessage('system.adapter.' + target, {
-        command:    command,
-        message:    message,
-        from:       'system.adapter.test.0',
-        callback: {
-            message: message,
-            id:      sendToID++,
-            ack:     false,
-            time:    Date.now()
-        }
-    });
-}
-
-describe('Test ' + adapterShortName + ' adapter', function () {
-    before('Test ' + adapterShortName + ' adapter: Start js-controller', function (_done) {
+describe(`Test ${adapterShortName} adapter`, function () {
+    before(`Test ${adapterShortName} adapter: Start js-controller`, function (_done) {
         this.timeout(600000); // because of first install from npm
 
         setup.setupController(async () => {
@@ -104,6 +62,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         checkConnectionOfAdapter(res => {
             res && console.log(res);
             expect(res).not.to.be.equal('Cannot check connection');
+            done();
         });
     });
 
