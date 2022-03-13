@@ -22,7 +22,7 @@
 'use strict';
 
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-const request     = require('request');
+const axios       = require('axios');
 const crypto      = require('crypto');
 const adapterName = require('./package.json').name.split('.').pop();
 let adapter;
@@ -67,6 +67,10 @@ function _(text) {
         }
     }
     return text;
+}
+
+function time2date(date) {
+    return date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear();
 }
 
 function sleep(ms) {
@@ -277,7 +281,7 @@ function getKeysAndData(cb) {
             getLegacyWuData(cb);
         } else {
             adapter.log.debug('Use New API');
-            getNewWuDataCurrentObservations(data => getNewWuDataDailyForcast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
+            getNewWuDataCurrentObservations(data => getNewWuDataDailyForecast(data, (data) => getNewWuDataHourlyForcast(data, (data) => parseNewResult(data, cb))));
         }
     });
 }
@@ -336,14 +340,13 @@ function getStationKey(cb) {
 
     adapter.log.debug('get PWS dashboard page: ' + url);
 
-    request({
-        url: url,
-        encoding: 'utf-8',
-        followAllRedirects: true,
-        headers: requestHeaders
-    }, (error, response, body) => {
-        if (stopInProgress) return;
-        if (!error && response && response.statusCode === 200 && body) {
+    axios.get(url, {
+        headers: requestHeaders,
+        timeout: 15000,
+        validateStatus: status => status === 200
+    })
+        .then(response => {
+            const body = response.data;
             const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
             if (!scriptFile || !scriptFile[1]) {
                 const pwsApiKey = body.match(/WU_LEGACY_API_KEY&q;:&q;([^&]+)&q/);
@@ -362,46 +365,44 @@ function getStationKey(cb) {
 
                 return cb && cb();
             }
-            if (scriptFile[1].startsWith('//')) scriptFile[1] = 'https:' + scriptFile[1];
+            if (scriptFile[1].startsWith('//')) {
+                scriptFile[1] = 'https:' + scriptFile[1];
+            }
 
             adapter.log.debug('get PWS dashboard script: ' + scriptFile[1]);
-
-            request({
-                url: scriptFile[1],
-                encoding: 'utf-8',
-                headers: requestHeaders
-             }, (error, response, body) => {
-                if (stopInProgress) return;
-                if (!error && response && response.statusCode === 200 && body) {
-
-// "https://api.wunderground.com/api/606f3f6977348613/conditions/forecast10day/hourly10day/astronomy10day/pwsidentity/units:" + units + "/v:2.0/q/pws:" + stationid + ".json?ID=" + stationid + "&callback=?"
-                    const pwsApiKey = body.match(/https:\/\/api.wunderground.com\/api\/([^\/]+)\/conditions\//);
-                    if (!pwsApiKey || !pwsApiKey[1]) {
-                        return cb && cb();
-                    }
-                    pwsStationKey = pwsApiKey[1];
-                    adapter.log.debug('fetched new stationKey from WU webpage: ' + pwsStationKey);
-                    adapter.setObjectNotExists('currentStationKey', {
-                        type: 'state',
-                        common: {type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: ''},
-                        native: {id: 'currentStationKey'}
-                    }, () => {
-                        adapter.setState('currentStationKey', {val: pwsStationKey, ack: true});
-                    });
-
-                    return cb && cb();
-                } else {
-                    // ERROR
-                    adapter.log.error('Unable to get PWS dashboard script: ' + (response ? response.statusCode : '--') + '/' + error);
-                    return cb && cb();
-                }
+            return axios.get(scriptFile[1], {
+                headers: requestHeaders,
+                timeout: 15000,
+                validateStatus: status => status === 200
             });
-        } else {
-            // ERROR
-            adapter.log.error('Unable to get PWS dashboard page: ' + error + ' / ' + (response ? response.statusCode : '--'));
+        })
+        .then(response => {
+            const body = response.data;
+            if (stopInProgress) {
+                return;
+            }
+            // "https://api.wunderground.com/api/606f3f6977348613/conditions/forecast10day/hourly10day/astronomy10day/pwsidentity/units:" + units + "/v:2.0/q/pws:" + stationid + ".json?ID=" + stationid + "&callback=?"
+            const pwsApiKey = body.match(/https:\/\/api.wunderground.com\/api\/([^\/]+)\/conditions\//);
+            if (!pwsApiKey || !pwsApiKey[1]) {
+                return cb && cb();
+            }
+            pwsStationKey = pwsApiKey[1];
+            adapter.log.debug('fetched new stationKey from WU webpage: ' + pwsStationKey);
+            adapter.setObjectNotExists('currentStationKey', {
+                type: 'state',
+                common: {type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: ''},
+                native: {id: 'currentStationKey'}
+            }, () => {
+                adapter.setState('currentStationKey', {val: pwsStationKey, ack: true});
+            });
+
             return cb && cb();
-        }
-    });
+        })
+        .catch(error => {
+            // ERROR
+            adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+            return cb && cb();
+        });
 }
 
 function getWebsiteKey(cb, tryQ) {
@@ -411,24 +412,26 @@ function getWebsiteKey(cb, tryQ) {
 
     let url;
     if (adapter.config.location.startsWith('pws:') || adapter.config.location.match(/^[A-Z]+[0-9]{1,4}$/) || adapter.config.location.match(/^[0-9]+\.[0-9]+ *, *[0-9]+\.[0-9]+$/)) { // Geocode
-        url = 'https://www.wunderground.com/hourly/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
+        url = `https://www.wunderground.com/hourly/${tryQ ? 'q/' : ''}${encodeURIComponent(adapter.config.location)}`;
     } else {
-        url = 'https://www.wunderground.com/hourly/' + encodeURIComponent(adapter.config.country) + '/' + (tryQ ? 'q/' : '') + encodeURIComponent(adapter.config.location);
+        url = `https://www.wunderground.com/hourly/${encodeURIComponent(adapter.config.country)}/${tryQ ? 'q/' : ''}${encodeURIComponent(adapter.config.location)}`;
     }
-
 
     adapter.log.debug('get WU weather page: ' + url);
 
-    request({
-        url: url,
-        encoding: 'utf-8',
-        headers: requestHeaders
-    }, (error, response, body) => {
-        if (stopInProgress) return;
-        if (body) {
-            body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
-        }
-        if (!error && response && response.statusCode === 200 && body) {
+    axios.get(url, {
+        headers: requestHeaders,
+        timeout: 15000,
+        validateStatus: status => status === 200
+    })
+        .then(response => {
+            if (stopInProgress) {
+                return;
+            }
+            let body = response.data;
+            if (body) {
+                body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
+            }
             const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
             if (!data || !data[1]) {
                 return cb && cb();
@@ -483,17 +486,19 @@ function getWebsiteKey(cb, tryQ) {
                 });
             }
             return cb && cb();
-        } else if (!error && response && response.statusCode === 404 && !tryQ) {
-            getWebsiteKey(cb, true);
-        } else if (!error && response && response.statusCode === 404) {
-            adapter.log.error('The given Location can not be found. Please check on https://wunderground.com or try geo coordinates (lat,lon) or nearby cities!');
-            return cb && cb();
-        } else {
-            // ERROR
-            adapter.log.error('Unable to get WU weather page: ' + (response ? response.statusCode : '--') + '/' + error);
-            return cb && cb();
-        }
-    });
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 404 && !tryQ) {
+                getWebsiteKey(cb, true);
+            } else if (error.response && error.response.status === 404) {
+                adapter.log.error('The given Location can not be found. Please check on https://wunderground.com or try geo coordinates (lat,lon) or nearby cities!');
+                return cb && cb();
+            } else {
+                // ERROR
+                adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                return cb && cb();
+            }
+        });
 }
 
 async function parseLegacyResult(body, cb) {
@@ -704,7 +709,7 @@ async function parseLegacyResult(body, cb) {
 
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.date', {
                         ack: true,
-                        val: now.toLocaleDateString()
+                        val: time2date(now)
                     });
                     let iconId = parseInt(body.forecast.txt_forecast.forecastday[i].icon, 10);
                     if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
@@ -753,7 +758,7 @@ async function parseLegacyResult(body, cb) {
                 try {
                     await adapter.setStateAsync('forecast.' + i + 'd.date', {
                         ack: true,
-                        val: new Date(parseInt(body.forecast.simpleforecast.forecastday[i].date.epoch, 10) * 1000).toLocaleDateString()
+                        val: time2date(new Date(parseInt(body.forecast.simpleforecast.forecastday[i].date.epoch, 10) * 1000))
                     });
                     await adapter.setStateAsync('forecast.' + i + 'd.tempMax', {
                         ack: true,
@@ -1127,7 +1132,7 @@ async function parseNewResult(body, cb) {
 
                     await adapter.setStateAsync('forecastPeriod.' + i + 'p.date', {
                         ack: true,
-                        val: now.toLocaleDateString()
+                        val: time2date(now)
                     });
                     let iconId = parseInt(body.daily_forecast.daypart[0].iconCode[idx], 10);
                     if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
@@ -1166,7 +1171,7 @@ async function parseNewResult(body, cb) {
                     if (body.daily_forecast2[i].day) {
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.date', {
                             ack: true,
-                            val: new Date(body.daily_forecast2[i].day.fcst_valid_local).toLocaleDateString()
+                            val: time2date(new Date(body.daily_forecast2[i].day.fcst_valid_local))
                         });
                         let iconId = parseInt(body.daily_forecast2[i].day.icon_code, 10);
                         if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
@@ -1198,7 +1203,7 @@ async function parseNewResult(body, cb) {
                     if (body.daily_forecast2[i].night) {
                         await adapter.setStateAsync('forecastPeriod.' + idx + 'p.date', {
                             ack: true,
-                            val: new Date(body.daily_forecast2[i].night.fcst_valid_local).toLocaleDateString()
+                            val: time2date(new Date(body.daily_forecast2[i].night.fcst_valid_local))
                         });
                         let iconId = parseInt(body.daily_forecast2[i].night.icon_code, 10);
                         if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
@@ -1243,7 +1248,7 @@ async function parseNewResult(body, cb) {
                 try {
                     await adapter.setStateAsync('forecast.' + i + 'd.date', {
                         ack: true,
-                        val: new Date(body.daily_forecast.validTimeLocal[i]).toLocaleDateString()
+                        val: time2date(new Date(body.daily_forecast.validTimeLocal[i]))
                     });
                     await adapter.setStateAsync('forecast.' + i + 'd.tempMax', {
                         ack: true,
@@ -1347,7 +1352,7 @@ async function parseNewResult(body, cb) {
                 try {
                     await adapter.setStateAsync('forecast.' + i + 'd.date', {
                         ack: true,
-                        val: new Date(body.daily_forecast2[i].fcst_valid_local).toLocaleDateString()
+                        val: time2date(new Date(body.daily_forecast2[i].fcst_valid_local))
                     });
                     await adapter.setStateAsync('forecast.' + i + 'd.tempMax', {
                         ack: true,
@@ -1570,7 +1575,7 @@ function getLegacyWuData(cb) {
         url += '/conditions';
     }
 
-    url += '/units:' + (nonMetric ? 'e' : 'm');
+    url += `/units:${nonMetric ? 'e' : 'm'}`;
 
     url += '/lang:' + encodeURIComponent(adapter.config.language);
 
@@ -1587,36 +1592,38 @@ function getLegacyWuData(cb) {
     }
     adapter.log.debug('get WU legacy data: ' + url);
 
-    request({
-        url: url,
-        json: true,
-        encoding: null,
-        followAllRedirects: true,
-        headers: requestHeaders
-    }, (error, response, body) => {
-        if (stopInProgress) return;
-        if (!error && response && response.statusCode === 200) {
+    axios.get(url, {
+        headers: requestHeaders,
+        timeout: 15000,
+        validateStatus: status => status === 200
+    })
+        .then(response => {
+            if (stopInProgress) {
+                return;
+            }
+            let body = response.data;
             if (body && body.response && body.response.error) {
-                adapter.log.error('Error: ' + (typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error) + ', Resetting Station Key');
+                adapter.log.error(`Error: ${typeof body.response.error === 'object' ? body.response.error.description || JSON.stringify(body.response.error) : body.response.error}, Resetting Station Key`);
                 pwsStationKey = '';
                 errorCounter++;
                 setImmediate(() => getKeysAndData(cb));
-                return;
+            } else {
+                parseLegacyResult(body, cb);
             }
-            parseLegacyResult(body, cb);
-        } else if (!error && response && response.statusCode === 401) {
-            adapter.log.info('Key rejected, resetting legacy key and trying again ...');
-            pwsStationKey = '';
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 401) {
+                adapter.log.info('Key rejected, resetting legacy key and trying again ...');
+                pwsStationKey = '';
 
-            errorCounter++;
-            setImmediate(() => getKeysAndData(cb));
-            return;
-        } else {
-            // ERROR
-            adapter.log.error('Wunderground reported an error: ' + error + ', ' + (response ? response.statusCode : '--'));
-        }
-        if (cb) cb();
-    });
+                errorCounter++;
+                setImmediate(() => getKeysAndData(cb));
+            } else {
+                // ERROR
+                adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                return cb && cb();
+            }
+        });
 }
 
 function modifyExtractedUrl(url) {
@@ -1638,51 +1645,55 @@ function getNewWuDataCurrentObservations(cb) {
     let url;
     if (adapter.config.station) {
         const usedKey = adapter.config.current ? (officialApiKey || newWebKey) : newWebKey;
-        url = 'https://api.weather.com/v2/pws/observations/current?stationId=' + encodeURIComponent(adapter.config.station) + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&numericPrecision=decimal&apiKey=' + usedKey;
+        url = `https://api.weather.com/v2/pws/observations/current?stationId=${encodeURIComponent(adapter.config.station)}&format=json&units=${nonMetric ? 'e' : 'm'}&numericPrecision=decimal&apiKey=${usedKey}`;
     } else {
         url = modifyExtractedUrl(currentObservationUrl);
     }
     adapter.log.debug('get current observation data: ' + url);
 
-    request({
-        url: url,
-        json: true,
-        encoding: null,
-        headers: requestHeaders
-    }, (error, response, body) => {
-        if (stopInProgress) return;
-        if (!error && response && response.statusCode === 200) {
+    axios.get(url, {
+        headers: requestHeaders,
+        timeout: 15000,
+        validateStatus: status => status === 200
+    })
+        .then(response => {
+            if (stopInProgress) {
+                return;
+            }
+            let body = response.data;
             if (!body || !body.observations) {
                 adapter.log.error('no observations in response from ' + url);
             } else {
                 weatherData.current_observation = body.observations[0];
             }
-        } else if (!error && response && response.statusCode === 401) {
-            if (officialApiKey) {
-                adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
-                officialApiKey = '';
+            cb && cb(weatherData);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 401) {
+                if (officialApiKey) {
+                    adapter.log.error('Please check your PWS Owner Key! Using key extracted from web page for now!');
+                    officialApiKey = '';
+                } else {
+                    adapter.log.info('Key rejected, resetting web-key and trying again');
+                    newWebKey = '';
+                }
+                errorCounter++;
+                setImmediate(() => getKeysAndData(cb));
             } else {
-                adapter.log.info('Key rejected, resetting webkey and trying again');
-                newWebKey = '';
+                // ERROR
+                adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                return cb && cb(weatherData);
             }
-            errorCounter++;
-            setImmediate(() => getKeysAndData(cb));
-            return;
-        } else {
-            // ERROR
-            adapter.log.error('Wunderground reported an error: ' + (response ? response.statusCode : '--') + '/' + error);
-        }
-        cb && cb(weatherData);
-    });
+        });
 }
 
-function getNewWuDataDailyForcast(weatherData, cb) {
+function getNewWuDataDailyForecast(weatherData, cb) {
     weatherData = weatherData || {};
     if (adapter.config.forecast_periods_txt || adapter.config.forecast_periods) {
         let url;
         if (adapter.config.station && officialApiKey && weatherData.current_observation && weatherData.current_observation.lon !== undefined && weatherData.current_observation.lat !== undefined ) {
             // https://api.weather.com/v3/wx/forecast/daily/5day?geocode=49.03578568,8.34588718&language=de&format=json&units=m&apiKey=712eb8d021404624aeb8d021402624d6
-            url = 'https://api.weather.com/v3/wx/forecast/daily/5day?geocode=' + encodeURIComponent(weatherData.current_observation.lat + ',' + weatherData.current_observation.lon) + '&language=' + lang + '&format=json&units=' + (nonMetric ? 'e' : 'm') + '&apiKey=' + (officialApiKey || newWebKey);
+            url = `https://api.weather.com/v3/wx/forecast/daily/5day?geocode=${encodeURIComponent(weatherData.current_observation.lat + ',' + weatherData.current_observation.lon)}&language=${lang}&format=json&units=${nonMetric ? 'e' : 'm'}&apiKey=${officialApiKey || newWebKey}`;
             if (weatherData.current_observation.lat === 0 && weatherData.current_observation.lon === 0) {
                 adapter.log.info('Location seems invalid (0,0), please check the stateion-id/city setting!');
             }
@@ -1692,14 +1703,16 @@ function getNewWuDataDailyForcast(weatherData, cb) {
         }
         adapter.log.debug('get daily forecast data: ' + url);
 
-        request({
-            url: url,
-            json: true,
-            encoding: null,
-            headers: requestHeaders
-        }, (error, response, body) => {
-            if (stopInProgress) return;
-            if (!error && response && response.statusCode === 200) {
+        axios.get(url, {
+            headers: requestHeaders,
+            timeout: 15000,
+            validateStatus: status => status === 200
+        })
+            .then(response => {
+                if (stopInProgress) {
+                    return;
+                }
+                let body = response.data;
                 if (!body || !body.dayOfWeek) {
                     if (body && body.forecasts) {
                         weatherData.daily_forecast2 = body.forecasts;
@@ -1710,25 +1723,25 @@ function getNewWuDataDailyForcast(weatherData, cb) {
                 } else {
                     weatherData.daily_forecast = body;
                 }
-            } else if (!error && response && response.statusCode === 401) {
-                if (officialApiKey) {
-                    adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
-                    officialApiKey = '';
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 401) {
+                    if (officialApiKey) {
+                        adapter.log.error('Please check your PWS Owner Key! Using key extracted from webpage for now!');
+                        officialApiKey = '';
+                    } else {
+                        adapter.log.info('Key rejected, resetting webkey and trying again');
+                        newWebKey = '';
+                    }
+                    errorCounter++;
+                    setImmediate(() => getKeysAndData(cb));
                 } else {
-                    adapter.log.info('Key rejected, resetting webkey and trying again');
-                    newWebKey = '';
+                    // ERROR
+                    adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                    return cb && cb(weatherData);
                 }
-                errorCounter++;
-                setImmediate(() => getKeysAndData(cb));
-                return;
-            } else {
-                // ERROR
-                adapter.log.error('Wunderground reported an error: ' + (response ? response.statusCode : '--') + '/' + error);
-            }
-            cb && cb(weatherData);
-        });
-    }
-    else {
+            });
+    } else {
         cb && cb(weatherData);
     }
 }
@@ -1740,39 +1753,41 @@ function getNewWuDataHourlyForcast(weatherData, cb) {
         url = url.replace(/\/[0-9]+hour/,'/48hour');
         adapter.log.debug('get hourly forecast data: ' + url);
 
-        request({
-            url: url,
-            json: true,
-            encoding: null,
-            headers: requestHeaders
-        }, (error, response, body) => {
-            if (stopInProgress) return;
-            if (!error && response && response.statusCode === 200) {
+        axios.get(url, {
+            headers: requestHeaders,
+            timeout: 15000,
+            validateStatus: status => status === 200
+        })
+            .then(response => {
+                if (stopInProgress) {
+                    return;
+                }
+                let body = response.data;
                 try {
                     weatherData.hourly_forecast = body;
 
                 } catch (e) {
                     adapter.log.error('no hourly forecast in response from ' + url);
                 }
-            } else if (!error && response && response.statusCode === 401) {
-                if (officialApiKey) {
-                    adapter.log.error('Please check your PWS Owner Key! Using key extracted from webage for now!');
-                    officialApiKey = '';
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 401) {
+                    if (officialApiKey) {
+                        adapter.log.error('Please check your PWS Owner Key! Using key extracted from webpage for now!');
+                        officialApiKey = '';
+                    } else {
+                        adapter.log.info('Key rejected, resetting webkey and trying again');
+                        newWebKey = '';
+                    }
+                    errorCounter++;
+                    setImmediate(() => getKeysAndData(cb));
                 } else {
-                    adapter.log.info('Key rejected, resetting webkey and trying again');
-                    newWebKey = '';
+                    // ERROR
+                    adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                    return cb && cb(weatherData);
                 }
-                errorCounter++;
-                setImmediate(() => getKeysAndData(cb));
-                return;
-            } else {
-                // ERROR
-                adapter.log.error('Wunderground reported an error: ' + (response ? response.statusCode : '--') + '/' + error);
-            }
-            cb && cb(weatherData);
-        });
-    }
-    else {
+            });
+    } else {
         cb && cb(weatherData);
     }
 }
