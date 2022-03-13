@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "3.4.0",
+    "version": "3.4.1",
     "news": {
+      "3.4.1": {
+        "en": "Use axios for communication\nmake sure date states are filled correctly",
+        "de": "Verwenden Sie Axios für die Kommunikation\nStellen Sie sicher, dass die Datumsangaben korrekt ausgefüllt sind",
+        "ru": "Используйте axios для общения\nубедитесь, что состояния даты заполнены правильно",
+        "pt": "Use axios para comunicação\nverifique se os estados de data estão preenchidos corretamente",
+        "nl": "Gebruik axios voor communicatie\nzorg ervoor dat de datumstaten correct zijn ingevuld",
+        "fr": "Utiliser axios pour la communication\nassurez-vous que les états de date sont remplis correctement",
+        "it": "Usa assios per la comunicazione\nassicurati che gli stati della data siano compilati correttamente",
+        "es": "Usa axios para comunicarte\nasegúrese de que los estados de fecha se llenen correctamente",
+        "pl": "Używaj axios do komunikacji\nupewnij się, że stany dat są wypełnione poprawnie",
+        "zh-cn": "使用 axios 进行通信\n确保正确填写日期状态"
+      },
       "3.4.0": {
         "en": "If no official API-Key is used: Move schedule if default is used to better spread the requests over time to prevent peaks; Additionally add a random delay in the start minute\nFurther optimizations and additional logging",
         "de": "Wenn kein offizieller API-Schlüssel verwendet wird: Zeitplan verschieben, wenn Standard verwendet wird, um die Anfragen besser über die Zeit zu verteilen, um Spitzen zu vermeiden; Fügen Sie zusätzlich eine zufällige Verzögerung in der Startminute hinzu\nWeitere Optimierungen und zusätzliches Logging",
@@ -74,18 +86,6 @@
         "es": "los iconos a veces no tenían una extensión correcta\nCorrija algunos casos con diferentes tipos de ubicaciones al leer datos",
         "pl": "ikony czasami nie miały poprawnego rozszerzenia\nPopraw niektóre przypadki z różnymi typami lokalizacji podczas odczytu danych",
         "zh-cn": "图标有时没有正确的扩展名\n读取数据时更正具有不同类型位置的某些情况"
-      },
-      "3.2.1": {
-        "en": "Corrected 'Imperial' terminology",
-        "de": "Korrigierte 'imperiale' Terminologie",
-        "ru": "Исправленная «имперская» терминология",
-        "pt": "Terminologia 'Imperial' corrigida",
-        "nl": "Gecorrigeerde 'imperiale' terminologie",
-        "fr": "Terminologie «impériale» corrigée",
-        "it": "Terminologia \"imperiale\" corretta",
-        "es": "Terminología 'imperial' corregida",
-        "pl": "Poprawiona terminologia „imperialna”",
-        "zh-cn": "更正了“帝国”术语"
       }
     },
     "title": "weatherunderground forecast",
