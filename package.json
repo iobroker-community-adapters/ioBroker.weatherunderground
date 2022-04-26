@@ -22,7 +22,7 @@
     "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground"
   },
   "dependencies": {
-    "axios": "^0.26.1",
+    "axios": "^0.27.0",
     "@iobroker/adapter-core": "^2.6.0"
   },
   "devDependencies": {

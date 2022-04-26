@@ -410,7 +410,7 @@ function getStationKey(cb) {
         })
         .catch(error => {
             // ERROR
-            adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+            adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.status : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
             return cb && cb();
         });
 }
@@ -505,7 +505,7 @@ function getWebsiteKey(cb, tryQ) {
                 return cb && cb();
             } else {
                 // ERROR
-                adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.status : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
                 return cb && cb();
             }
         });
@@ -1628,9 +1628,12 @@ function getLegacyWuData(cb) {
 
                 errorCounter++;
                 setImmediate(() => getKeysAndData(cb));
+            } else if (error.response && error.response.status === 204) {
+                adapter.log.info('WUnderground API returned 204, no data available. The configured station might be offline');
+                return cb && cb();
             } else {
                 // ERROR
-                adapter.log.error(`Unable to get PWS dashboard script: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                adapter.log.error(`Unable to get PWS legacy data: ${error.response ? error.response.status : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
                 return cb && cb();
             }
         });
@@ -1689,9 +1692,12 @@ function getNewWuDataCurrentObservations(cb) {
                 }
                 errorCounter++;
                 setImmediate(() => getKeysAndData(cb));
-            } else {
+            } else if (error.response && error.response.status === 204) {
+                adapter.log.info('WUnderground API returned 204, no data available. The configured station might be offline');
+                return cb && cb(weatherData);
+            }  else {
                 // ERROR
-                adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.status : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
                 return cb && cb(weatherData);
             }
         });
@@ -1748,7 +1754,7 @@ function getNewWuDataDailyForecast(weatherData, cb) {
                     setImmediate(() => getKeysAndData(cb));
                 } else {
                     // ERROR
-                    adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                    adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.status : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
                     cb && cb(weatherData);
                 }
             });
@@ -1789,7 +1795,7 @@ function getNewWuDataHourlyForecast(weatherData, cb) {
                     setImmediate(() => getKeysAndData(cb));
                 } else {
                     // ERROR
-                    adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.statusCode : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
+                    adapter.log.error(`WUnderground reported an error: ${error.response ? error.response.status : '--'}/${error.response && error.response.data ? JSON.stringify(error.response.data) : JSON.stringify(error)}`);
                     cb && cb(weatherData);
                 }
             });
