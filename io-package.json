@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "3.4.1",
+    "version": "3.4.2",
     "news": {
+      "3.4.2": {
+        "en": "Added special logging when no current observation data are available because Station most likely offline to reduce confusion",
+        "de": "Spezielle Protokollierung hinzugefügt, wenn keine aktuellen Beobachtungsdaten verfügbar sind, da die Station höchstwahrscheinlich offline ist, um Verwirrung zu vermeiden",
+        "ru": "Добавлено специальное ведение журнала, когда текущие данные наблюдений недоступны, поскольку станция, скорее всего, отключена, чтобы уменьшить путаницу.",
+        "pt": "Adicionado registro especial quando não há dados de observação atuais disponíveis porque a Estação provavelmente está offline para reduzir a confusão",
+        "nl": "Speciale logboekregistratie toegevoegd wanneer er geen huidige observatiegegevens beschikbaar zijn omdat Station hoogstwaarschijnlijk offline is om verwarring te verminderen",
+        "fr": "Ajout d'une journalisation spéciale lorsqu'aucune donnée d'observation actuelle n'est disponible car la station est probablement hors ligne pour réduire la confusion",
+        "it": "Aggiunta una registrazione speciale quando non sono disponibili dati di osservazione attuali perché Station molto probabilmente offline per ridurre la confusione",
+        "es": "Se agregó un registro especial cuando no hay datos de observación actuales disponibles porque la estación probablemente esté fuera de línea para reducir la confusión.",
+        "pl": "Dodano specjalne rejestrowanie, gdy nie są dostępne żadne aktualne dane z obserwacji, ponieważ stacja najprawdopodobniej jest w trybie offline, aby zmniejszyć zamieszanie",
+        "zh-cn": "当没有可用的当前观测数据时添加了特殊记录，因为 Station 很可能离线以减少混乱"
+      },
       "3.4.1": {
         "en": "Use axios for communication\nmake sure date states are filled correctly",
         "de": "Verwenden Sie Axios für die Kommunikation\nStellen Sie sicher, dass die Datumsangaben korrekt ausgefüllt sind",
@@ -74,18 +86,6 @@
         "es": "asegúrese de que el adaptador no se bloquee cuando no se puedan leer datos\nAgregar informe de errores de Sentry",
         "pl": "upewnij się, że adapter nie ulega awarii, gdy nie można odczytać żadnych danych\nDodaj raportowanie błędów Sentry",
         "zh-cn": "确保在无法读取数据时适配器不会崩溃\n添加Sentry错误报告"
-      },
-      "3.2.2": {
-        "en": "icons sometimes did not had a correct extension\nCorrect some cases with different types of locations when reading data",
-        "de": "Symbole hatten manchmal keine korrekte Erweiterung\nKorrigieren Sie einige Fälle mit unterschiedlichen Speicherorten beim Lesen von Daten",
-        "ru": "значки иногда не имели правильного расширения\nИсправьте некоторые случаи с разными типами местоположений при чтении данных",
-        "pt": "os ícones às vezes não tinham uma extensão correta\nCorrija alguns casos com diferentes tipos de locais ao ler os dados",
-        "nl": "pictogrammen hadden soms geen juiste extensie\nCorrigeer enkele gevallen met verschillende soorten locaties bij het lezen van gegevens",
-        "fr": "les icônes n'avaient parfois pas une extension correcte\nCorrigez certains cas avec différents types d'emplacements lors de la lecture de données",
-        "it": "le icone a volte non avevano un'estensione corretta\nCorreggere alcuni casi con diversi tipi di posizioni durante la lettura dei dati",
-        "es": "los iconos a veces no tenían una extensión correcta\nCorrija algunos casos con diferentes tipos de ubicaciones al leer datos",
-        "pl": "ikony czasami nie miały poprawnego rozszerzenia\nPopraw niektóre przypadki z różnymi typami lokalizacji podczas odczytu danych",
-        "zh-cn": "图标有时没有正确的扩展名\n读取数据时更正具有不同类型位置的某些情况"
       }
     },
     "title": "weatherunderground forecast",
