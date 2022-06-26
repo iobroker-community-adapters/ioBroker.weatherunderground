@@ -1,174 +1,174 @@
 {
-  "common": {
-    "name": "weatherunderground",
-    "version": "3.4.2",
-    "news": {
-      "3.4.2": {
-        "en": "Added special logging when no current observation data are available because Station most likely offline to reduce confusion",
-        "de": "Spezielle Protokollierung hinzugefügt, wenn keine aktuellen Beobachtungsdaten verfügbar sind, da die Station höchstwahrscheinlich offline ist, um Verwirrung zu vermeiden",
-        "ru": "Добавлено специальное ведение журнала, когда текущие данные наблюдений недоступны, поскольку станция, скорее всего, отключена, чтобы уменьшить путаницу.",
-        "pt": "Adicionado registro especial quando não há dados de observação atuais disponíveis porque a Estação provavelmente está offline para reduzir a confusão",
-        "nl": "Speciale logboekregistratie toegevoegd wanneer er geen huidige observatiegegevens beschikbaar zijn omdat Station hoogstwaarschijnlijk offline is om verwarring te verminderen",
-        "fr": "Ajout d'une journalisation spéciale lorsqu'aucune donnée d'observation actuelle n'est disponible car la station est probablement hors ligne pour réduire la confusion",
-        "it": "Aggiunta una registrazione speciale quando non sono disponibili dati di osservazione attuali perché Station molto probabilmente offline per ridurre la confusione",
-        "es": "Se agregó un registro especial cuando no hay datos de observación actuales disponibles porque la estación probablemente esté fuera de línea para reducir la confusión.",
-        "pl": "Dodano specjalne rejestrowanie, gdy nie są dostępne żadne aktualne dane z obserwacji, ponieważ stacja najprawdopodobniej jest w trybie offline, aby zmniejszyć zamieszanie",
-        "zh-cn": "当没有可用的当前观测数据时添加了特殊记录，因为 Station 很可能离线以减少混乱"
-      },
-      "3.4.1": {
-        "en": "Use axios for communication\nmake sure date states are filled correctly",
-        "de": "Verwenden Sie Axios für die Kommunikation\nStellen Sie sicher, dass die Datumsangaben korrekt ausgefüllt sind",
-        "ru": "Используйте axios для общения\nубедитесь, что состояния даты заполнены правильно",
-        "pt": "Use axios para comunicação\nverifique se os estados de data estão preenchidos corretamente",
-        "nl": "Gebruik axios voor communicatie\nzorg ervoor dat de datumstaten correct zijn ingevuld",
-        "fr": "Utiliser axios pour la communication\nassurez-vous que les états de date sont remplis correctement",
-        "it": "Usa assios per la comunicazione\nassicurati che gli stati della data siano compilati correttamente",
-        "es": "Usa axios para comunicarte\nasegúrese de que los estados de fecha se llenen correctamente",
-        "pl": "Używaj axios do komunikacji\nupewnij się, że stany dat są wypełnione poprawnie",
-        "zh-cn": "使用 axios 进行通信\n确保正确填写日期状态"
-      },
-      "3.4.0": {
-        "en": "If no official API-Key is used: Move schedule if default is used to better spread the requests over time to prevent peaks; Additionally add a random delay in the start minute\nFurther optimizations and additional logging",
-        "de": "Wenn kein offizieller API-Schlüssel verwendet wird: Zeitplan verschieben, wenn Standard verwendet wird, um die Anfragen besser über die Zeit zu verteilen, um Spitzen zu vermeiden; Fügen Sie zusätzlich eine zufällige Verzögerung in der Startminute hinzu\nWeitere Optimierungen und zusätzliches Logging",
-        "ru": "Если официальный API-ключ не используется: перенесите расписание, если используется значение по умолчанию, чтобы лучше распределить запросы по времени и предотвратить пики; Дополнительно добавить случайную задержку в стартовой минуте\nДальнейшая оптимизация и дополнительное ведение журнала",
-        "pt": "Se nenhuma API-Key oficial for usada: Mova o agendamento se o padrão for usado para distribuir melhor as solicitações ao longo do tempo para evitar picos; Além disso, adicione um atraso aleatório no minuto de início\nOutras otimizações e registros adicionais",
-        "nl": "Als er geen officiële API-Key wordt gebruikt: Verplaats schema als standaard wordt gebruikt om de verzoeken beter te spreiden over de tijd om pieken te voorkomen; Voeg bovendien een willekeurige vertraging toe aan de startminuut\nVerdere optimalisaties en extra logging",
-        "fr": "Si aucune clé API officielle n'est utilisée : déplacer le calendrier si la valeur par défaut est utilisée pour mieux répartir les demandes dans le temps afin d'éviter les pics ; Ajoutez également un délai aléatoire dans la minute de démarrage\nOptimisations supplémentaires et journalisation supplémentaire",
-        "it": "Se non viene utilizzata alcuna API-Key ufficiale: Sposta la pianificazione se viene utilizzata di default per distribuire meglio le richieste nel tempo ed evitare picchi; Aggiungi inoltre un ritardo casuale nel minuto di inizio\nUlteriori ottimizzazioni e registrazione aggiuntiva",
-        "es": "Si no se usa una clave de API oficial: Mover el cronograma si se usa el predeterminado para distribuir mejor las solicitudes a lo largo del tiempo para evitar picos; Además, agregue un retraso aleatorio en el minuto de inicio\nMás optimizaciones y registro adicional",
-        "pl": "Jeśli nie jest używany żaden oficjalny klucz API: Przenieś harmonogram, jeśli używany jest domyślny, aby lepiej rozłożyć żądania w czasie, aby zapobiec szczytom; Dodatkowo dodaj losowe opóźnienie w minucie startu\nDalsze optymalizacje i dodatkowe logowanie",
-        "zh-cn": "如果没有使用官方 API-Key：如果使用默认值，则移动计划以更好地随着时间的推移分散请求以防止峰值；另外在开始分钟添加随机延迟\n进一步的优化和额外的日志记录"
-      },
-      "3.3.1": {
-        "en": "Optimize for js-controller 3.3",
-        "de": "Optimieren Sie für js-Controller 3.3",
-        "ru": "Оптимизировать под js-controller 3.3",
-        "pt": "Otimize para js-controller 3.3",
-        "nl": "Optimaliseren voor js-controller 3.3",
-        "fr": "Optimiser pour js-controller 3.3",
-        "it": "Ottimizza per js-controller 3.3",
-        "es": "Optimizar para js-controller 3.3",
-        "pl": "Optymalizacja dla kontrolera js 3.3",
-        "zh-cn": "针对 js-controller 3.3 优化"
-      },
-      "3.3.0": {
-        "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
-        "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
-        "ru": "Оптимизировать под js-controller 3.2\njs-controller 2.0 теперь требуется как минимум",
-        "pt": "Otimize para js-controller 3.2\njs-controller 2.0 agora é necessário pelo menos",
-        "nl": "Optimaliseren voor js-controller 3.2\njs-controller 2.0 is nu minimaal vereist",
-        "fr": "Optimiser pour js-controller 3.2\njs-controller 2.0 est maintenant requis au moins",
-        "it": "Ottimizza per js-controller 3.2\njs-controller 2.0 è ora almeno richiesto",
-        "es": "Optimizar para js-controller 3.2\njs-controller 2.0 ahora se requiere al menos",
-        "pl": "Optymalizacja pod kątem js-controller 3.2\njs-controller 2.0 jest teraz wymagany przynajmniej",
-        "zh-cn": "针对js-controller 3.2进行优化\n现在至少需要js-controller 2.0"
-      },
-      "3.2.5": {
-        "en": "Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "de": "Absturz verhindern (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "ru": "Случай предотвращения сбоя (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "pt": "Evitar caso de colisão (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "nl": "Voorkom crashgeval (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "fr": "Prévenir les cas d'accident (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "it": "Prevenire il crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "es": "Caso de prevención de choque (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "pl": "Zapobiegaj przypadkowi awarii (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
-        "zh-cn": "防止发生崩溃情况（哨兵IOBROKER-WEATHERUNDERGROUND-1，IOBROKER-WEATHERUNDERGROUND-2）"
-      },
-      "3.2.3": {
-        "en": "make sure adapter do not crash when no data could be read\nAdd Sentry error reporting",
-        "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt, wenn keine Daten gelesen werden konnten\nSentry-Fehlerberichterstattung hinzufügen",
-        "ru": "убедитесь, что адаптер не выйдет из строя, когда данные не могут быть прочитаны\nДобавить отчет об ошибках Sentry",
-        "pt": "certifique-se de que o adaptador não trave quando nenhum dado puder ser lido\nAdicionar relatório de erro de Sentry",
-        "nl": "zorg ervoor dat de adapter niet crasht als er geen gegevens kunnen worden gelezen\nVoeg Sentry-foutrapportage toe",
-        "fr": "assurez-vous que l'adaptateur ne plante pas lorsqu'aucune donnée ne peut être lue\nAjouter un rapport d'erreur Sentry",
-        "it": "assicurarsi che l'adattatore non si blocchi quando non è possibile leggere i dati\nAggiungi la segnalazione degli errori di Sentry",
-        "es": "asegúrese de que el adaptador no se bloquee cuando no se puedan leer datos\nAgregar informe de errores de Sentry",
-        "pl": "upewnij się, że adapter nie ulega awarii, gdy nie można odczytać żadnych danych\nDodaj raportowanie błędów Sentry",
-        "zh-cn": "确保在无法读取数据时适配器不会崩溃\n添加Sentry错误报告"
-      }
+    "common": {
+        "name": "weatherunderground",
+        "version": "3.4.2",
+        "news": {
+            "3.4.2": {
+                "en": "Added special logging when no current observation data are available because Station most likely offline to reduce confusion",
+                "de": "Spezielle Protokollierung hinzugefügt, wenn keine aktuellen Beobachtungsdaten verfügbar sind, da die Station höchstwahrscheinlich offline ist, um Verwirrung zu vermeiden",
+                "ru": "Добавлено специальное ведение журнала, когда текущие данные наблюдений недоступны, поскольку станция, скорее всего, отключена, чтобы уменьшить путаницу.",
+                "pt": "Adicionado registro especial quando não há dados de observação atuais disponíveis porque a Estação provavelmente está offline para reduzir a confusão",
+                "nl": "Speciale logboekregistratie toegevoegd wanneer er geen huidige observatiegegevens beschikbaar zijn omdat Station hoogstwaarschijnlijk offline is om verwarring te verminderen",
+                "fr": "Ajout d'une journalisation spéciale lorsqu'aucune donnée d'observation actuelle n'est disponible car la station est probablement hors ligne pour réduire la confusion",
+                "it": "Aggiunta una registrazione speciale quando non sono disponibili dati di osservazione attuali perché Station molto probabilmente offline per ridurre la confusione",
+                "es": "Se agregó un registro especial cuando no hay datos de observación actuales disponibles porque la estación probablemente esté fuera de línea para reducir la confusión.",
+                "pl": "Dodano specjalne rejestrowanie, gdy nie są dostępne żadne aktualne dane z obserwacji, ponieważ stacja najprawdopodobniej jest w trybie offline, aby zmniejszyć zamieszanie",
+                "zh-cn": "当没有可用的当前观测数据时添加了特殊记录，因为 Station 很可能离线以减少混乱"
+            },
+            "3.4.1": {
+                "en": "Use axios for communication\nmake sure date states are filled correctly",
+                "de": "Verwenden Sie Axios für die Kommunikation\nStellen Sie sicher, dass die Datumsangaben korrekt ausgefüllt sind",
+                "ru": "Используйте axios для общения\nубедитесь, что состояния даты заполнены правильно",
+                "pt": "Use axios para comunicação\nverifique se os estados de data estão preenchidos corretamente",
+                "nl": "Gebruik axios voor communicatie\nzorg ervoor dat de datumstaten correct zijn ingevuld",
+                "fr": "Utiliser axios pour la communication\nassurez-vous que les états de date sont remplis correctement",
+                "it": "Usa assios per la comunicazione\nassicurati che gli stati della data siano compilati correttamente",
+                "es": "Usa axios para comunicarte\nasegúrese de que los estados de fecha se llenen correctamente",
+                "pl": "Używaj axios do komunikacji\nupewnij się, że stany dat są wypełnione poprawnie",
+                "zh-cn": "使用 axios 进行通信\n确保正确填写日期状态"
+            },
+            "3.4.0": {
+                "en": "If no official API-Key is used: Move schedule if default is used to better spread the requests over time to prevent peaks; Additionally add a random delay in the start minute\nFurther optimizations and additional logging",
+                "de": "Wenn kein offizieller API-Schlüssel verwendet wird: Zeitplan verschieben, wenn Standard verwendet wird, um die Anfragen besser über die Zeit zu verteilen, um Spitzen zu vermeiden; Fügen Sie zusätzlich eine zufällige Verzögerung in der Startminute hinzu\nWeitere Optimierungen und zusätzliches Logging",
+                "ru": "Если официальный API-ключ не используется: перенесите расписание, если используется значение по умолчанию, чтобы лучше распределить запросы по времени и предотвратить пики; Дополнительно добавить случайную задержку в стартовой минуте\nДальнейшая оптимизация и дополнительное ведение журнала",
+                "pt": "Se nenhuma API-Key oficial for usada: Mova o agendamento se o padrão for usado para distribuir melhor as solicitações ao longo do tempo para evitar picos; Além disso, adicione um atraso aleatório no minuto de início\nOutras otimizações e registros adicionais",
+                "nl": "Als er geen officiële API-Key wordt gebruikt: Verplaats schema als standaard wordt gebruikt om de verzoeken beter te spreiden over de tijd om pieken te voorkomen; Voeg bovendien een willekeurige vertraging toe aan de startminuut\nVerdere optimalisaties en extra logging",
+                "fr": "Si aucune clé API officielle n'est utilisée : déplacer le calendrier si la valeur par défaut est utilisée pour mieux répartir les demandes dans le temps afin d'éviter les pics ; Ajoutez également un délai aléatoire dans la minute de démarrage\nOptimisations supplémentaires et journalisation supplémentaire",
+                "it": "Se non viene utilizzata alcuna API-Key ufficiale: Sposta la pianificazione se viene utilizzata di default per distribuire meglio le richieste nel tempo ed evitare picchi; Aggiungi inoltre un ritardo casuale nel minuto di inizio\nUlteriori ottimizzazioni e registrazione aggiuntiva",
+                "es": "Si no se usa una clave de API oficial: Mover el cronograma si se usa el predeterminado para distribuir mejor las solicitudes a lo largo del tiempo para evitar picos; Además, agregue un retraso aleatorio en el minuto de inicio\nMás optimizaciones y registro adicional",
+                "pl": "Jeśli nie jest używany żaden oficjalny klucz API: Przenieś harmonogram, jeśli używany jest domyślny, aby lepiej rozłożyć żądania w czasie, aby zapobiec szczytom; Dodatkowo dodaj losowe opóźnienie w minucie startu\nDalsze optymalizacje i dodatkowe logowanie",
+                "zh-cn": "如果没有使用官方 API-Key：如果使用默认值，则移动计划以更好地随着时间的推移分散请求以防止峰值；另外在开始分钟添加随机延迟\n进一步的优化和额外的日志记录"
+            },
+            "3.3.1": {
+                "en": "Optimize for js-controller 3.3",
+                "de": "Optimieren Sie für js-Controller 3.3",
+                "ru": "Оптимизировать под js-controller 3.3",
+                "pt": "Otimize para js-controller 3.3",
+                "nl": "Optimaliseren voor js-controller 3.3",
+                "fr": "Optimiser pour js-controller 3.3",
+                "it": "Ottimizza per js-controller 3.3",
+                "es": "Optimizar para js-controller 3.3",
+                "pl": "Optymalizacja dla kontrolera js 3.3",
+                "zh-cn": "针对 js-controller 3.3 优化"
+            },
+            "3.3.0": {
+                "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
+                "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
+                "ru": "Оптимизировать под js-controller 3.2\njs-controller 2.0 теперь требуется как минимум",
+                "pt": "Otimize para js-controller 3.2\njs-controller 2.0 agora é necessário pelo menos",
+                "nl": "Optimaliseren voor js-controller 3.2\njs-controller 2.0 is nu minimaal vereist",
+                "fr": "Optimiser pour js-controller 3.2\njs-controller 2.0 est maintenant requis au moins",
+                "it": "Ottimizza per js-controller 3.2\njs-controller 2.0 è ora almeno richiesto",
+                "es": "Optimizar para js-controller 3.2\njs-controller 2.0 ahora se requiere al menos",
+                "pl": "Optymalizacja pod kątem js-controller 3.2\njs-controller 2.0 jest teraz wymagany przynajmniej",
+                "zh-cn": "针对js-controller 3.2进行优化\n现在至少需要js-controller 2.0"
+            },
+            "3.2.5": {
+                "en": "Prevent crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "de": "Absturz verhindern (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "ru": "Случай предотвращения сбоя (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "pt": "Evitar caso de colisão (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "nl": "Voorkom crashgeval (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "fr": "Prévenir les cas d'accident (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "it": "Prevenire il crash case (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "es": "Caso de prevención de choque (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "pl": "Zapobiegaj przypadkowi awarii (Sentry IOBROKER-WEATHERUNDERGROUND-1, IOBROKER-WEATHERUNDERGROUND-2)",
+                "zh-cn": "防止发生崩溃情况（哨兵IOBROKER-WEATHERUNDERGROUND-1，IOBROKER-WEATHERUNDERGROUND-2）"
+            },
+            "3.2.3": {
+                "en": "make sure adapter do not crash when no data could be read\nAdd Sentry error reporting",
+                "de": "Stellen Sie sicher, dass der Adapter nicht abstürzt, wenn keine Daten gelesen werden konnten\nSentry-Fehlerberichterstattung hinzufügen",
+                "ru": "убедитесь, что адаптер не выйдет из строя, когда данные не могут быть прочитаны\nДобавить отчет об ошибках Sentry",
+                "pt": "certifique-se de que o adaptador não trave quando nenhum dado puder ser lido\nAdicionar relatório de erro de Sentry",
+                "nl": "zorg ervoor dat de adapter niet crasht als er geen gegevens kunnen worden gelezen\nVoeg Sentry-foutrapportage toe",
+                "fr": "assurez-vous que l'adaptateur ne plante pas lorsqu'aucune donnée ne peut être lue\nAjouter un rapport d'erreur Sentry",
+                "it": "assicurarsi che l'adattatore non si blocchi quando non è possibile leggere i dati\nAggiungi la segnalazione degli errori di Sentry",
+                "es": "asegúrese de que el adaptador no se bloquee cuando no se puedan leer datos\nAgregar informe de errores de Sentry",
+                "pl": "upewnij się, że adapter nie ulega awarii, gdy nie można odczytać żadnych danych\nDodaj raportowanie błędów Sentry",
+                "zh-cn": "确保在无法读取数据时适配器不会崩溃\n添加Sentry错误报告"
+            }
+        },
+        "title": "weatherunderground forecast",
+        "titleLang": {
+            "en": "Weatherunderground forecast",
+            "de": "Vorhersage Weatherunderground",
+            "ru": "Weatherunderground прогноз",
+            "pt": "Previsão do Weatherunderground",
+            "nl": "Weatherunderground voorspelling",
+            "fr": "Météo Weatherunderground",
+            "it": "Previsioni Weatherunderground",
+            "es": "Previsión Weatherunderground",
+            "pl": "Prognoza Weatherunderground",
+            "zh-cn": "地下天气预报"
+        },
+        "desc": {
+            "en": "Loads Weatherunderground weather forecast for your location",
+            "de": "Lädt Wetterwetterprognose für Ihren Standort",
+            "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
+            "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
+            "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
+            "fr": "Charge Weatherunder météo Prévisions pour votre localité",
+            "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
+            "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
+            "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji",
+            "zh-cn": "载入您所在位置的Weatherunderground天气预报"
+        },
+        "platform": "Javascript/Node.js",
+        "mode": "schedule",
+        "schedule": "12 * * * *",
+        "icon": "wu.png",
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.weatherunderground/master/admin/wu.png",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/blob/master/README.md",
+        "license": "MIT",
+        "type": "weather",
+        "compact": true,
+        "materialize": true,
+        "keywords": [
+            "iobroker",
+            "weather",
+            "forecast",
+            "wu",
+            "weatherunderground"
+        ],
+        "loglevel": "info",
+        "enabled": true,
+        "allowInit": true,
+        "authors": [
+            "Daniel Schaedler <daniel.schaedler@gmail.com>",
+            "Ingo Fischer <iobroker@fischer-ka.de>"
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://eceef3154b014c2db3267875a45b6888@sentry.iobroker.net/112",
+                "errorBlacklist": [
+                    "SyntaxError"
+                ]
+            }
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ],
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "tier": 2
     },
-    "title": "weatherunderground forecast",
-    "titleLang": {
-      "en": "Weatherunderground forecast",
-      "de": "Vorhersage Weatherunderground",
-      "ru": "Weatherunderground прогноз",
-      "pt": "Previsão do Weatherunderground",
-      "nl": "Weatherunderground voorspelling",
-      "fr": "Météo Weatherunderground",
-      "it": "Previsioni Weatherunderground",
-      "es": "Previsión Weatherunderground",
-      "pl": "Prognoza Weatherunderground",
-      "zh-cn": "地下天气预报"
+    "native": {
+        "apikey": "",
+        "location": "",
+        "station": "",
+        "language": "DL",
+        "forecast_periods_txt": true,
+        "forecast_periods": true,
+        "forecast_hourly": true,
+        "current": true,
+        "nonMetric": false,
+        "custom_icon_base_url": "",
+        "country": "DE",
+        "useLegacyApi": true,
+        "iconSet": "i"
     },
-    "desc": {
-      "en": "Loads Weatherunderground weather forecast for your location",
-      "de": "Lädt Wetterwetterprognose für Ihren Standort",
-      "ru": "Нагрузки Weatherunderground прогноз погоды для вашего местоположения",
-      "pt": "Carrega Weatherunderground previsão do tempo para sua localização",
-      "nl": "Hiermee laadt u Weatherunderground-weersvoorspelling voor uw locatie",
-      "fr": "Charge Weatherunder météo Prévisions pour votre localité",
-      "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
-      "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
-      "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji",
-      "zh-cn": "载入您所在位置的Weatherunderground天气预报"
-    },
-    "platform": "Javascript/Node.js",
-    "mode": "schedule",
-    "schedule": "12 * * * *",
-    "icon": "wu.png",
-    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.weatherunderground/master/admin/wu.png",
-    "readme": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/blob/master/README.md",
-    "license": "MIT",
-    "type": "weather",
-    "compact": true,
-    "materialize": true,
-    "keywords": [
-      "iobroker",
-      "weather",
-      "forecast",
-      "wu",
-      "weatherunderground"
-    ],
-    "loglevel": "info",
-    "enabled": true,
-    "allowInit": true,
-    "authors": [
-      "Daniel Schaedler <daniel.schaedler@gmail.com>",
-      "Ingo Fischer <iobroker@fischer-ka.de>"
-    ],
-    "plugins": {
-      "sentry": {
-        "dsn": "https://eceef3154b014c2db3267875a45b6888@sentry.iobroker.net/112",
-        "errorBlacklist": [
-          "SyntaxError"
-        ]
-      }
-    },
-    "dependencies": [
-      {
-        "js-controller": ">=2.0.0"
-      }
-    ],
-    "connectionType": "cloud",
-    "dataSource": "poll",
-    "tier": 2
-  },
-  "native": {
-    "apikey": "",
-    "location": "",
-    "station": "",
-    "language": "DL",
-    "forecast_periods_txt": true,
-    "forecast_periods": true,
-    "forecast_hourly": true,
-    "current": true,
-    "nonMetric": false,
-    "custom_icon_base_url": "",
-    "country": "DE",
-    "useLegacyApi": true,
-    "iconSet": "i"
-  },
-  "objects": [],
-  "instanceObjects": []
+    "objects": [],
+    "instanceObjects": []
 }

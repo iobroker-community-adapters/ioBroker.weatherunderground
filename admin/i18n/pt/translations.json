@@ -2,7 +2,7 @@
     "Icon set": "Conjunto de ícones (somente API legada)",
     "Icons": "Ícones",
     "Station - only for current conditions data": "Estação - apenas para dados de condições atuais",
-    "Use non-metric system": "Use o sistema métrico inglês (° F, milhas)",
+    "Use non-metric system": "Use unidades imperiais (°F, milhas)",
     "apikey": "Chave API",
     "apikey_info": "Opcionalmente, insira seu próprio proprietário NEW PWS apikey de Weatherunderground, deixe vazio se você não tiver um <br/>",
     "apikey_info_1": "Se deixado em branco, a chave geral atual é tentada para extrair da página da Web da WU",
