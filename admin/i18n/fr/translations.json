@@ -17,7 +17,7 @@
     "forecast_periods_txt": "Prévision comme texte pour les 4 prochains jours et nuits",
     "language": "La langue",
     "location": "Emplacement",
-    "location_info": "Sélectionnez votre emplacement soit par nom (par exemple \"Berlin\"), Code aéroport (par exemple \"ZRH\"), coordonnées (par exemple \"47.3145359,8.4159812\")",
+    "location_info": "Sélectionnez votre emplacement soit par nom (par exemple \"Berlin\"), Code aéroport (par exemple \"ZRH\"), coordonnées (par exemple \"47.3145359,8.4159812\").",
     "state_chanceflurries": "Fortes averses de neige",
     "state_chancerain": "Chance pluie",
     "state_chancesleet": "Chance grésil",

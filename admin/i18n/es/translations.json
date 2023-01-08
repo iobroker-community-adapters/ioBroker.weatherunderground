@@ -7,7 +7,7 @@
     "apikey_info": "Opcionalmente, ingrese su propio propietario de PWS NUEVO de Weatherunderground, déjelo vacío si no tiene uno <br/>",
     "apikey_info_1": "Si se deja vacío, se intenta extraer la clave general actual de la página web de WU",
     "country": "País",
-    "country_info": "Introduzca un código de país de dos letras del país para el que solicita los datos",
+    "country_info": "Introduzca un código de país de dos letras del país para el que solicita los datos.",
     "current": "Datos actuales",
     "custom": "conjunto personalizado",
     "custom_icon_base_url": "Icono personalizado-Base-URL",
