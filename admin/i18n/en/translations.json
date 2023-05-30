@@ -7,7 +7,7 @@
     "apikey_info": "Optionally enter your own NEW PWS owner apikey from Weatherunderground, leave empty if you do not have one<br/>",
     "apikey_info_1": "If left empty the current general key is tried to extract from WU webpage",
     "country": "Country",
-    "country_info": "Please enter a two letter country code of the country you request data for",
+    "country_info": "Please enter a two letter country code of the country you request data for.",
     "current": "Current data",
     "custom": "custom set",
     "custom_icon_base_url": "Custom Icon-Base-URL",
@@ -17,7 +17,7 @@
     "forecast_periods_txt": "Forecast as Text for next 4 days and nights",
     "language": "Language",
     "location": "Location",
-    "location_info": "Select your location either by name (e.g. \"Berlin\"), Airport Code (e.g. \"ZRH\"), coordinates (e.g.\"47.3145359,8.4159812\")",
+    "location_info": "Select your location either by name (e.g. \"Berlin\"), Airport Code (e.g. \"ZRH\") or coordinates (e.g.\"47.3145359,8.4159812\").",
     "state_chanceflurries": "Chance flurries",
     "state_chancerain": "Chance rain",
     "state_chancesleet": "Chance sleet",
@@ -38,6 +38,6 @@
     "state_sunny": "Sunny",
     "state_tstorms": "Storms",
     "station": "Station",
-    "station_info": "If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your preferred station (e.g. \"IAARGAUB5\"). You can find these codes e.g. on the <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\">Wundermap</a> - click a station and look for the \"Station ID\"",
+    "station_info": "If you leave the station empty, then the nearest station according to the give location is picked automatically. If you are not happy with this choice you can insert here the station code of your preferred station (e.g. \"IAARGAUB5\"). You can find these codes e.g. on the <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\">Wundermap</a> - click a station and look for the \"Station ID\".",
     "useLegacyApi": "Use legacy WU APIs"
 }
