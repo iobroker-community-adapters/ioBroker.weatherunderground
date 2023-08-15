@@ -1296,6 +1296,10 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: body.daily_forecast.daypart[0].qpf[i * 2]
                     });
+                    await adapter.setStateAsync(`forecast.${i}d.cloudCover`, {
+                        ack: true,
+                        val: body.daily_forecast.daypart[0].cloudCover[i * 2]
+                    });
                     await adapter.setStateAsync(`forecast.${i}d.precipitationNight`, {
                         ack: true,
                         val: body.daily_forecast.daypart[0].qpf[1 + (i * 2)]
@@ -2411,6 +2415,18 @@ async function checkWeatherVariables() {
                     },
                     native: {id: id + 'qpf_day.in'}
                 });
+                await adapter.setObjectNotExistsAsync(id + 'cloudCover', {
+                    type: 'state',
+                    common: {
+                        name: 'cloudCover day forecast',
+                        role: 'value.cloudcover.day.forecast.' + p,
+                        unit: '%',
+                        type: 'number',
+                        read: true,
+                        write: false
+                    },
+                    native: {id: id + 'cloudCover'}
+                });
                 await adapter.setObjectNotExistsAsync(id + 'precipitationNight', {
                     type: 'state',
                     common: {
@@ -2533,6 +2549,18 @@ async function checkWeatherVariables() {
                         write: false
                     },
                     native: {id: id + 'qpf_day.mm'}
+                });
+                await adapter.setObjectNotExistsAsync(id + 'cloudCover', {
+                    type: 'state',
+                    common: {
+                        name: 'cloudCover day forecast',
+                        role: 'value.cloudcover.day.forecast.' + p,
+                        unit: '%',
+                        type: 'number',
+                        read: true,
+                        write: false
+                    },
+                    native: {id: id + 'cloudCover'}
                 });
                 await adapter.setObjectNotExistsAsync(id + 'precipitationNight', {
                     type: 'state',
