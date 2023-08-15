@@ -77,7 +77,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.4.3 (2023-08-15)
 * (Aplollon77) Translations have been updated (#159)
 * (mcm1957) The testenvironment has been updated to use node 16/18/20
 * (bluefox) Dependencies have been updated
