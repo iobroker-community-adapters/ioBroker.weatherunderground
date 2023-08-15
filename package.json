@@ -21,6 +21,9 @@
     "type": "git",
     "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground"
   },
+  "engines": {
+    "node": ">= 16.0.0"
+  },
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.3",
     "axios": "^1.4.0"
