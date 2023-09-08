@@ -296,14 +296,16 @@ function handleIconUrl(original) {
     if (typeof original !== 'string') {
         original = original.toString();
     }
+    // old url https://icons.wxug.com
+    // new url https://www.wunderground.com/static
     if (original.match(/^[0-9]{1,4}$/)) {
-        original = `https://icons.wxug.com/i/c/v4/${original}.svg`;
+        original = `https://www.wunderground.com/static/i/c/v4/${original}.svg`;
         if (iconSet === 'i') {
             iconSet = null;
         }
     }
     if (iconSet) {
-        original = `https://icons.wxug.com/i/c/${encodeURIComponent(iconSet)}/${original.substring(original.lastIndexOf('/') + 1)}`;
+        original = `https://www.wunderground.com/static/i/c/${encodeURIComponent(iconSet)}/${original.substring(original.lastIndexOf('/') + 1)}`;
     }
     else if (adapter.config.custom_icon_base_url) {
         const pos = original.lastIndexOf('.');
