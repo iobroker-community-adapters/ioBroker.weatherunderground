@@ -81,8 +81,8 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
 * (mcm1957) Adapter now requires node 16 or newer
 * (mcm1957) Dependencies have been updated
 * (waldmensch1) Cloudcover states have been added (PR #178)
-* (mcm1957) Date format has been fixed to avoid incorrect display with newer admin versions
-* (mcm1957) Forecast urls have been adapted to wwetherunderground website changes
+* (mcm1957) Date format has been fixed to avoid incorrect display with newer admin versions (#191)
+* (mcm1957) Forecast urls have been adapted to weatherunderground website changes (#158)
 
 ### 3.4.3 (2023-08-15)
 * (Aplollon77) Translations have been updated (#159)
