@@ -77,7 +77,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.5.0 (2023-09-08)
 * (mcm1957) Adapter now requires node 16 or newer
 * (mcm1957) Dependencies have been updated
 * (waldmensch1) Cloudcover states have been added (PR #178)
