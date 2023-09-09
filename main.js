@@ -711,10 +711,10 @@ async function parseLegacyResult(body, cb) {
         }
     }
 
-    //next 8 periods (day and night) -> text and icon forecast
+    //next 12 periods (day and night) -> text and icon forecast
     if (adapter.config.forecast_periods_txt) {
         if (body.forecast && body.forecast.txt_forecast && body.forecast.txt_forecast.forecastday) {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 12; i++) {
                 if (!body.forecast.txt_forecast.forecastday[i]) continue;
                 try {
                     const now = new Date();
@@ -764,9 +764,9 @@ async function parseLegacyResult(body, cb) {
     }
 
     if (adapter.config.forecast_periods) {
-        //next 4 days
+        //next 6 days
         if (body.forecast && body.forecast.simpleforecast && body.forecast.simpleforecast.forecastday) {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 6; i++) {
                 if (!body.forecast.simpleforecast.forecastday[i]) continue;
                 try {
                     await adapter.setStateAsync('forecast.' + i + 'd.date', {
@@ -1133,11 +1133,11 @@ async function parseNewResult(body, cb) {
         }
     }
 
-    //next 8 periods (day and night) -> text and icon forecast
+    //next 12 periods (day and night) -> text and icon forecast
     if (adapter.config.forecast_periods_txt) {
         if (body.daily_forecast && body.daily_forecast.daypart) {
             const startId = (body.daily_forecast.daypart[0].daypartName[0] === null) ? 1 : 0;
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 12; i++) {
                 const idx = startId + i;
                 try {
                     const now = new Date();
@@ -1255,9 +1255,9 @@ async function parseNewResult(body, cb) {
     }
 
     if (adapter.config.forecast_periods) {
-        //next 4 days
+        //next 6 days
         if (body.daily_forecast) {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 6; i++) {
                 try {
                     await adapter.setStateAsync(`forecast.${i}d.date`, {
                         ack: true,
