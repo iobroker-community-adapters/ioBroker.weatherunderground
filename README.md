@@ -77,7 +77,7 @@ There is a still a problem with encoding. The addresses with "äüöß" will be 
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.6.0 (2023-09-09)
 * (mcm1957) Icon urls at admin ui have been adapted to weatherunderground website changes (#158)
 * (mcm1957) Forecast periods have been extended
 

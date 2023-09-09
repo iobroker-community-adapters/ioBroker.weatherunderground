@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "3.5.0",
+    "version": "3.6.0",
     "news": {
+      "3.6.0": {
+        "en": "Icon urls at admin ui have been adapted to weatherunderground website changes (#158)\nForecast periods have been extended",
+        "de": "Icon urls des admin ui wurden an die Änderungen der Wetteruntergrund-Website angepasst #(158)\nVorausschauperioden wurden verlängert",
+        "ru": "Icon urls at admin ui были адаптированы к изменениям сайта weatherunderground #(158)\nПрогнозные периоды были продлены",
+        "pt": "Icon urls em admin ui foram adaptados às mudanças do site intemperário #(158)\nOs períodos de previsão foram prolongados",
+        "nl": "Icon urls bij admin ui zijn aangepast aan de weerunderground website verandert\nDe voorspellingen zijn verlengd",
+        "fr": "Les urls d'Icon à admin ui ont été adaptés aux changements de site web #(158)\nLes périodes de prévision ont été prolongées",
+        "it": "Gli urli di Icon a admin ui sono stati adattati alle modifiche del sito web in sottofondo di tempo #(158)\nPeriodi di previsione",
+        "es": "Urls de icono en admin ui han sido adaptados a cambios en el sitio web de meteorunderground #(158)\nSe han prorrogado períodos de prescripción",
+        "pl": "Icon urls at admin ui został zaadaptowany na stronę internetową zmiany #(158)\nOkresy wstępne zostały przedłużone",
+        "uk": "Ікона виворітна на адмін ui адаптована до змін веб-сайту погоди #(158)\nРозширено прогнозні періоди",
+        "zh-cn": "Icon urls in admin uis已适应天气地下网站变化(158)\n广播期已经延长。"
+      },
       "3.5.0": {
         "en": "Adapter now requires node 16 or newer\nDependencies have been updated\nCloudcover states have been added (PR #178)\nDate format has been fixed to avoid incorrect display with newer admin versions (#191)\nForecast urls have been adapted to weatherunderground website changes (#158)",
         "de": "Adapter benötigt jetzt Node 16 oder neuer\nAbhängigkeiten wurden aktualisiert\nBewölkungszustände wurden hinzugefügt (PR #178)\nDatumsformat wurde behoben, um falsche Anzeige mit neueren Admin-Versionen zu vermeiden #(191).\nWettervorhersage urls wurden an Weatherunderground Website Änderungen angepasst (#158)",
@@ -76,18 +89,6 @@
         "es": "Optimizar para js-controller 3.3",
         "pl": "Optymalizacja dla kontrolera js 3.3",
         "zh-cn": "针对 js-controller 3.3 优化"
-      },
-      "3.3.0": {
-        "en": "Optimize for js-controller 3.2\njs-controller 2.0 is now required at least",
-        "de": "Optimieren für js-controller 3.2\njs-controller 2.0 ist jetzt mindestens erforderlich",
-        "ru": "Оптимизировать под js-controller 3.2\njs-controller 2.0 теперь требуется как минимум",
-        "pt": "Otimize para js-controller 3.2\njs-controller 2.0 agora é necessário pelo menos",
-        "nl": "Optimaliseren voor js-controller 3.2\njs-controller 2.0 is nu minimaal vereist",
-        "fr": "Optimiser pour js-controller 3.2\njs-controller 2.0 est maintenant requis au moins",
-        "it": "Ottimizza per js-controller 3.2\njs-controller 2.0 è ora almeno richiesto",
-        "es": "Optimizar para js-controller 3.2\njs-controller 2.0 ahora se requiere al menos",
-        "pl": "Optymalizacja pod kątem js-controller 3.2\njs-controller 2.0 jest teraz wymagany przynajmniej",
-        "zh-cn": "针对js-controller 3.2进行优化\n现在至少需要js-controller 2.0"
       }
     },
     "title": "weatherunderground forecast",
