@@ -2288,7 +2288,7 @@ async function checkWeatherVariables() {
             native: {location: adapter.config.location}
         });
 
-        for (let d = 0; d < 8; d++) {
+        for (let d = 0; d < 12; d++) {
             id = `forecastPeriod.${d}p.`;
             await adapter.setObjectNotExistsAsync(`forecastPeriod.${d}p`, {
                 type: 'channel',
@@ -2356,7 +2356,7 @@ async function checkWeatherVariables() {
             native: {location: adapter.config.location}
         });
 
-        for (let p = 0; p < 4; p++) {
+        for (let p = 0; p < 6; p++) {
             id = 'forecast.' + p + 'd.';
             await adapter.setObjectNotExistsAsync(`forecast.${p}d`, {
                 type: 'channel',
