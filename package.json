@@ -35,7 +35,7 @@
     "@alcalzone/release-script-plugin-manual-review": "^3.7.0",
     "@iobroker/adapter-dev": "^1.2.0",
     "chai": "^4.3.10",
-    "mocha": "^10.2.0"
+    "mocha": "^10.3.0"
   },
   "bugs": {
     "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/issues"
