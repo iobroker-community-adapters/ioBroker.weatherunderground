@@ -91,7 +91,6 @@
         "zh-cn": "针对 js-controller 3.3 优化"
       }
     },
-    "title": "weatherunderground forecast",
     "titleLang": {
       "en": "Weatherunderground forecast",
       "de": "Vorhersage Weatherunderground",
@@ -127,7 +126,6 @@
     "compact": true,
     "materialize": true,
     "keywords": [
-      "iobroker",
       "weather",
       "forecast",
       "wu",
@@ -150,7 +148,12 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=2.0.0"
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.13"
       }
     ],
     "connectionType": "cloud",
