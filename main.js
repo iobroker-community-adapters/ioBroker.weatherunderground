@@ -104,7 +104,7 @@ function startAdapter(options) {
                     instObj.common.schedule = `${Math.floor(Math.random() * 60)} * * * *`;
                     adapter.log.info(`Default schedule found and adjusted to spread calls better over the full hour!`);
                     await adapter.setForeignObjectAsync(`system.adapter.${adapter.namespace}`, instObj);
-                    adapter.terminate ? adapter.terminate() : process.exit(0);
+                    adapter.terminate ? adapter.terminate(0) : process.exit(0);
                     return;
                 }
             } catch (err) {
@@ -259,7 +259,7 @@ function startAdapter(options) {
             forceTimeout = null;
             stopInProgress = true;
             adapter.log.warn('force terminate');
-            adapter.terminate ? adapter.terminate() : process.exit(0);
+            adapter.terminate ? adapter.terminate(0) : process.exit(0);
         }, 60000);
     });
 
