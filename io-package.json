@@ -127,7 +127,10 @@
     "icon": "wu.png",
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.weatherunderground/master/admin/wu.png",
     "readme": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/blob/master/README.md",
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "type": "weather",
     "compact": true,
     "materialize": true,
