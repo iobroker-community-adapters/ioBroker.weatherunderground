@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "3.6.0",
+    "version": "3.7.0",
     "news": {
+      "3.7.0": {
+        "en": "Adapter requires node.js 18 and js-controller >= 5 now\nDependencies have been updated",
+        "de": "Adapter benötigt node.js 18 und js-controller >= 5 jetzt\nAbhängigkeiten wurden aktualisiert",
+        "ru": "Адаптер требует node.js 18 и js-controller >= 5 сейчас\nЗависимость обновлена",
+        "pt": "Adapter requer node.js 18 e js-controller >= 5 agora\nAs dependências foram atualizadas",
+        "nl": "Adapter vereist node.js 18 en js-controller Nu 5\nAfhankelijkheden zijn bijgewerkt",
+        "fr": "Adaptateur nécessite node.js 18 et js-controller >= 5 maintenant\nLes dépendances ont été actualisées",
+        "it": "Adattatore richiede node.js 18 e js-controller >= 5 ora\nLe dipendenze sono state aggiornate",
+        "es": "Adaptador requiere node.js 18 y js-controller √= 5 ahora\nSe han actualizado las dependencias",
+        "pl": "Adapter wymaga node.js 18 i sterownika js- > = 5 teraz\nZaktualizowano zależności",
+        "uk": "Адаптер вимагає node.js 18 і js-controller >= 5 тепер\nЗалежність було оновлено",
+        "zh-cn": "适配器需要节点.js 18和js控制器 QQ 现在5号\n依赖关系已更新"
+      },
       "3.6.0": {
         "en": "Icon urls at admin ui have been adapted to weatherunderground website changes (#158)\nForecast periods have been extended",
         "de": "Icon urls des admin ui wurden an die Änderungen der Wetteruntergrund-Website angepasst #(158)\nVorausschauperioden wurden verlängert",
@@ -80,19 +93,6 @@
         "pl": "Jeśli nie jest używany żaden oficjalny klucz API: Przenieś harmonogram, jeśli używany jest domyślny, aby lepiej rozłożyć żądania w czasie, aby zapobiec szczytom; Dodatkowo dodaj losowe opóźnienie w minucie startu\nDalsze optymalizacje i dodatkowe logowanie",
         "zh-cn": "如果没有使用官方 API-Key：如果使用默认值，则移动计划以更好地随着时间的推移分散请求以防止峰值；另外在开始分钟添加随机延迟\n进一步的优化和额外的日志记录",
         "uk": "Якщо не використовується офіційний API-ключ: перемістіть розклад, якщо використовується за замовчуванням, щоб краще розподілити запити в часі, щоб запобігти пікам; Додатково додайте випадкову затримку в хвилину початку\nПодальша оптимізація та додаткове журналювання"
-      },
-      "3.3.1": {
-        "en": "Optimize for js-controller 3.3",
-        "de": "Optimieren Sie für js-Controller 3.3",
-        "ru": "Оптимизировать под js-controller 3.3",
-        "pt": "Otimize para js-controller 3.3",
-        "nl": "Optimaliseren voor js-controller 3.3",
-        "fr": "Optimiser pour js-controller 3.3",
-        "it": "Ottimizza per js-controller 3.3",
-        "es": "Optimizar para js-controller 3.3",
-        "pl": "Optymalizacja dla kontrolera js 3.3",
-        "zh-cn": "针对 js-controller 3.3 优化",
-        "uk": "Оптимізація для js-контролера 3.3"
       }
     },
     "titleLang": {
