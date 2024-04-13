@@ -52,7 +52,8 @@
         "it": "Aggiunta una registrazione speciale quando non sono disponibili dati di osservazione attuali perché Station molto probabilmente offline per ridurre la confusione",
         "es": "Se agregó un registro especial cuando no hay datos de observación actuales disponibles porque la estación probablemente esté fuera de línea para reducir la confusión.",
         "pl": "Dodano specjalne rejestrowanie, gdy nie są dostępne żadne aktualne dane z obserwacji, ponieważ stacja najprawdopodobniej jest w trybie offline, aby zmniejszyć zamieszanie",
-        "zh-cn": "当没有可用的当前观测数据时添加了特殊记录，因为 Station 很可能离线以减少混乱"
+        "zh-cn": "当没有可用的当前观测数据时添加了特殊记录，因为 Station 很可能离线以减少混乱",
+        "uk": "Додано спеціальне журналювання, коли поточні дані спостережень недоступні, оскільки станція, швидше за все, не в мережі, щоб зменшити плутанину"
       },
       "3.4.1": {
         "en": "Use axios for communication\nmake sure date states are filled correctly",
@@ -64,7 +65,8 @@
         "it": "Usa assios per la comunicazione\nassicurati che gli stati della data siano compilati correttamente",
         "es": "Usa axios para comunicarte\nasegúrese de que los estados de fecha se llenen correctamente",
         "pl": "Używaj axios do komunikacji\nupewnij się, że stany dat są wypełnione poprawnie",
-        "zh-cn": "使用 axios 进行通信\n确保正确填写日期状态"
+        "zh-cn": "使用 axios 进行通信\n确保正确填写日期状态",
+        "uk": "Використовуйте аксіос для спілкування\nпереконайтеся, що стани дат заповнені правильно"
       },
       "3.4.0": {
         "en": "If no official API-Key is used: Move schedule if default is used to better spread the requests over time to prevent peaks; Additionally add a random delay in the start minute\nFurther optimizations and additional logging",
@@ -76,7 +78,8 @@
         "it": "Se non viene utilizzata alcuna API-Key ufficiale: Sposta la pianificazione se viene utilizzata di default per distribuire meglio le richieste nel tempo ed evitare picchi; Aggiungi inoltre un ritardo casuale nel minuto di inizio\nUlteriori ottimizzazioni e registrazione aggiuntiva",
         "es": "Si no se usa una clave de API oficial: Mover el cronograma si se usa el predeterminado para distribuir mejor las solicitudes a lo largo del tiempo para evitar picos; Además, agregue un retraso aleatorio en el minuto de inicio\nMás optimizaciones y registro adicional",
         "pl": "Jeśli nie jest używany żaden oficjalny klucz API: Przenieś harmonogram, jeśli używany jest domyślny, aby lepiej rozłożyć żądania w czasie, aby zapobiec szczytom; Dodatkowo dodaj losowe opóźnienie w minucie startu\nDalsze optymalizacje i dodatkowe logowanie",
-        "zh-cn": "如果没有使用官方 API-Key：如果使用默认值，则移动计划以更好地随着时间的推移分散请求以防止峰值；另外在开始分钟添加随机延迟\n进一步的优化和额外的日志记录"
+        "zh-cn": "如果没有使用官方 API-Key：如果使用默认值，则移动计划以更好地随着时间的推移分散请求以防止峰值；另外在开始分钟添加随机延迟\n进一步的优化和额外的日志记录",
+        "uk": "Якщо не використовується офіційний API-ключ: перемістіть розклад, якщо використовується за замовчуванням, щоб краще розподілити запити в часі, щоб запобігти пікам; Додатково додайте випадкову затримку в хвилину початку\nПодальша оптимізація та додаткове журналювання"
       },
       "3.3.1": {
         "en": "Optimize for js-controller 3.3",
@@ -88,7 +91,8 @@
         "it": "Ottimizza per js-controller 3.3",
         "es": "Optimizar para js-controller 3.3",
         "pl": "Optymalizacja dla kontrolera js 3.3",
-        "zh-cn": "针对 js-controller 3.3 优化"
+        "zh-cn": "针对 js-controller 3.3 优化",
+        "uk": "Оптимізація для js-контролера 3.3"
       }
     },
     "titleLang": {
@@ -101,7 +105,8 @@
       "it": "Previsioni Weatherunderground",
       "es": "Previsión Weatherunderground",
       "pl": "Prognoza Weatherunderground",
-      "zh-cn": "地下天气预报"
+      "zh-cn": "地下天气预报",
+      "uk": "Прогноз погоди під землею"
     },
     "desc": {
       "en": "Loads Weatherunderground weather forecast for your location",
@@ -113,7 +118,8 @@
       "it": "Carica le previsioni meteo Weatherunderground per la tua posizione",
       "es": "Cargas Weatherunderground pronóstico del tiempo para su ubicación",
       "pl": "Ładuje prognozę pogody Weatherunderground dla Twojej lokalizacji",
-      "zh-cn": "载入您所在位置的Weatherunderground天气预报"
+      "zh-cn": "载入您所在位置的Weatherunderground天气预报",
+      "uk": "Завантажує прогноз погоди Weatherunderground для вашого місця розташування"
     },
     "platform": "Javascript/Node.js",
     "mode": "schedule",
