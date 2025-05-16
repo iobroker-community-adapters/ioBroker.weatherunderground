@@ -145,7 +145,7 @@
     "allowInit": true,
     "authors": [
       "Daniel Schaedler <daniel.schaedler@gmail.com>",
-      "Ingo Fischer <iobroker@fischer-ka.de>"
+      "Apollon77 <iobroker@fischer-ka.de>"
     ],
     "plugins": {
       "sentry": {
