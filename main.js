@@ -23,7 +23,7 @@
 
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
 const axios       = require('axios');
-const crypto      = require('crypto');
+const crypto      = require('node:crypto');
 const adapterName = require('./package.json').name.split('.').pop();
 let adapter;
 
@@ -1605,7 +1605,7 @@ function getLegacyWuData(cb) {
 
     if (adapter.config.location.match(/^file:/)) {
         adapter.log.debug('read local WU file: ' + adapter.config.location);
-        return parseLegacyResult(JSON.parse(require('fs').readFileSync(adapter.config.location.substring(7)).toString('utf8')), cb);
+        return parseLegacyResult(JSON.parse(require('node:fs').readFileSync(adapter.config.location.substring(7)).toString('utf8')), cb);
     }
     adapter.log.debug('get WU legacy data: ' + url);
 
