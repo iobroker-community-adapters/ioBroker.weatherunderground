@@ -133,7 +133,6 @@
     },
     "type": "weather",
     "compact": true,
-    "materialize": true,
     "keywords": [
       "weather",
       "forecast",
@@ -168,7 +167,10 @@
     ],
     "connectionType": "cloud",
     "dataSource": "poll",
-    "tier": 2
+    "tier": 2,
+    "adminUI": {
+      "config": "materialize"
+    }
   },
   "native": {
     "apikey": "",
