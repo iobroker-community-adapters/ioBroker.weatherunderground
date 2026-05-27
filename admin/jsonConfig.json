@@ -159,15 +159,15 @@
           "label": "language",
           "options": [
             {
-              "label": "deutsch",
+              "label": "Deutsch",
               "value": "DL"
             },
             {
-              "label": "english",
+              "label": "English",
               "value": "EN"
             },
             {
-              "label": "русский",
+              "label": "Русский",
               "value": "RU"
             },
             {
