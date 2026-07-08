@@ -1,0 +1,299 @@
+{
+  "i18n": true,
+  "type": "tabs",
+  "items": {
+    "main": {
+      "type": "panel",
+      "label": {
+        "en": "Main settings",
+        "de": "Haupteinstellungen",
+        "ru": "Основные настройки",
+        "pt": "Configurações principais",
+        "nl": "Hoofdinstellingen",
+        "fr": "Paramètres principaux",
+        "it": "Impostazioni principali",
+        "es": "Ajustes principales",
+        "pl": "Ustawienia główne",
+        "uk": "Основні налаштування",
+        "zh-cn": "主要设置"
+      },
+      "items": {
+        "apikey": {
+          "type": "text",
+          "label": "apikey",
+          "xs": 12,
+          "sm": 12,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "_apikey_info": {
+          "type": "staticText",
+          "text": "apikey_info",
+          "format": "html",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "_apikey_info_1": {
+          "type": "staticText",
+          "text": "apikey_info_1",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "forecast_periods_txt": {
+          "newLine": true,
+          "type": "checkbox",
+          "label": "forecast_periods_txt",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "forecast_periods": {
+          "type": "checkbox",
+          "label": "forecast_periods",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "forecast_hourly": {
+          "newLine": true,
+          "type": "checkbox",
+          "label": "forecast_hourly",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "current": {
+          "type": "checkbox",
+          "label": "current",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "country": {
+          "newLine": true,
+          "type": "text",
+          "label": "country",
+          "xs": 12,
+          "sm": 6,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
+        },
+        "location": {
+          "type": "text",
+          "label": "location",
+          "xs": 12,
+          "sm": 6,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
+        },
+        "station": {
+          "type": "text",
+          "label": "station",
+          "hidden": "!data.current",
+          "xs": 12,
+          "sm": 12,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
+        },
+        "_country_info": {
+          "newLine": true,
+          "type": "staticText",
+          "text": "country_info",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "_location_info": {
+          "type": "staticText",
+          "text": "location_info",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "_station_only": {
+          "type": "staticText",
+          "text": "Station - only for current conditions data",
+          "hidden": "!data.current",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "_station_info": {
+          "type": "staticText",
+          "text": "station_info",
+          "format": "html",
+          "hidden": "!data.current",
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "language": {
+          "newLine": true,
+          "type": "select",
+          "label": "language",
+          "options": [
+            {
+              "label": "Deutsch",
+              "value": "DL"
+            },
+            {
+              "label": "English",
+              "value": "EN"
+            },
+            {
+              "label": "Русский",
+              "value": "RU"
+            },
+            {
+              "label": "Nederlands",
+              "value": "NL"
+            }
+          ],
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        },
+        "nonMetric": {
+          "type": "checkbox",
+          "label": "Use non-metric system",
+          "xs": 12,
+          "sm": 6,
+          "md": 6,
+          "lg": 6,
+          "xl": 6
+        }
+      }
+    },
+    "icons": {
+      "type": "panel",
+      "label": "Icons",
+      "items": {
+        "iconSet": {
+          "type": "select",
+          "label": "Icon set",
+          "options": [
+            {
+              "label": "A",
+              "value": "a"
+            },
+            {
+              "label": "B",
+              "value": "b"
+            },
+            {
+              "label": "C",
+              "value": "c"
+            },
+            {
+              "label": "D",
+              "value": "d"
+            },
+            {
+              "label": "E",
+              "value": "e"
+            },
+            {
+              "label": "F",
+              "value": "f"
+            },
+            {
+              "label": "G",
+              "value": "g"
+            },
+            {
+              "label": "H",
+              "value": "h"
+            },
+            {
+              "label": "I",
+              "value": "i"
+            },
+            {
+              "label": "J",
+              "value": "j"
+            },
+            {
+              "label": "K",
+              "value": "k"
+            },
+            {
+              "label": "custom",
+              "value": ""
+            }
+          ],
+          "xs": 12,
+          "sm": 6,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
+        },
+        "custom_icon_base_url": {
+          "type": "text",
+          "label": "custom_icon_base_url",
+          "hidden": "data.iconSet !== ''",
+          "xs": 12,
+          "sm": 12,
+          "md": 8,
+          "lg": 8,
+          "xl": 8
+        },
+        "custom_icon_format": {
+          "type": "select",
+          "label": "custom_icon_format",
+          "hidden": "data.iconSet !== ''",
+          "options": [
+            {
+              "label": "gif",
+              "value": "gif"
+            },
+            {
+              "label": "png",
+              "value": "png"
+            },
+            {
+              "label": "svg",
+              "value": "svg"
+            },
+            {
+              "label": "jpg",
+              "value": "jpg"
+            }
+          ],
+          "xs": 12,
+          "sm": 6,
+          "md": 4,
+          "lg": 4,
+          "xl": 4
+        }
+      }
+    }
+  }
+}

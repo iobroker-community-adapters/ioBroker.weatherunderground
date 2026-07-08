@@ -169,7 +169,7 @@
     "dataSource": "poll",
     "tier": 2,
     "adminUI": {
-      "config": "materialize"
+      "config": "json"
     }
   },
   "native": {
@@ -185,7 +185,8 @@
     "custom_icon_base_url": "",
     "country": "DE",
     "useLegacyApi": true,
-    "iconSet": "i"
+    "iconSet": "i",
+    "custom_icon_format": "gif"
   },
   "objects": [],
   "instanceObjects": []
