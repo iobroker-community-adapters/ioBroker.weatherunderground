@@ -37,7 +37,7 @@
     "state_snow": "雪",
     "state_sunny": "阳光明媚",
     "state_tstorms": "暴风雨",
-    "station": "车站",
+    "station": "电台",
     "station_info": "如果您将桩号留空，那么将根据给定位置自动选择最近的桩号。",
     "useLegacyApi": "使用旧版WU API"
 }
