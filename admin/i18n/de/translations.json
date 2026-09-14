@@ -37,7 +37,7 @@
     "state_snow": "Schnee",
     "state_sunny": "Sonnig",
     "state_tstorms": "Stürme",
-    "station": "Messstation",
+    "station": "Sender",
     "station_info": "Wenn das Eingabefeld \"Station\" leer gelassen wird, wird automatisch die nächstgelegene Station entsprechend der angegebenen Position ausgewählt. Wenn diese Auswahl nicht zufriedenstellend ist, kann hier die \"Station ID\" der bevorzugten Station (z. B. \"IAARGAUB5\") eingeben werden. Diese Codes sind z.B. auf der <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> abfragbar; einfach auf eine Station klicken und nach der \"Station ID\" suchen.",
     "useLegacyApi": "Ältere WU-APIs nutzen"
 }
