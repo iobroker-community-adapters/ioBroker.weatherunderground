@@ -37,7 +37,7 @@
     "state_snow": "Nieve",
     "state_sunny": "Soleado",
     "state_tstorms": "Tormentas",
-    "station": "Estación",
+    "station": "Emisora",
     "station_info": "Si deja la estación vacía, entonces la estación más cercana según la ubicación de entrega se selecciona automáticamente. Si no está satisfecho con esta opción, puede insertar aquí el código de estación de su estación preferida (por ejemplo, \"IAARGAUB5\"). Puede encontrar estos códigos, p. en el <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - haga clic en una estación y busque la \"ID de la estación\"",
     "useLegacyApi": "Usar las API de WU heredadas"
 }
