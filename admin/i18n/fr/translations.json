@@ -37,7 +37,7 @@
     "state_snow": "Neige",
     "state_sunny": "Ensoleillé",
     "state_tstorms": "Tempêtes",
-    "station": "Gare",
+    "station": "Station",
     "station_info": "Si vous laissez la station vide, la station la plus proche est automatiquement sélectionnée. Si vous n'êtes pas satisfait de ce choix, vous pouvez insérer ici le code de station de votre station préférée (par exemple \"IAARGAUB5\"). Vous pouvez trouver ces codes par ex. sur le <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - cliquez sur une station et cherchez le \"Station ID\"",
     "useLegacyApi": "Utiliser les anciennes API WU"
 }

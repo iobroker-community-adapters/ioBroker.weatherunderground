@@ -37,7 +37,7 @@
     "state_snow": "Sneeuw",
     "state_sunny": "Zonnig",
     "state_tstorms": "Storm",
-    "station": "Station",
+    "station": "Zender",
     "station_info": "Als u het station leeg laat, wordt het dichtstbijzijnde station op basis van de locatie van de locatie automatisch geselecteerd. Als u niet tevreden bent met deze keuze, kunt u hier de stationscode van uw voorkeursstation invoegen (bijvoorbeeld 'IAARGAUB5'). Je kunt deze codes vinden b.v. op de <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - klik op een station en zoek naar de \"Station-ID\"",
     "useLegacyApi": "Gebruik oudere WU-API's"
 }
