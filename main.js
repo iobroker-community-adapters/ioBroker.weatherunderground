@@ -321,8 +321,10 @@ function handleIconUrl(original) {
 }
 
 function getApiKey(cb) {
-    getStationKey(() =>
-        getWebsiteKey( () => cb()));
+    if (!adapter.config.useLegacyApi) {
+        return getWebsiteKey(cb);
+    }
+    getStationKey(() => getWebsiteKey(cb));
 }
 
 function getStationKey(cb) {
