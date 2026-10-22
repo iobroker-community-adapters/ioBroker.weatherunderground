@@ -54,7 +54,7 @@ describe('daily forecast temperatures', () => {
     });
 
     for (const absent of ['arrays', 'entries', 'null']) {
-        it(`retains legacy temperatures when calendar-day ${absent} are unavailable`, async () => {
+        it(`retains temperatureMax/temperatureMin when calendar-day ${absent} are unavailable`, async () => {
             const forecast = structuredClone(fixture.daily_forecast);
             for (const field of ['calendarDayTemperatureMax', 'calendarDayTemperatureMin']) {
                 if (absent === 'arrays') delete forecast[field];
