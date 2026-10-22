@@ -1773,8 +1773,14 @@ function getNewWuDataDailyForecast(weatherData, cb) {
 function getNewWuDataHourlyForecast(weatherData, cb) {
     weatherData = weatherData || {};
     if (adapter.config.forecast_hourly) {
-        let url = modifyExtractedUrl(forecastHourlyUrl);
-        url = url.replace(/\/[0-9]+hour/,'/48hour');
+        let url;
+        const observation = weatherData.current_observation;
+        if (adapter.config.station && observation && observation.lat !== undefined && observation.lon !== undefined) {
+            url = `https://api.weather.com/v3/wx/forecast/hourly/2day?geocode=${encodeURIComponent(observation.lat + ',' + observation.lon)}&language=${lang}&format=json&units=${nonMetric ? 'e' : 'm'}&apiKey=${newWebKey}`;
+        } else {
+            url = modifyExtractedUrl(forecastHourlyUrl);
+            url = url.replace(/\/[0-9]+(?:hour|day)/,'/2day');
+        }
         adapter.log.debug('get hourly forecast data: ' + url);
 
         axios.get(url, {
