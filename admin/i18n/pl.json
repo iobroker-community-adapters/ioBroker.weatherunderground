@@ -1,5 +1,5 @@
 {
-    "weatherunderground_Icon set": "Zestaw ikon (tylko starszy interfejs API)",
+    "weatherunderground_Icon set": "Zestaw ikon",
     "weatherunderground_Icons": "Ikony",
     "weatherunderground_Station - only for current conditions data": "Stacja - tylko dla danych o warunkach bieżących",
     "weatherunderground_Use non-metric system": "Użyj jednostek imperialnych (°F, mile)",
@@ -8,13 +8,13 @@
     "weatherunderground_apikey_info_1": "Jeśli pozostanie pusty, próbuje się wyodrębnić bieżący klucz ogólny ze strony WU",
     "weatherunderground_country": "Kraj",
     "weatherunderground_country_info": "Wprowadź dwuliterowy kod kraju, dla którego żądasz danych.",
-    "weatherunderground_current": "Aktualne dane",
+    "weatherunderground_current": "Bieżące pomiary stacji",
     "weatherunderground_custom": "zestaw niestandardowy",
     "weatherunderground_custom_icon_base_url": "Niestandardowy adres URL ikony",
     "weatherunderground_custom_icon_format": "Niestandardowy format ikon",
-    "weatherunderground_forecast_hourly": "Prognoza godzinowa dzisiaj",
-    "weatherunderground_forecast_periods": "Prognoza na kolejne 4 dni",
-    "weatherunderground_forecast_periods_txt": "Prognoza jako tekst na następne 4 dni i noce",
+    "weatherunderground_forecast_hourly": "Prognoza godzinowa (do 36 godzin)",
+    "weatherunderground_forecast_periods": "Prognoza dzienna (6 dat)",
+    "weatherunderground_forecast_periods_txt": "Prognoza tekstowa (do 6 dni i nocy)",
     "weatherunderground_language": "Język",
     "weatherunderground_location": "Lokalizacja",
     "weatherunderground_location_info": "Wybierz swoją lokalizację według nazwy (np. \"Berlin\"), kodu lotniska (np. \"ZRH\"), współrzędnych (np. \"47.3145359,8.4159812\").",
@@ -39,5 +39,11 @@
     "state_tstorms": "Burze",
     "weatherunderground_station": "Stacja",
     "weatherunderground_station_info": "Jeśli zostawisz stację pustą, wtedy najbliższa stacja zgodnie z położeniem podaj jest wybierana automatycznie. Jeśli nie jesteś zadowolony z tego wyboru, możesz wstawić kod stacji wybranej stacji (np. \"IAARGAUB5\"). Możesz znaleźć te kody, np. na <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - kliknij stację i znajdź \"Identyfikator stacji\"",
-    "weatherunderground_useLegacyApi": "Użyj starszych interfejsów API WU"
+    "weatherunderground_useLegacyApi": "Użyj starszych interfejsów API WU",
+    "weatherunderground_regionalCurrent": "Dodatkowe dane pogodowe i o jakości powietrza",
+    "weatherunderground_regionalCurrent_info": "Uzupełnia dane stacji o opis pogody, ikonę, widoczność i jakość powietrza w okolicy. Dane dostarcza Weather Company. Do 3 dodatkowych żądań na uruchomienie.",
+    "weatherunderground_iconSet_info": "A–K używają tych samych ikon SVG v4 z bieżącym API. Wybierz Własne, aby użyć własnych ikon.",
+    "weatherunderground_current_info": "Odczytuje temperaturę, wilgotność, wiatr i opady ze stacji pogodowej.",
+    "weatherunderground_custom_icon_base_url_info": "Pozostaw puste dla standardowych ikon. Dla własnych ikon podaj bazowy URL, np. https://example.com/icons/ dla 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Rozszerzenie plików własnych ikon, np. SVG dla 32.svg."
 }

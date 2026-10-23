@@ -21,6 +21,7 @@ describe('published package', function () {
             for (const required of [
                 'main.js',
                 'lib/words.js',
+                'lib/icon-url.js',
                 'lib/migrate-api-key.js',
                 'io-package.json',
                 'package.json',
