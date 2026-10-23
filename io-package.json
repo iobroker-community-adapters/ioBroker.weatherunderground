@@ -142,6 +142,7 @@
     "loglevel": "info",
     "enabled": true,
     "allowInit": true,
+    "nogit":true,
     "authors": [
       "Daniel Schaedler <daniel.schaedler@gmail.com>",
       "Apollon77 <iobroker@fischer-ka.de>",
