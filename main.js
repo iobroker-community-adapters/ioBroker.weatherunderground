@@ -2067,6 +2067,15 @@ function getNewWuDataHourlyForecast(weatherData, cb) {
     }
 }
 
+// Existing installations need role corrections without replacing user metadata.
+async function setWeatherObject(id, object) {
+    await adapter.setObjectNotExistsAsync(id, object);
+    const existing = await adapter.getObjectAsync(id);
+    if (existing && existing.common.role !== object.common.role) {
+        await adapter.extendObjectAsync(id, { common: { role: object.common.role } });
+    }
+}
+
 async function checkWeatherVariables() {
     let id;
     if (adapter.config.current) {
@@ -2353,11 +2362,11 @@ async function checkWeatherVariables() {
             },
             native: { id: 'current_observation.wind_degrees' },
         });
-        await adapter.setObjectNotExistsAsync('forecast.current.windDirection', {
+        await setWeatherObject('forecast.current.windDirection', {
             type: 'state',
             common: {
                 name: 'Wind direction',
-                role: 'value.direction.wind',
+                role: 'weather.direction.wind',
                 type: 'string',
                 unit: '',
                 read: true,
@@ -2552,61 +2561,61 @@ async function checkWeatherVariables() {
                 common: { name: `in ${d}periods` },
                 native: { location: adapter.config.location },
             });
-            await adapter.setObjectNotExistsAsync(`${id}date`, {
+            await setWeatherObject(`${id}date`, {
                 type: 'state',
-                common: { name: 'forecast for', type: 'string', role: `date.forecast.${d}`, read: true, write: false },
+                common: { name: 'forecast for', type: 'string', role: 'date', read: true, write: false },
                 native: { id: `${id}period` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}icon`, {
+            await setWeatherObject(`${id}icon`, {
                 type: 'state',
                 common: {
                     name: 'icon',
                     type: 'number',
-                    role: `weather.icon.name.forecast.${d}`,
+                    role: 'value',
                     read: true,
                     write: false,
                 },
                 native: { id: `${id}icon` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}iconURL`, {
+            await setWeatherObject(`${id}iconURL`, {
                 type: 'state',
                 common: {
                     name: 'icon URL',
                     type: 'string',
-                    role: `value.iconURL.forecast.${d}`,
+                    role: 'weather.icon',
                     read: true,
                     write: false,
                 },
                 native: { id: `${id}icon_URL` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}title`, {
+            await setWeatherObject(`${id}title`, {
                 type: 'state',
                 common: {
                     name: 'title',
                     type: 'string',
-                    role: `weather.title.forecast.${d}`,
+                    role: 'weather.title',
                     read: true,
                     write: false,
                 },
                 native: { id: `${id}title` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}state`, {
+            await setWeatherObject(`${id}state`, {
                 type: 'state',
                 common: {
                     name: 'state',
                     type: 'string',
-                    role: `weather.state.forecast.${d}`,
+                    role: 'weather.state',
                     read: true,
                     write: false,
                 },
                 native: { id: `${id}fcttext` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}precipitationChance`, {
+            await setWeatherObject(`${id}precipitationChance`, {
                 type: 'state',
                 common: {
                     name: 'Precipitation chance',
                     type: 'number',
-                    role: `value.precipitation.forecast.${d}`,
+                    role: 'value.precipitation.chance',
                     unit: '%',
                     read: true,
                     write: false,
@@ -2662,11 +2671,11 @@ async function checkWeatherVariables() {
                     },
                     native: { id: `${id}low.fahrenheit` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}precipitationAllDay`, {
+                await setWeatherObject(`${id}precipitationAllDay`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation all day forecast',
-                        role: `value.precipitation.today.forecast.${p}`,
+                        role: `value.precipitation.forecast.${p}`,
                         unit: 'in',
                         type: 'number',
                         read: true,
@@ -2686,11 +2695,11 @@ async function checkWeatherVariables() {
                     },
                     native: { id: `${id}qpf_day.in` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}cloudCover`, {
+                await setWeatherObject(`${id}cloudCover`, {
                     type: 'state',
                     common: {
                         name: 'cloudCover day forecast',
-                        role: `value.cloudcover.day.forecast.${p}`,
+                        role: 'value.clouds',
                         unit: '%',
                         type: 'number',
                         read: true,
@@ -2711,23 +2720,23 @@ async function checkWeatherVariables() {
                     native: { id: `${id}qpf.night` },
                 });
 
-                await adapter.setObjectNotExistsAsync(`${id}snowAllDay`, {
+                await setWeatherObject(`${id}snowAllDay`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow all day forecast',
                         type: 'number',
-                        role: `value.snow.forecast.${p}`,
+                        role: 'value.snow',
                         unit: 'in',
                         read: true,
                         write: false,
                     },
                     native: { id: `${id}snow_allday.in` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}snowDay`, {
+                await setWeatherObject(`${id}snowDay`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow day forecast',
-                        role: `value.snow.day.forecast.${p}`,
+                        role: 'value',
                         type: 'number',
                         unit: 'in',
                         read: true,
@@ -2735,11 +2744,11 @@ async function checkWeatherVariables() {
                     },
                     native: { id: `${id}snow_day.in` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}snowNight`, {
+                await setWeatherObject(`${id}snowNight`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow night forecast',
-                        role: `value.snow.night.forecast.${p}`,
+                        role: 'value',
                         type: 'number',
                         unit: 'in',
                         read: true,
@@ -2748,11 +2757,11 @@ async function checkWeatherVariables() {
                     native: { id: `${id}snow_night.in` },
                 });
 
-                await adapter.setObjectNotExistsAsync(`${id}windSpeedMax`, {
+                await setWeatherObject(`${id}windSpeedMax`, {
                     type: 'state',
                     common: {
                         name: 'max. wind speed',
-                        role: `value.speed.max.wind.forecast.${p}`,
+                        role: 'value.speed.max.wind',
                         unit: 'm/h',
                         type: 'number',
                         read: true,
@@ -2797,11 +2806,11 @@ async function checkWeatherVariables() {
                     },
                     native: { id: `${id}low.celsius` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}precipitationAllDay`, {
+                await setWeatherObject(`${id}precipitationAllDay`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative precipitation all day forecast',
-                        role: `value.precipitation.today.forecast.${p}`,
+                        role: `value.precipitation.forecast.${p}`,
                         unit: 'mm',
                         type: 'number',
                         read: true,
@@ -2821,11 +2830,11 @@ async function checkWeatherVariables() {
                     },
                     native: { id: `${id}qpf_day.mm` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}cloudCover`, {
+                await setWeatherObject(`${id}cloudCover`, {
                     type: 'state',
                     common: {
                         name: 'cloudCover day forecast',
-                        role: `value.cloudcover.day.forecast.${p}`,
+                        role: 'value.clouds',
                         unit: '%',
                         type: 'number',
                         read: true,
@@ -2846,23 +2855,23 @@ async function checkWeatherVariables() {
                     native: { id: `${id}qpf_night.mm` },
                 });
 
-                await adapter.setObjectNotExistsAsync(`${id}snowAllDay`, {
+                await setWeatherObject(`${id}snowAllDay`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow all day forecast',
                         type: 'number',
-                        role: `value.snow.forecast.${p}`,
+                        role: 'value.snow',
                         unit: 'cm',
                         read: true,
                         write: false,
                     },
                     native: { id: `${id}snow_allday.cm` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}snowDay`, {
+                await setWeatherObject(`${id}snowDay`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow day forecast',
-                        role: `value.snow.day.forecast.${p}`,
+                        role: 'value',
                         type: 'number',
                         unit: 'cm',
                         read: true,
@@ -2870,11 +2879,11 @@ async function checkWeatherVariables() {
                     },
                     native: { id: `${id}snow_day.cm` },
                 });
-                await adapter.setObjectNotExistsAsync(`${id}snowNight`, {
+                await setWeatherObject(`${id}snowNight`, {
                     type: 'state',
                     common: {
                         name: 'Quantitative snow night forecast',
-                        role: `value.snow.night.forecast.${p}`,
+                        role: 'value',
                         type: 'number',
                         unit: 'cm',
                         read: true,
@@ -2883,11 +2892,11 @@ async function checkWeatherVariables() {
                     native: { id: `${id}snow_night.cm` },
                 });
 
-                await adapter.setObjectNotExistsAsync(`${id}windSpeedMax`, {
+                await setWeatherObject(`${id}windSpeedMax`, {
                     type: 'state',
                     common: {
                         name: 'max. wind speed',
-                        role: `value.speed.max.wind.forecast.${p}`,
+                        role: 'value.speed.max.wind',
                         unit: 'km/h',
                         type: 'number',
                         read: true,
@@ -2908,12 +2917,12 @@ async function checkWeatherVariables() {
                     native: { id: `${id}avewind.kph` },
                 });
             }
-            await adapter.setObjectNotExistsAsync(`${id}icon`, {
+            await setWeatherObject(`${id}icon`, {
                 type: 'state',
                 common: {
                     name: 'forecast icon',
                     type: 'number',
-                    role: `weather.icon.name.forecast.${p}`,
+                    role: 'value',
                     read: true,
                     write: false,
                 },
@@ -2941,12 +2950,12 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}icon_url` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}precipitationChance`, {
+            await setWeatherObject(`${id}precipitationChance`, {
                 type: 'state',
                 common: {
                     name: 'Percentage of precipitation',
                     type: 'number',
-                    role: `value.precipitation.forecast.${p}`,
+                    role: 'value.precipitation.chance',
                     unit: '%',
                     read: true,
                     write: false,
@@ -2954,22 +2963,22 @@ async function checkWeatherVariables() {
                 native: { id: `${id}pop` },
             });
 
-            await adapter.setObjectNotExistsAsync(`${id}windDirectionMax`, {
+            await setWeatherObject(`${id}windDirectionMax`, {
                 type: 'state',
                 common: {
                     name: 'max. wind direction',
-                    role: `weather.direction.max.wind.forecast.${p}`,
+                    role: 'value',
                     type: 'number',
                     read: true,
                     write: false,
                 },
                 native: { id: `${id}maxwind.dir` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}windDegreesMax`, {
+            await setWeatherObject(`${id}windDegreesMax`, {
                 type: 'state',
                 common: {
                     name: 'max. wind direction',
-                    role: `value.direction.max.wind.forecast.${p}`,
+                    role: 'value.direction.max.wind',
                     unit: '°',
                     type: 'number',
                     read: true,
@@ -3000,11 +3009,11 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}avewind.degrees` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}windDirection`, {
+            await setWeatherObject(`${id}windDirection`, {
                 type: 'state',
                 common: {
                     name: 'average wind direction',
-                    role: `value.direction.wind.forecast.${p}`,
+                    role: `weather.direction.wind.forecast.${p}`,
                     unit: '',
                     type: 'string',
                     read: true,
@@ -3037,11 +3046,11 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}maxhumidity` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}humidityMin`, {
+            await setWeatherObject(`${id}humidityMin`, {
                 type: 'state',
                 common: {
                     name: 'minimum humidity',
-                    role: `value.humidity.min.forecast.${p}`,
+                    role: 'value.humidity.min',
                     unit: '%',
                     type: 'number',
                     read: true,
@@ -3085,9 +3094,9 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}temp` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}fctcode`, {
+            await setWeatherObject(`${id}fctcode`, {
                 type: 'state',
-                common: { name: 'forecast description code', type: 'number', read: true, write: false },
+                common: { name: 'forecast description code', type: 'number', role: 'value', read: true, write: false },
                 native: { id: `${id}fctcode` },
             });
             await adapter.setObjectNotExistsAsync(`${id}sky`, {
@@ -3102,12 +3111,12 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}sky` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}windSpeed`, {
+            await setWeatherObject(`${id}windSpeed`, {
                 type: 'state',
                 common: {
                     name: 'Windspeed',
                     type: 'number',
-                    role: 'value.wind',
+                    role: 'value.speed.wind',
                     unit: nonMetric ? 'm/h' : 'km/h',
                     read: true,
                     write: false,
@@ -3191,12 +3200,12 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}snow.${nonMetric ? 'english' : 'metric'}` },
             });
-            await adapter.setObjectNotExistsAsync(`${id}precipitationChance`, {
+            await setWeatherObject(`${id}precipitationChance`, {
                 type: 'state',
                 common: {
                     name: 'Percentage of precipitation',
                     type: 'number',
-                    role: 'value.rain',
+                    role: 'value.precipitation.chance',
                     unit: '%',
                     read: true,
                     write: false,
@@ -3266,36 +3275,36 @@ async function checkWeatherVariables() {
             native: { id: `forecast.24h.sum.qpf.${nonMetric ? 'english' : 'metric'}` },
         });
 
-        await adapter.setObjectNotExistsAsync('forecastHourly.6h.sum.precipitationChance', {
+        await setWeatherObject('forecastHourly.6h.sum.precipitationChance', {
             type: 'state',
             common: {
                 name: 'max of precipitation chance',
                 type: 'number',
-                role: 'value.rain',
+                role: 'value.precipitation.chance',
                 unit: '%',
                 read: true,
                 write: false,
             },
             native: { id: 'forecast.6h.sum.pop' },
         });
-        await adapter.setObjectNotExistsAsync('forecastHourly.12h.sum.precipitationChance', {
+        await setWeatherObject('forecastHourly.12h.sum.precipitationChance', {
             type: 'state',
             common: {
                 name: 'max of precipitation chance',
                 type: 'number',
-                role: 'value.rain',
+                role: 'value.precipitation.chance',
                 unit: '%',
                 read: true,
                 write: false,
             },
             native: { id: 'forecast.12h.sum.pop' },
         });
-        await adapter.setObjectNotExistsAsync('forecastHourly.24h.sum.precipitationChance', {
+        await setWeatherObject('forecastHourly.24h.sum.precipitationChance', {
             type: 'state',
             common: {
                 name: 'max of precipitation chance',
                 type: 'number',
-                role: 'value.rain',
+                role: 'value.precipitation.chance',
                 unit: '%',
                 read: true,
                 write: false,

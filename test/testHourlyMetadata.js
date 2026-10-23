@@ -26,6 +26,7 @@ describe('hourly object metadata', () => {
                         config: { forecast_hourly: true },
                         log: { debug() {} },
                         setObjectNotExistsAsync: async (id, object) => objects.set(id, object),
+                        getObjectAsync: async id => objects.get(id),
                     },
                 },
             );
