@@ -178,11 +178,8 @@ describe('scheduled termination (#224)', () => {
     for (const schedule of ['0 * * * *', '12 * * * *']) {
         it(`does not adjust schedule or create a delay after unload during schedule read (${schedule})`, async () => {
             const run = setup({ apiKey: '' });
-            let finishRead;
-            run.adapter.getForeignObjectAsync = () =>
-                new Promise(resolve => {
-                    finishRead = resolve;
-                });
+            const { promise, resolve: finishRead } = Promise.withResolvers();
+            run.adapter.getForeignObjectAsync = () => promise;
             const ready = run.handlers.ready();
             await flush();
             run.handlers.unload(() => {});
@@ -197,12 +194,9 @@ describe('scheduled termination (#224)', () => {
     }
 
     it('does not resume startup after unload during key migration', async () => {
-        let finishMigration;
+        const { promise, resolve: finishMigration } = Promise.withResolvers();
         const run = setup({
-            migration: () =>
-                new Promise(resolve => {
-                    finishMigration = resolve;
-                }),
+            migration: () => promise,
         });
         const ready = run.handlers.ready();
         run.handlers.unload(() => {});
