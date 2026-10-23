@@ -31,6 +31,15 @@ const icons = [
  */
 export function initialSettings(data, system) {
     const settings = { ...data };
+    // Admin encrypts apiKey and clears the legacy plaintext in the same configuration save.
+    if (
+        typeof settings.apikey === 'string' &&
+        settings.apikey &&
+        (!settings.apiKey || settings.apiKey === settings.apikey)
+    ) {
+        settings.apiKey = settings.apikey;
+        settings.apikey = '';
+    }
     for (const [key, value] of Object.entries({ iconSet: 'i', nonMetric: false, country: 'DE', useLegacyApi: true })) {
         if (settings[key] === undefined) {
             settings[key] = value;

@@ -24,6 +24,7 @@
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const axios = require('axios');
 const crypto = require('node:crypto');
+const migrateApiKey = require('./lib/migrate-api-key');
 const adapterName = require('./package.json').name.split('.').pop();
 let adapter;
 
@@ -110,7 +111,18 @@ function startAdapter(options) {
     });
 
     adapter.on('ready', async () => {
-        officialApiKey = adapter.config.apikey;
+        try {
+            const migration = await migrateApiKey(adapter);
+            if (migration) {
+                adapter.terminate(0);
+                return;
+            }
+        } catch (error) {
+            adapter.log.error(error.message);
+            adapter.terminate(1);
+            return;
+        }
+        officialApiKey = adapter.config.apiKey;
         if (officialApiKey && officialApiKey.length > 0 && officialApiKey.length !== 32) {
             adapter.log.warn('API key invalid, please enter the new PWS owner API key or remove the key, ignoring it!');
             officialApiKey = '';

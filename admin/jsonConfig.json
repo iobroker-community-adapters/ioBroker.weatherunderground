@@ -18,7 +18,7 @@
             "lg": 12,
             "xl": 12
         },
-        "apikey": {
+        "apiKey": {
             "type": "password",
             "label": "weatherunderground_apikey",
             "xs": 12,

@@ -42,7 +42,7 @@ describe('JSON configuration migration', () => {
         assert.deepEqual(
             editable.sort(),
             [
-                'apikey',
+                'apiKey',
                 'country',
                 'current',
                 'custom_icon_base_url',
@@ -57,7 +57,7 @@ describe('JSON configuration migration', () => {
                 'station',
             ].sort(),
         );
-        assert.equal(config.items.apikey.type, 'password');
+        assert.equal(config.items.apiKey.type, 'password');
         assert.equal(config.items.station.hidden, '!data.current');
         assert.equal(config.items.custom_icon_base_url.hidden, '!!data.iconSet');
         assert.equal(config.items.custom_icon_format.hidden, '!!data.iconSet');
@@ -97,11 +97,27 @@ describe('JSON configuration migration', () => {
             station: 'PWS',
             custom_icon_base_url: 'https://icons.example/',
             custom_icon_format: 'svg',
-            apikey: 'synthetic-key',
+            apiKey: 'synthetic-key',
         };
         const result = initialSettings(data, { latitude: 1, longitude: 2, tempUnit: '°F' });
         assert.deepEqual(plain(result), data);
         assert.deepEqual(plain(initialSettings(result, { tempUnit: '°F' })), data);
+    });
+
+    it('moves a legacy key into the encrypted field before the first adapter start without mutating the source', () => {
+        const data = { apikey: 'synthetic-legacy-key', station: 'PWS' };
+        const result = initialSettings(data, {});
+        assert.equal(result.apiKey, data.apikey);
+        assert.equal(result.apikey, '');
+        assert.equal(result.station, 'PWS');
+        assert.equal(data.apikey, 'synthetic-legacy-key');
+        assert.deepEqual(plain(initialSettings(result, {})), plain(result));
+    });
+
+    it('preserves conflicting keys rather than silently discarding either value', () => {
+        const result = initialSettings({ apikey: 'legacy', apiKey: 'new' }, {});
+        assert.equal(result.apiKey, 'new');
+        assert.equal(result.apikey, 'legacy');
     });
 
     it('keeps legacy defaults for absent fields without resetting explicit false or custom icon values', () => {

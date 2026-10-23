@@ -173,7 +173,7 @@
     }
   },
   "native": {
-    "apikey": "",
+    "apiKey": "",
     "location": "",
     "station": "",
     "language": "DL",
@@ -190,9 +190,9 @@
   "objects": [],
   "instanceObjects": [],
   "encryptedNative": [
-    "apikey"
+    "apiKey"
   ],
   "protectedNative": [
-    "apikey"
+    "apiKey"
   ]
 }
