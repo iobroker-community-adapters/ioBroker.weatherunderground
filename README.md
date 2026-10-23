@@ -17,6 +17,12 @@ The adapter retrieves daily and hourly forecast data once per hour by default. T
 ## Notes
 You can use this adapter with providing an official "PWS owner" API-key or leave API key empty to use keys extracted out of the WU webpage.
 
+## Configuration
+
+The instance settings use JSON Config. Existing settings remain available without re-entry. The API-key input is hidden by default; this alone does not encrypt an existing stored key.
+
+Station settings appear when current observations are enabled. Choose an icon set or select Custom to enter an icon base URL and format. Hidden fields retain their values. When the location is empty, the dialog uses the system coordinates and selects non-metric units if the system uses Fahrenheit. A saved location and its units remain unchanged.
+
 ## Icon Sets
 
 There are some different Icon Sets available when using "Legacy API", see below. For the usabe with the new API the image names have changed (see https://docs.google.com/document/d/1dNCf6nF6cjm4oOxQxjtqNuAvG_iEe5f9MQH1xlCeV4s/edit) and are now number based ... they can be downloaded from e.g. https://drive.google.com/drive/folders/0B6fWQWXuE09OOWtBOXJNX190TDQ and could be used as custom set (see below). 
@@ -73,6 +79,9 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options
+- (reloxx13) Correct hourly forecast provider paths for metric and non-metric units
+- (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
 - (copilot) Adapter requires node.js >= 22 now
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (copilot) Adapter requires admin >= 7.7.22 now
@@ -157,8 +166,11 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 ### 3.0.13 (2019-07-10)
 * (Apollon77) Fix error in image url handling
 
-### 3.0.11/12 (2019-07-09)
+### 3.0.12 (2019-07-09)
 * (Apollon77) Re-Fetch PWS station key on Error 401
+
+### 3.0.11 (2019-06-04)
+* (Apollon77) Use a fallback ID after the dashboard fallback page became unavailable
 
 ### 3.0.10 (2019-05-27)
 * (Apollon77) Adopt logic to WU changes
@@ -256,7 +268,7 @@ initial release with all basics to load WU-forecast data
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>
+Copyright (c) 2024-2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2015-2023 dschaedl <daniel.schaedler@gmail.com>, iobroker-community-adapters
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
