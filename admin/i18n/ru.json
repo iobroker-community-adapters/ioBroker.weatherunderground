@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Дополнительные данные о погоде и качестве воздуха",
     "weatherunderground_regionalCurrent_info": "Дополняет данные станции описанием погоды, значком, видимостью и качеством воздуха в окрестностях. Эти данные предоставляет Weather Company. До 3 дополнительных запросов за запуск.",
     "weatherunderground_iconSet_info": "A–K используют одинаковые значки SVG v4 с текущим API. Выберите собственный набор для своих значков.",
-    "weatherunderground_current_info": "Считывает температуру, влажность, ветер и осадки с метеостанции."
+    "weatherunderground_current_info": "Считывает температуру, влажность, ветер и осадки с метеостанции.",
+    "weatherunderground_custom_icon_base_url_info": "Оставьте пустым для стандартных значков. Для своих значков укажите базовый URL, например https://example.com/icons/ для 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Расширение файлов своих значков, например SVG для 32.svg."
 }

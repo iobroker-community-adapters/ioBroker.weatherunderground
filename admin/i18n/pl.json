@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Dodatkowe dane pogodowe i o jakości powietrza",
     "weatherunderground_regionalCurrent_info": "Uzupełnia dane stacji o opis pogody, ikonę, widoczność i jakość powietrza w okolicy. Dane dostarcza Weather Company. Do 3 dodatkowych żądań na uruchomienie.",
     "weatherunderground_iconSet_info": "A–K używają tych samych ikon SVG v4 z bieżącym API. Wybierz Własne, aby użyć własnych ikon.",
-    "weatherunderground_current_info": "Odczytuje temperaturę, wilgotność, wiatr i opady ze stacji pogodowej."
+    "weatherunderground_current_info": "Odczytuje temperaturę, wilgotność, wiatr i opady ze stacji pogodowej.",
+    "weatherunderground_custom_icon_base_url_info": "Pozostaw puste dla standardowych ikon. Dla własnych ikon podaj bazowy URL, np. https://example.com/icons/ dla 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Rozszerzenie plików własnych ikon, np. SVG dla 32.svg."
 }

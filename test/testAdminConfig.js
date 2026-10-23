@@ -55,8 +55,8 @@ describe('JSON configuration migration', () => {
         assert.equal(config.items.regionalCurrent.type, 'checkbox');
         assert.equal(config.items.regionalCurrent.disabled, '!data.current');
         assert.equal(config.items.station.hidden, '!data.current');
-        assert.equal(config.items.custom_icon_base_url.hidden, '!!data.iconSet');
-        assert.equal(config.items.custom_icon_format.hidden, '!!data.iconSet');
+        assert.ok(!('hidden' in config.items.custom_icon_base_url));
+        assert.ok(!('hidden' in config.items.custom_icon_format));
         assert.deepEqual(
             config.items.iconSet.options.map(option => option.value),
             [...'abcdefghijk', ''],
@@ -134,11 +134,11 @@ describe('JSON configuration migration', () => {
                 {
                     iconSet: 'c',
                     useLegacyApi: true,
-                    custom_icon_base_url: 'https://ignored.example/',
+                    custom_icon_base_url: 'https://custom.example/',
                     custom_icon_format: 'gif',
                 },
-                'https://www.wunderground.com/static/i/c/v4',
-                'svg',
+                'https://custom.example',
+                'gif',
             ],
             [{ iconSet: 'i', useLegacyApi: false }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],
             [{ iconSet: '' }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],

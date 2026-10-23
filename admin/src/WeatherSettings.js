@@ -48,7 +48,7 @@ export function initialSettings(data, system) {
  */
 export function previewUrls(data) {
     // Runtime always uses the new API, even if a saved useLegacyApi flag is true.
-    const base = !data.iconSet && (data.custom_icon_base_url || '').trim().replace(/\/+$/, '');
+    const base = (data.custom_icon_base_url || '').trim().replace(/\/+$/, '');
     const extension = base ? data.custom_icon_format || 'gif' : 'svg';
     return icons.map(icon => ({
         name: String(icon),

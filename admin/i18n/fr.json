@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Données météo et de qualité de l’air supplémentaires",
     "weatherunderground_regionalCurrent_info": "Complète les données de la station avec une description du temps, une icône, la visibilité et la qualité de l’air aux alentours. Ces données sont fournies par Weather Company. Jusqu’à 3 requêtes supplémentaires par exécution.",
     "weatherunderground_iconSet_info": "Avec l’API actuelle, A–K utilisent les mêmes icônes SVG v4. Choisissez Personnalisé pour vos propres icônes.",
-    "weatherunderground_current_info": "Lit la température, l’humidité, le vent et les précipitations de la station météo."
+    "weatherunderground_current_info": "Lit la température, l’humidité, le vent et les précipitations de la station météo.",
+    "weatherunderground_custom_icon_base_url_info": "Laisser vide pour les icônes standard. Pour vos icônes, saisir l’URL de base, p. ex. https://example.com/icons/ pour 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Extension des fichiers de vos icônes, p. ex. SVG pour 32.svg."
 }

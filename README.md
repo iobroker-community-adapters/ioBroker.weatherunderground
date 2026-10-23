@@ -41,9 +41,9 @@ PWS means **Personal Weather Station**, a private weather station. Station measu
 | `location` | Location name, airport code or coordinates. A blank initial location is filled from ioBroker system coordinates where available. |
 | `station` | Optional preferred station ID. If empty, the provider selects a station for the location. The field is shown when `current` is enabled. |
 | `nonMetric` | `false` for metric values; `true` for imperial values such as °F and miles. When initializing a blank location, the dialog also follows the system temperature unit. Air-quality concentrations always use µg/m³. |
-| `iconSet` | Hidden compatibility setting. Saved A–K values use the same v4 SVG icons; an empty value retains Custom mode. |
-| `custom_icon_base_url` | Base URL for numeric icon files, editable for an existing Custom configuration. |
-| `custom_icon_format` | Custom extension: GIF, PNG or SVG; defaults to GIF when absent. |
+| `iconSet` | Hidden compatibility setting. A–K use the same v4 SVG icons when no custom URL is configured. |
+| `custom_icon_base_url` | Optional base URL for numeric icon files. A nonempty URL enables custom icons; leave empty for standard icons. |
+| `custom_icon_format` | Custom extension: GIF, PNG, SVG or JPG; defaults to GIF when absent. |
 
 Hidden settings retain their saved values. The dialog groups Country/Language and Location/Station.
 
@@ -105,9 +105,9 @@ Daily short text, narrative and icon use the same daytime or remaining nighttime
 
 ## Icons
 
-The current API returns numeric codes. Saved built-in A–K settings all use the same v4 SVG icons, such as [32.svg](https://www.wunderground.com/static/i/c/v4/32.svg). The redundant selector is hidden, so the dialog does not offer switching between built-in and Custom modes.
+The current API returns numeric codes. Saved built-in A–K settings all use the same v4 SVG icons, such as [32.svg](https://www.wunderground.com/static/i/c/v4/32.svg). The redundant selector is hidden. Enter a custom base URL to use your own icons, or clear it to use standard icons.
 
-Existing Custom configurations (`iconSet` empty) retain editable URL/format fields. For example, base URL `https://example.com/weather-icons/` and PNG format resolve code `32` to `https://example.com/weather-icons/32.png`. The host must provide files for every code returned by the provider; preview codes `0`, `12`, `26` and `32` are only samples.
+The custom URL and format fields are always editable, independent of the saved `iconSet` value. Existing nonempty custom URLs take precedence over A–K settings. For example, base URL `https://example.com/weather-icons/` and PNG format resolve code `32` to `https://example.com/weather-icons/32.png`. The host must provide files for every code returned by the provider; preview codes `0`, `12`, `26` and `32` are only samples.
 
 Legacy named icons such as `clear.gif` and `nt_clear.gif` do not match numeric codes. The adapter does not translate codes into those filenames; old A–K directories are unsuitable as Custom bases for the current API.
 
@@ -140,7 +140,7 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 
 ### **WORK IN PROGRESS**
 - (reloxx13) Explain configuration switches, data sources, provider endpoints and request counts; simplify translated help texts and group location fields as Country/Language and Location/Station
-- (reloxx13) Hide the redundant icon-set selector while preserving saved built-in and custom icon settings
+- (reloxx13) Hide the redundant icon-set selector; show custom URL/format fields and let a nonempty URL select custom icons in runtime and preview
 - (reloxx13) Make regional current weather, visibility and air quality opt-in; clarify PWS, forecast coverage and icon settings
 - (reloxx13) Show zero UV index and solar radiation instead of blank readings
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states

@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Datos adicionales del tiempo y de la calidad del aire",
     "weatherunderground_regionalCurrent_info": "Complementa los datos de la estación con una descripción del tiempo, un icono, la visibilidad y la calidad del aire de la zona. Weather Company proporciona estos datos. Hasta 3 solicitudes adicionales por ejecución.",
     "weatherunderground_iconSet_info": "A–K usan los mismos iconos SVG v4 con la API actual. Seleccione Personalizado para sus propios iconos.",
-    "weatherunderground_current_info": "Lee la temperatura, la humedad, el viento y las precipitaciones de la estación meteorológica."
+    "weatherunderground_current_info": "Lee la temperatura, la humedad, el viento y las precipitaciones de la estación meteorológica.",
+    "weatherunderground_custom_icon_base_url_info": "Dejar vacío para los iconos estándar. Para iconos propios, indicar la URL base, p. ej. https://example.com/icons/ para 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Extensión de los archivos de iconos propios, p. ej. SVG para 32.svg."
 }

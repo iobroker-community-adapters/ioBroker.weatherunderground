@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Additional weather and air-quality data",
     "weatherunderground_regionalCurrent_info": "Adds weather descriptions, icons, visibility and air quality for the surrounding area to the station data. These data are supplied by Weather Company. Up to 3 additional requests per run.",
     "weatherunderground_iconSet_info": "A–K all use the same v4 SVG icons with the current API. Select Custom for your own icons.",
-    "weatherunderground_current_info": "Reads temperature, humidity, wind and precipitation from the weather station."
+    "weatherunderground_current_info": "Reads temperature, humidity, wind and precipitation from the weather station.",
+    "weatherunderground_custom_icon_base_url_info": "Leave empty for standard icons. For custom icons, enter the base URL, e.g. https://example.com/icons/ for 32.svg.",
+    "weatherunderground_custom_icon_format_info": "File extension of your custom icons, e.g. SVG for 32.svg."
 }

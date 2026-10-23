@@ -244,9 +244,9 @@
         "custom_icon_base_url": {
             "type": "text",
             "label": "weatherunderground_custom_icon_base_url",
+            "help": "weatherunderground_custom_icon_base_url_info",
             "xs": 12,
             "sm": 6,
-            "hidden": "!!data.iconSet",
             "md": 6,
             "lg": 6,
             "xl": 6
@@ -254,6 +254,7 @@
         "custom_icon_format": {
             "type": "select",
             "label": "weatherunderground_custom_icon_format",
+            "help": "weatherunderground_custom_icon_format_info",
             "xs": 12,
             "sm": 6,
             "options": [
@@ -275,7 +276,6 @@
                 }
             ],
             "default": "gif",
-            "hidden": "!!data.iconSet",
             "noTranslation": true,
             "md": 6,
             "lg": 6,

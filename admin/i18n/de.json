@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Zusätzliche Wetter- und Luftqualitätsdaten",
     "weatherunderground_regionalCurrent_info": "Ergänzt die Stationsdaten um Wetterbeschreibung, Symbol, Sichtweite und Luftqualität für die Umgebung. Die Daten liefert Weather Company. Bis zu 3 zusätzliche Anfragen pro Lauf.",
     "weatherunderground_iconSet_info": "A–K verwenden mit der aktuellen API dieselben v4-SVG-Symbole. Für eigene Symbole Benutzerdefiniert wählen.",
-    "weatherunderground_current_info": "Liest Temperatur, Luftfeuchtigkeit, Wind und Niederschlag der Wetterstation ein."
+    "weatherunderground_current_info": "Liest Temperatur, Luftfeuchtigkeit, Wind und Niederschlag der Wetterstation ein.",
+    "weatherunderground_custom_icon_base_url_info": "Leer lassen für Standardsymbole. Für eigene Symbole die Basis-URL angeben, z. B. https://example.com/icons/ für 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Dateiendung der eigenen Symbole, z. B. SVG für 32.svg."
 }

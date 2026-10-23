@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Додаткові дані про погоду та якість повітря",
     "weatherunderground_regionalCurrent_info": "Доповнює дані станції описом погоди, піктограмою, видимістю та якістю повітря в околицях. Ці дані надає Weather Company. До 3 додаткових запитів за запуск.",
     "weatherunderground_iconSet_info": "A–K використовують однакові значки SVG v4 з поточним API. Виберіть власний набір для своїх значків.",
-    "weatherunderground_current_info": "Зчитує температуру, вологість, вітер та опади з метеостанції."
+    "weatherunderground_current_info": "Зчитує температуру, вологість, вітер та опади з метеостанції.",
+    "weatherunderground_custom_icon_base_url_info": "Залиште порожнім для стандартних піктограм. Для власних піктограм укажіть базову URL-адресу, наприклад https://example.com/icons/ для 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Розширення файлів власних піктограм, наприклад SVG для 32.svg."
 }

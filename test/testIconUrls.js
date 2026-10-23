@@ -6,7 +6,7 @@ describe('provider icon URLs', () => {
         for (const iconSet of 'abcdefghijk') {
             for (const code of [0, '0', 32, '32']) {
                 assert.equal(
-                    resolveIconUrl(code, { iconSet, custom_icon_base_url: 'https://ignored.example/' }),
+                    resolveIconUrl(code, { iconSet }),
                     `https://www.wunderground.com/static/i/c/v4/${code}.svg`,
                 );
             }
@@ -25,14 +25,14 @@ describe('provider icon URLs', () => {
         }
     });
 
-    it('normalizes explicit custom sets while preserving filename families and format defaults', () => {
+    it('uses custom URLs despite a saved legacy set and normalizes them while preserving filename families and format defaults', () => {
         for (const base of [
             'https://icons.example/weather',
             'https://icons.example/weather/',
             ' https://icons.example/weather/// ',
         ]) {
             for (const format of ['gif', 'png', 'svg', undefined, '']) {
-                const config = { iconSet: '', custom_icon_base_url: base, custom_icon_format: format };
+                const config = { iconSet: 'i', custom_icon_base_url: base, custom_icon_format: format };
                 assert.equal(resolveIconUrl(32, config), `https://icons.example/weather/32.${format || 'gif'}`);
                 assert.equal(
                     resolveIconUrl('https://icons.wxug.com/i/c/k/nt_clear.gif', config),

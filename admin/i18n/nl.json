@@ -43,5 +43,7 @@
     "weatherunderground_regionalCurrent": "Aanvullende weer- en luchtkwaliteitsgegevens",
     "weatherunderground_regionalCurrent_info": "Vult de stationsgegevens aan met een weerbeschrijving, pictogram, zicht en luchtkwaliteit voor de omgeving. Weather Company levert deze gegevens. Tot 3 extra aanvragen per uitvoering.",
     "weatherunderground_iconSet_info": "A–K gebruiken met de huidige API dezelfde v4-SVG-pictogrammen. Kies Aangepast voor eigen pictogrammen.",
-    "weatherunderground_current_info": "Leest temperatuur, luchtvochtigheid, wind en neerslag van het weerstation."
+    "weatherunderground_current_info": "Leest temperatuur, luchtvochtigheid, wind en neerslag van het weerstation.",
+    "weatherunderground_custom_icon_base_url_info": "Laat leeg voor standaardpictogrammen. Vul voor eigen pictogrammen de basis-URL in, bijv. https://example.com/icons/ voor 32.svg.",
+    "weatherunderground_custom_icon_format_info": "Bestandsextensie van eigen pictogrammen, bijv. SVG voor 32.svg."
 }
