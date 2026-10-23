@@ -30,12 +30,8 @@ jobs:
               with:
                   node-version: '24.x'
                   type-checking: true
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
                   lint: true
-            - name: Build settings
-              run: npm run build
-
+                  
     # Runs adapter tests on all supported node versions and OSes
     adapter-tests:
         needs: [check-and-lint]
@@ -81,8 +77,7 @@ jobs:
             - uses: ioBroker/testing-action-deploy@v1
               with:
                   node-version: '24.x'
-                  # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-                  # install-command: 'npm install'
+                  build: true
                   # npm-token: ${{ secrets.NPM_TOKEN }}  # Commented out for migration to Trusted Publishing
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
