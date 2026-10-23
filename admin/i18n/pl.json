@@ -40,8 +40,8 @@
     "weatherunderground_station": "Stacja",
     "weatherunderground_station_info": "Jeśli zostawisz stację pustą, wtedy najbliższa stacja zgodnie z położeniem podaj jest wybierana automatycznie. Jeśli nie jesteś zadowolony z tego wyboru, możesz wstawić kod stacji wybranej stacji (np. \"IAARGAUB5\"). Możesz znaleźć te kody, np. na <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - kliknij stację i znajdź \"Identyfikator stacji\"",
     "weatherunderground_useLegacyApi": "Użyj starszych interfejsów API WU",
-    "weatherunderground_regionalCurrent": "Bieżąca pogoda regionalna i jakość powietrza",
-    "weatherunderground_regionalCurrent_info": "Opcjonalne; wymaga bieżących pomiarów PWS. Do 3 dodatkowych żądań na uruchomienie z kluczem witryny dla pogody regionalnej, ikon, widoczności i jakości powietrza. Domyślnie wyłączone; pomiary PWS pozostają bez zmian.",
+    "weatherunderground_regionalCurrent": "Dodatkowe dane pogodowe i o jakości powietrza",
+    "weatherunderground_regionalCurrent_info": "Uzupełnia dane stacji o opis pogody, ikonę, widoczność i jakość powietrza w okolicy. Dane dostarcza Weather Company. Do 3 dodatkowych żądań na uruchomienie.",
     "weatherunderground_iconSet_info": "A–K używają tych samych ikon SVG v4 z bieżącym API. Wybierz Własne, aby użyć własnych ikon.",
-    "weatherunderground_current_info": "Wartości zmierzone przez prywatną stację pogodową (PWS), nie prognoza. Prognozy godzinowe i dzienne mają osobne przełączniki. Po wyłączeniu tej opcji obserwacje stacji nadal są pobierane w celu ustalenia współrzędnych dla prognoz."
+    "weatherunderground_current_info": "Odczytuje temperaturę, wilgotność, wiatr i opady ze stacji pogodowej."
 }

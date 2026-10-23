@@ -40,8 +40,8 @@
     "weatherunderground_station": "Emisora",
     "weatherunderground_station_info": "Si deja la estación vacía, entonces la estación más cercana según la ubicación de entrega se selecciona automáticamente. Si no está satisfecho con esta opción, puede insertar aquí el código de estación de su estación preferida (por ejemplo, \"IAARGAUB5\"). Puede encontrar estos códigos, p. en el <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - haga clic en una estación y busque la \"ID de la estación\"",
     "weatherunderground_useLegacyApi": "Usar las API de WU heredadas",
-    "weatherunderground_regionalCurrent": "Tiempo regional actual y calidad del aire",
-    "weatherunderground_regionalCurrent_info": "Opcional; requiere mediciones PWS actuales. Hasta 3 solicitudes adicionales por ejecución con la clave del sitio para tiempo regional, iconos, visibilidad y calidad del aire. Desactivado por defecto; las mediciones PWS no cambian.",
+    "weatherunderground_regionalCurrent": "Datos adicionales del tiempo y de la calidad del aire",
+    "weatherunderground_regionalCurrent_info": "Complementa los datos de la estación con una descripción del tiempo, un icono, la visibilidad y la calidad del aire de la zona. Weather Company proporciona estos datos. Hasta 3 solicitudes adicionales por ejecución.",
     "weatherunderground_iconSet_info": "A–K usan los mismos iconos SVG v4 con la API actual. Seleccione Personalizado para sus propios iconos.",
-    "weatherunderground_current_info": "Valores medidos por una estación meteorológica privada (PWS), no un pronóstico. Los pronósticos horarios y diarios tienen opciones independientes. Aunque se desactive esta opción, se obtienen observaciones de la estación para determinar las coordenadas de los pronósticos."
+    "weatherunderground_current_info": "Lee la temperatura, la humedad, el viento y las precipitaciones de la estación meteorológica."
 }

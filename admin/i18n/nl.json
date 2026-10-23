@@ -40,8 +40,8 @@
     "weatherunderground_station": "Zender",
     "weatherunderground_station_info": "Als u het station leeg laat, wordt het dichtstbijzijnde station op basis van de locatie van de locatie automatisch geselecteerd. Als u niet tevreden bent met deze keuze, kunt u hier de stationscode van uw voorkeursstation invoegen (bijvoorbeeld 'IAARGAUB5'). Je kunt deze codes vinden b.v. op de <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - klik op een station en zoek naar de \"Station-ID\"",
     "weatherunderground_useLegacyApi": "Gebruik oudere WU-API's",
-    "weatherunderground_regionalCurrent": "Actueel regionaal weer en luchtkwaliteit",
-    "weatherunderground_regionalCurrent_info": "Optioneel; vereist actuele PWS-metingen. Tot 3 extra aanvragen per uitvoering met de websitesleutel voor regionaal weer, pictogrammen, zicht en luchtkwaliteit. Standaard uit; PWS-metingen blijven ongewijzigd.",
+    "weatherunderground_regionalCurrent": "Aanvullende weer- en luchtkwaliteitsgegevens",
+    "weatherunderground_regionalCurrent_info": "Vult de stationsgegevens aan met een weerbeschrijving, pictogram, zicht en luchtkwaliteit voor de omgeving. Weather Company levert deze gegevens. Tot 3 extra aanvragen per uitvoering.",
     "weatherunderground_iconSet_info": "A–K gebruiken met de huidige API dezelfde v4-SVG-pictogrammen. Kies Aangepast voor eigen pictogrammen.",
-    "weatherunderground_current_info": "Gemeten waarden van een privéweerstation (PWS), geen voorspelling. Uur- en dagverwachtingen hebben eigen schakelaars. Ook als dit uitstaat, worden stationswaarnemingen opgehaald voor de coördinaten van de voorspellingen."
+    "weatherunderground_current_info": "Leest temperatuur, luchtvochtigheid, wind en neerslag van het weerstation."
 }

@@ -50,11 +50,11 @@
             "type": "checkbox",
             "label": "weatherunderground_forecast_periods_txt",
             "xs": 12,
-            "sm": 6,
+            "sm": 12,
             "default": true,
-            "md": 6,
-            "lg": 6,
-            "xl": 6
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
         "forecast_periods": {
             "type": "checkbox",
@@ -94,10 +94,10 @@
             "disabled": "!data.current",
             "default": false,
             "xs": 12,
-            "sm": 12,
-            "md": 12,
-            "lg": 12,
-            "xl": 12
+            "sm": 6,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
         },
         "country": {
             "type": "text",
@@ -109,37 +109,6 @@
             "md": 6,
             "lg": 6,
             "xl": 6
-        },
-        "location": {
-            "type": "text",
-            "label": "weatherunderground_location",
-            "xs": 12,
-            "sm": 6,
-            "help": "weatherunderground_location_info",
-            "md": 6,
-            "lg": 6,
-            "xl": 6
-        },
-        "station": {
-            "type": "text",
-            "label": "weatherunderground_station",
-            "xs": 12,
-            "sm": 6,
-            "hidden": "!data.current",
-            "help": "weatherunderground_station_info",
-            "md": 6,
-            "lg": 6,
-            "xl": 6
-        },
-        "_stationInfo": {
-            "type": "staticText",
-            "text": "weatherunderground_Station - only for current conditions data",
-            "hidden": "!data.current",
-            "xs": 12,
-            "sm": 12,
-            "md": 12,
-            "lg": 12,
-            "xl": 12
         },
         "language": {
             "type": "select",
@@ -166,6 +135,27 @@
             ],
             "default": "DL",
             "noTranslation": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "location": {
+            "type": "text",
+            "label": "weatherunderground_location",
+            "xs": 12,
+            "sm": 6,
+            "help": "weatherunderground_location_info",
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "station": {
+            "type": "text",
+            "label": "weatherunderground_station",
+            "xs": 12,
+            "sm": 6,
+            "hidden": "!data.current",
+            "help": "weatherunderground_station_info",
             "md": 6,
             "lg": 6,
             "xl": 6
@@ -248,7 +238,8 @@
             "md": 6,
             "lg": 6,
             "xl": 6,
-            "help": "weatherunderground_iconSet_info"
+            "help": "weatherunderground_iconSet_info",
+            "hidden": true
         },
         "custom_icon_base_url": {
             "type": "text",

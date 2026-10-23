@@ -40,8 +40,8 @@
     "weatherunderground_station": "电台",
     "weatherunderground_station_info": "如果您将桩号留空，那么将根据给定位置自动选择最近的桩号。",
     "weatherunderground_useLegacyApi": "使用旧版WU API",
-    "weatherunderground_regionalCurrent": "当前区域天气和空气质量",
-    "weatherunderground_regionalCurrent_info": "可选；需要启用当前 PWS 测量值。每次运行使用网站密钥额外发送最多 3 个请求，获取区域天气、图标、能见度和空气质量。默认关闭；PWS 测量值保持不变。",
+    "weatherunderground_regionalCurrent": "额外的天气和空气质量数据",
+    "weatherunderground_regionalCurrent_info": "为气象站数据补充周边地区的天气描述、图标、能见度和空气质量。这些数据由 Weather Company 提供。每次运行最多增加 3 个请求。",
     "weatherunderground_iconSet_info": "当前 API 中 A–K 均使用相同的 v4 SVG 图标。选择自定义以使用自己的图标。",
-    "weatherunderground_current_info": "私人气象站（PWS）的实测值，并非天气预报。逐小时和每日预报有独立开关。即使关闭此选项，仍会获取气象站观测数据，以取得预报所需的坐标。"
+    "weatherunderground_current_info": "读取气象站的温度、湿度、风和降水数据。"
 }

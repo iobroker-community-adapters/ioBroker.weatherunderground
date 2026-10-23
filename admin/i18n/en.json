@@ -40,8 +40,8 @@
     "weatherunderground_station": "Weather station",
     "weatherunderground_station_info": "Leave empty to select the nearest station for the specified location automatically. To choose another station, enter its station ID (e.g. \"IAARGAUB5\"). Find IDs on <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://www.wunderground.com/wundermap\">Wundermap</a>: select a station and look for \"Station ID\".",
     "weatherunderground_useLegacyApi": "Use legacy WU APIs",
-    "weatherunderground_regionalCurrent": "Regional current weather and air quality",
-    "weatherunderground_regionalCurrent_info": "Optional; requires current PWS measurements. Adds up to 3 requests per run using the website key for regional weather, icons, visibility and air quality. Disabled by default; PWS measurements remain unchanged.",
+    "weatherunderground_regionalCurrent": "Additional weather and air-quality data",
+    "weatherunderground_regionalCurrent_info": "Adds weather descriptions, icons, visibility and air quality for the surrounding area to the station data. These data are supplied by Weather Company. Up to 3 additional requests per run.",
     "weatherunderground_iconSet_info": "A–K all use the same v4 SVG icons with the current API. Select Custom for your own icons.",
-    "weatherunderground_current_info": "Measured values from a private weather station (PWS), not a forecast. Hourly and daily forecasts have independent switches. When this is off, station observations are still fetched to obtain coordinates for forecasts."
+    "weatherunderground_current_info": "Reads temperature, humidity, wind and precipitation from the weather station."
 }

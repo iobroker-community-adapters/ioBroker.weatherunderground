@@ -4,98 +4,133 @@
 ![Number of Installations](https://iobroker.live/badges/weatherunderground-installed.svg)
 ![Number of Installations](https://iobroker.live/badges/weatherunderground-stable.svg)
 [![NPM version](https://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
-
 ![Test and Release](https://github.com/iobroker-community-adapters/iobroker.weatherunderground/workflows/Test%20and%20Release/badge.svg)
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/weatherunderground/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)!
+Current station measurements, up to 36 hourly forecasts and six daily forecasts from [Weather Underground](https://www.wunderground.com/), with optional regional weather and air-quality data from Weather Company.
 
-ioBroker adapter for current observations, up to 36 hours of hourly forecasts and six daily forecasts for your location from [Weather Underground](https://www.wunderground.com/).
-The adapter retrieves daily and hourly forecast data once per hour by default. The schedule can be changed in the instance settings.
+Data is retrieved once per hour by default. Change the instance schedule to adjust the frequency.
+
+**Sentry reports exceptions and code errors to the developers.** See the [Sentry plugin documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry) for details and how to disable reporting.
 
 ## Requirements
 
-For the current development version:
-
-- Node.js **22 or newer**
-- js-controller **6.0.11 or newer**
-- Admin **7.7.22 or newer**
-
-## Notes
-
-An official PWS owner API key is optional. With a configured station and current observations enabled, it is used for PWS observations. Forecasts and the optional regional current weather/air-quality products use the website key extracted from Weather Underground, even when an owner key is supplied. Leaving the owner key empty also uses the website key for observations. Availability of that key and the individual products is controlled by the provider.
+The current development version requires Node.js **22+**, js-controller **6.0.11+** and Admin **7.7.22+**.
 
 ## Configuration
 
-The instance settings use JSON Config. The new API-key field is encrypted in storage and protected from ordinary foreign-adapter access. Existing keys are transferred automatically to this field; no separate migration command or key re-entry is needed.
+PWS means **Personal Weather Station**, a private weather station. Station measurements describe observed weather; forecasts describe expected weather.
 
-**Current station measurements** controls measured values from a private weather station (PWS), rather than forecasts. Hourly and daily forecasts have independent switches. Even when current station measurements are disabled, station observations are still fetched to obtain coordinates for forecasts. The historical state prefix `forecast.current` contains current observations, despite its name; these IDs are retained for compatibility. **Regional current weather and air quality** is an additional opt-in switch (`regionalCurrent`, disabled by default) and requires current station measurements to be enabled. It adds up to three requests per run using the website key for regional weather descriptions, icons, visibility and air quality. Leaving it off preserves PWS measurements and makes no regional product requests; regional states are `null` when current observations are processed.
+### Data switches
 
-Station settings appear when current observations are enabled. Choose an icon set or select Custom to enter an icon base URL and format. Hidden fields retain their values. When the location is empty, the dialog uses the system coordinates and selects non-metric units if the system uses Fahrenheit. A saved location and its units remain unchanged.
+| Key | Default | Data and state IDs |
+| --- | --- | --- |
+| `current` | `true` | Station temperature, humidity, wind, pressure, precipitation, UV, solar radiation and quality control under `forecast.current.*`. |
+| `regionalCurrent` | `false` | **Additional weather and air-quality data** from Weather Company: weather description, icon, visibility and air quality for the surrounding area. Requires `current: true`, valid station coordinates and the website key. Uses `forecast.current.*` and adds up to three requests per run. |
+| `forecast_hourly` | `true` | Up to 36 hourly entries under `forecastHourly.0h`–`forecastHourly.35h`, plus summary states. |
+| `forecast_periods` | `true` | Six calendar dates under `forecast.0d`–`forecast.5d`, starting with today. |
+| `forecast_periods_txt` | `true` | Up to 12 successive day/night text and icon periods under `forecastPeriod.0p`–`forecastPeriod.11p`. Shares the daily response with `forecast_periods`. |
 
-## Automatic API-key migration
+### Location and display
 
-Released versions stored the key in `apikey`. This version uses `apiKey`, declared in both `encryptedNative` and `protectedNative`. The old field is retained during the upgrade so it cannot be mistaken for ciphertext.
-
-On the first adapter start, the adapter transfers the old key using the controller configuration API. The controller encrypts `apiKey` and clears `apikey` in the same configuration write; weather requests wait until migration is complete. Opening settings before that start also transfers the key into the new field in the form. Saving uses Admin encryption and clears the old field in the same save. An empty key remains empty, and completed migrations are not repeated.
-
-Until that first start or settings save, the legacy field keeps its previous plaintext storage and access behavior. Disabled instances are migrated when they are first started or their settings are saved.
-
-If both fields contain different nonempty keys, neither is discarded automatically. Migration failures stop weather requests and produce a message without key values. Do not edit an old configuration dialog across an adapter upgrade; reopen it after upgrading.
-
-Keep an ioBroker backup before upgrading. For rollback, restore that backup together with the old adapter version: the old version reads only `apikey`. Manually encrypted keys from modified or unreleased versions require their original encryption metadata; they cannot be identified reliably after an upgrade has overwritten that metadata.
-
-## Weather descriptions
-
-The current regional states below require **Regional current weather and air quality** to be enabled. PWS observations and forecast descriptions use their existing switches.
-
-- `forecast.current.weather` contains the localized current weather description, such as "Cloudy/Wind". It comes from Weather Company's geocode-based current conditions, using the coordinates returned by the station observation. Temperature, humidity, wind and other measurements still come from the configured PWS; the description can represent a different observation time and source.
-- `forecast.current.iconURL` uses the icon code from the same optional current-conditions response; without a valid code it is `null`.
-- `forecast.current.airQualityIndex` contains the numeric EPA air quality index for the station coordinates, obtained through Weather Company location resolution and its separate air-quality product. This is an index, not a pollutant concentration or a measurement from the PWS. Missing, invalid or unavailable air-quality data produces `null`.
-- `forecast.0d.state` through `forecast.5d.state` keep the complete daily forecast narrative.
-- `forecast.0d.stateShort` through `forecast.5d.stateShort` contain the short forecast description. Each uses the same daytime or remaining nighttime period as the corresponding narrative and icon. A provider response without a supported short description produces `null`.
-
-Descriptions use the existing language setting. With current PWS measurements and the regional option enabled, the adapter makes optional requests for the weather description, visibility and air quality (including location resolution) per run using the website key already extracted by the adapter. Missing coordinates, an unavailable key, a rejected request or a missing description leave `forecast.current.weather` as `null` when current observations are processed; they do not discard the PWS measurements or forecasts. A forecast is never substituted for current conditions. Website-key availability is controlled by the provider.
-
-`forecastHourly.0h` is displayed as "Next hourly forecast"; its ID and first hourly forecast values are unchanged. `0h` is the first API response index, not midnight or necessarily the current hour; `.time` gives its forecast timestamp. Existing custom channel names are preserved.
-
-## Additional forecast and air-quality states
-
-Hourly and daily additions reuse forecast responses and their existing configuration switches. PWS quality control uses the current PWS measurements switch. Regional visibility, weather and air-quality states require the separate regional option, which adds up to three optional requests per run (current conditions, location resolution and air quality):
-
-| States | Values |
+| Key | Meaning |
 | --- | --- |
-| `forecastHourly.0h` through `forecastHourly.35h` | `windGust`, `dewPoint`, `windChill`, `stateShort` (localized weather text), `precipitationType` (provider code, such as `rain` or `snow`) |
-| `forecast.0d` through `forecast.5d` | `sunrise`, `sunset`, `moonrise`, `moonset`, `moonPhase` |
-| `forecast.current` | `qualityControl` (raw PWS quality-control code), `airQualityCategory`, `primaryPollutant`, `airQualitySource`, `airQualityMessage`, `airQualitySensitiveMessage` |
-| `forecast.current.airQuality.CO`, `.NO2`, `.O3`, `.PM10`, `.PM2_5`, `.SO2` | `amount` (concentration in µg/m³), `index` (EPA pollutant index), `category` |
+| `country` | Two-letter country code for location lookup; default `DE`. |
+| `language` | Weather-text language: `DL` German, `EN` English, `RU` Russian or `NL` Dutch. Independent of the Admin interface language. |
+| `location` | Location name, airport code or coordinates. A blank initial location is filled from ioBroker system coordinates where available. |
+| `station` | Optional preferred station ID. If empty, the provider selects a station for the location. The field is shown when `current` is enabled. |
+| `nonMetric` | `false` for metric values; `true` for imperial values such as °F and miles. When initializing a blank location, the dialog also follows the system temperature unit. Air-quality concentrations always use µg/m³. |
+| `iconSet` | Hidden compatibility setting. Saved A–K values use the same v4 SVG icons; an empty value retains Custom mode. |
+| `custom_icon_base_url` | Base URL for numeric icon files, editable for an existing Custom configuration. |
+| `custom_icon_format` | Custom extension: GIF, PNG or SVG; defaults to GIF when absent. |
 
-Sun and moon times include the provider's UTC offset. Air-quality data and current visibility are regional values; station measurements come from the configured PWS.
+Hidden settings retain their saved values. The dialog groups Country/Language and Location/Station.
+
+### API keys
+
+`apiKey` is an optional PWS owner key, encrypted in storage and protected from ordinary foreign-adapter access. Existing keys migrate automatically; see [API-key upgrades](#api-key-upgrades).
+
+The adapter also reads the key used by the Weather Underground website:
+
+- Station observations use the owner key when a station and `current` are configured; otherwise they use the website key.
+- Daily forecasts use the owner key when a station, its coordinates and an owner key are available; otherwise they use the extracted website URL/key.
+- Hourly forecasts and regional products use the website key, even with an owner key configured.
+
+Key and product availability are controlled by the provider. The retained `useLegacyApi` key has no effect: the runtime always disables the former API.
+
+## Data sources and requests
+
+The direct product endpoints use `https://api.weather.com`:
+
+| Endpoint | Requested when | Provides |
+| --- | --- | --- |
+| `/v2/pws/observations/current` | Each acquisition run, including when `current` is off | Station observations and coordinates needed for forecasts. `current` controls publication of the measurements. |
+| `/v3/wx/forecast/daily/5day` | `forecast_periods` or `forecast_periods_txt` is on | Six calendar dates and their day/night periods. |
+| `/v3/wx/forecast/hourly/2day` | `forecast_hourly` is on | Hourly data; the adapter publishes the first 36 entries. |
+| `/v3/wx/observations/current` | `current` and `regionalCurrent` are on, with valid coordinates and a website key | Regional weather description, icon and visibility. |
+| `/v3/location/point` | Same regional prerequisites | A `placeId` for the station coordinates, used by the air-quality request. |
+| `/v3/wx/globalAirQuality` | Location resolution returned a valid `placeId` | EPA air-quality index, advice and six pollutant details. |
+
+If the direct station/coordinate path is unavailable, the adapter uses provider URLs extracted from the Weather Underground page. Regional products use the coordinates from the station response and can represent a different source and observation time from the station measurements.
+
+### Reducing requests
+
+- Keep `regionalCurrent` off to avoid all three regional requests.
+- Turn `forecast_hourly` off to avoid the hourly request.
+- Turn **both** `forecast_periods` and `forecast_periods_txt` off to avoid the shared daily request.
+- Turning `current` off stops station state updates and prevents regional requests, but the station request still runs to obtain forecast coordinates.
+
+A successful direct run with forecasts enabled uses three product requests: station, daily and hourly. Regional data adds up to three more; location failure prevents the subsequent air-quality request. Website/key discovery, retries and recovery can cause additional HTTP requests.
+
+## State reference
+
+| States | Meaning |
+| --- | --- |
+| `forecast.current.*` | Current observations despite the historical `forecast` prefix. Temperature, humidity, wind and precipitation come from the station. `qualityControl` is its raw quality-control code. |
+| `forecast.current.weather`, `.iconURL`, `.visibility` | Optional regional weather description, numeric-code icon URL and visibility. |
+| `forecast.current.airQualityIndex` | Optional numeric EPA index, without a physical unit. Category, primary pollutant, source and general/sensitive-group advice are separate states. |
+| `forecast.current.airQuality.CO`, `.NO2`, `.O3`, `.PM10`, `.PM2_5`, `.SO2` | Each pollutant has `amount` in µg/m³, its EPA `index` and `category`. These are regional products, not station measurements. |
+| `forecastHourly.0h`–`forecastHourly.35h` | Hourly values including `windGust`, `dewPoint`, `windChill`, `stateShort` and `precipitationType` (for example `rain` or `snow`). `0h` means **Next hourly forecast**, the first API entry; check `.time` for its timestamp. |
+| `forecast.0d`–`forecast.5d` | Daily values including complete narrative `.state`, short description `.stateShort`, `sunrise`, `sunset`, `moonrise`, `moonset` and `moonPhase`. Sun/moon times preserve the provider UTC offset. |
+
+Daily short text, narrative and icon use the same daytime or remaining nighttime period. Descriptions follow `language`. Regional descriptions do not replace station measurements, and forecasts are not substituted for current observations. Existing IDs and custom object names are preserved.
+
+### Missing data and disabled options
+
+- Missing or `null` station UV and solar radiation produce `0`.
+- Missing or invalid regional values produce `null`. Regional fields also clear to `null` when station observations are processed with `regionalCurrent` off. Optional regional failures do not discard station measurements or forecasts.
+- Without a processable station observation, existing current values can remain unchanged.
+- Disabled switches retain their objects and previously stored values; they do not delete historical data. Regional clearing follows the rule above.
+
+## Icons
+
+The current API returns numeric codes. Saved built-in A–K settings all use the same v4 SVG icons, such as [32.svg](https://www.wunderground.com/static/i/c/v4/32.svg). The redundant selector is hidden, so the dialog does not offer switching between built-in and Custom modes.
+
+Existing Custom configurations (`iconSet` empty) retain editable URL/format fields. For example, base URL `https://example.com/weather-icons/` and PNG format resolve code `32` to `https://example.com/weather-icons/32.png`. The host must provide files for every code returned by the provider; preview codes `0`, `12`, `26` and `32` are only samples.
+
+Legacy named icons such as `clear.gif` and `nt_clear.gif` do not match numeric codes. The adapter does not translate codes into those filenames; old A–K directories are unsuitable as Custom bases for the current API.
+
+## API-key upgrades
+
+Older releases stored the key in plaintext `apikey`. The adapter now uses encrypted/protected `apiKey`. On first start or settings save, the old value is transferred and `apikey` is cleared; weather requests wait for a startup migration to finish. Existing nonempty `apiKey` values are preserved. If both fields contain different nonempty keys, neither is discarded automatically; migration failures stop requests and log a message without key values.
+
+Until first start/save, the legacy field retains its old plaintext storage and access behavior. Disabled instances migrate only when started or saved. Reopen settings after an adapter upgrade rather than saving an old dialog.
+
+Keep an ioBroker backup before upgrading. To roll back to a version that reads only `apikey`, restore its corresponding configuration backup too. Manually encrypted keys from modified/unreleased versions require their original encryption metadata and cannot be identified reliably after that metadata has been overwritten.
 
 ## Development build
 
-Use Node.js 22.12 or newer within the supported runtime range for source builds; the Vite build tooling has a higher minimum than the adapter runtime. The CI build/check job uses Node.js 24; adapter tests also cover Node.js 22 and 26.
+Source builds require Node.js **22.12+** within the supported runtime range; Vite has a higher minimum than the adapter runtime. CI checks/builds on Node.js 24 and tests on 22/24/26.
 
-The configuration UI sources are in `admin/src/`. As in ioBroker Admin, generated `admin/custom/` files are ignored by Git and must not be committed. After `npm ci`, run `npm run build` before testing, packing or locally uploading the adapter. CI builds the UI before adapter tests; `prepublishOnly` rebuilds it before npm publication. The published npm package includes the generated UI and its assets, so installed users do not need build tools. For a source/Git installation, first run `npm ci`, `npm run build` and `npm pack` in the source checkout, then install the resulting tarball with ioBroker. An unbuilt Git checkout has no generated configuration UI.
+```sh
+npm ci
+npm run build
+npm test
+npm pack
+```
 
-## Icon Sets
-
-The adapter currently uses the new Weather Company API, which returns numeric icon codes. All built-in selections **A–K use the same v4 SVG icons** with this API; switching between A–K does not change their appearance. The selections remain compatible with saved configuration.
-
-For example, code `32` produces [32.svg](https://www.wunderground.com/static/i/c/v4/32.svg). The settings preview uses representative numeric icons from the same set.
-
-For your own icons, select **Custom**, enter the base URL and choose GIF, PNG or SVG. Host a file for each numeric code returned by the provider; for example:
-
-| Setting | Example |
-| --- | --- |
-| Custom Icon-Base-URL | `https://example.com/weather-icons/` |
-| Format | PNG |
-| Result for code 32 | `https://example.com/weather-icons/32.png` |
-
-The preview samples codes `0`, `12`, `26` and `32`; these are examples, not the complete set of required files. Custom icons are hosted and maintained by their owner.
-
-The old A–K directories contain named legacy files such as `clear.gif` and `nt_clear.gif`. They are not suitable as Custom base URLs for the current API: `https://www.wunderground.com/static/i/c/a/32.svg`, for example, returns Access Denied. The adapter does not translate numeric codes into legacy filenames. Handling of named files is retained for legacy responses, but the current runtime uses the new API.
+Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored by Git and must not be committed. Build before testing, packing or uploading; ordinary `npm pack` does not build automatically. The published npm package contains the UI assets, and `prepublishOnly` rebuilds them for publication. For a source/Git installation, install the built tarball through ioBroker; an unbuilt checkout has no generated configuration UI.
 
 ## Changelog
 <!--
@@ -104,6 +139,8 @@ The old A–K directories contain named legacy files such as `clear.gif` and `nt
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Explain configuration switches, data sources, provider endpoints and request counts; simplify translated help texts and group location fields as Country/Language and Location/Station
+- (reloxx13) Hide the redundant icon-set selector while preserving saved built-in and custom icon settings
 - (reloxx13) Make regional current weather, visibility and air quality opt-in; clarify PWS, forecast coverage and icon settings
 - (reloxx13) Show zero UV index and solar radiation instead of blank readings
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
@@ -303,8 +340,6 @@ config dialog fixed
 initial release with all basics to load WU-forecast data
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
-
-[Older changes](CHANGELOG_OLD.md)
 
 ## License
 
