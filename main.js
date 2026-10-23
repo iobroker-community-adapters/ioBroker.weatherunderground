@@ -1266,11 +1266,11 @@ async function parseNewResult(body, cb) {
                     });
                     await adapter.setStateAsync(`forecast.${i}d.tempMax`, {
                         ack: true,
-                        val: body.daily_forecast.temperatureMax[i]
+                        val: body.daily_forecast.calendarDayTemperatureMax?.[i] ?? body.daily_forecast.temperatureMax[i]
                     });
                     await adapter.setStateAsync(`forecast.${i}d.tempMin`, {
                         ack: true,
-                        val: body.daily_forecast.temperatureMin[i]
+                        val: body.daily_forecast.calendarDayTemperatureMin?.[i] ?? body.daily_forecast.temperatureMin[i]
                     });
                     let iconId = parseInt(body.daily_forecast.daypart[0].iconCode[i * 2], 10);
                     if (isNaN(iconId)) { // accept that for the case it is not only numbers to get feedback
