@@ -1443,10 +1443,12 @@ async function parseNewResult(body, cb) {
                         val:
                             body.daily_forecast.calendarDayTemperatureMin?.[i] ?? body.daily_forecast.temperatureMin[i],
                     });
-                    let iconId = parseInt(body.daily_forecast.daypart[0].iconCode[i * 2], 10);
+                    const daypart = body.daily_forecast.daypart[0];
+                    const daypartIndex = i * 2 + (daypart.daypartName?.[i * 2] === null ? 1 : 0);
+                    let iconId = parseInt(daypart.iconCode[daypartIndex], 10);
                     if (isNaN(iconId)) {
                         // accept that for the case it is not only numbers to get feedback
-                        iconId = body.daily_forecast.daypart[0].iconCode[i * 2];
+                        iconId = daypart.iconCode[daypartIndex];
                     }
                     await adapter.setStateAsync(`forecast.${i}d.icon`, {
                         ack: true,
@@ -1454,11 +1456,11 @@ async function parseNewResult(body, cb) {
                     });
                     await adapter.setStateAsync(`forecast.${i}d.state`, {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].narrative[i * 2],
+                        val: daypart.narrative[daypartIndex],
                     });
                     await adapter.setStateAsync(`forecast.${i}d.iconURL`, {
                         ack: true,
-                        val: handleIconUrl(body.daily_forecast.daypart[0].iconCode[i * 2]),
+                        val: handleIconUrl(daypart.iconCode[daypartIndex]),
                     });
                     await adapter.setStateAsync(`forecast.${i}d.precipitationChance`, {
                         ack: true,
@@ -1477,7 +1479,7 @@ async function parseNewResult(body, cb) {
                     });
                     await adapter.setStateAsync(`forecast.${i}d.cloudCover`, {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].cloudCover[i * 2],
+                        val: daypart.cloudCover[daypartIndex],
                     });
                     await adapter.setStateAsync(`forecast.${i}d.precipitationNight`, {
                         ack: true,
@@ -1499,14 +1501,14 @@ async function parseNewResult(body, cb) {
                     await adapter.setStateAsync(`forecast.${i}d.windSpeedMax`, {
                         ack: true,
                         val: Math.max(
-                            body.daily_forecast.daypart[0].windSpeed[i * 2],
+                            daypart.windSpeed[daypartIndex],
                             body.daily_forecast.daypart[0].windSpeed[1 + i * 2],
                         ),
                     });
                     await adapter.setStateAsync(`forecast.${i}d.windDirectionMax`, {
                         ack: true,
                         val: Math.max(
-                            body.daily_forecast.daypart[0].windDirection[i * 2],
+                            daypart.windDirection[daypartIndex],
                             body.daily_forecast.daypart[0].windDirection[1 + i * 2],
                         ),
                     });
@@ -1517,34 +1519,32 @@ async function parseNewResult(body, cb) {
 
                     await adapter.setStateAsync(`forecast.${i}d.windSpeed`, {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].windSpeed[i * 2],
+                        val: daypart.windSpeed[daypartIndex],
                     });
                     await adapter.setStateAsync(`forecast.${i}d.windDirection`, {
                         ack: true,
-                        val: windDirections[
-                            Math.floor((body.daily_forecast.daypart[0].windDirection[i * 2] + 11.25) / 22.5)
-                        ],
+                        val: windDirections[Math.floor((daypart.windDirection[daypartIndex] + 11.25) / 22.5)],
                     });
                     await adapter.setStateAsync(`forecast.${i}d.windDegrees`, {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].windDirection[i * 2],
+                        val: daypart.windDirection[daypartIndex],
                     });
 
                     await adapter.setStateAsync(`forecast.${i}d.humidity`, {
                         ack: true,
-                        val: body.daily_forecast.daypart[0].relativeHumidity[i * 2],
+                        val: daypart.relativeHumidity[daypartIndex],
                     });
                     await adapter.setStateAsync(`forecast.${i}d.humidityMax`, {
                         ack: true,
                         val: Math.max(
-                            body.daily_forecast.daypart[0].relativeHumidity[i * 2],
+                            daypart.relativeHumidity[daypartIndex],
                             body.daily_forecast.daypart[0].relativeHumidity[1 + i * 2],
                         ),
                     });
                     await adapter.setStateAsync(`forecast.${i}d.humidityMin`, {
                         ack: true,
                         val: Math.min(
-                            body.daily_forecast.daypart[0].relativeHumidity[i * 2],
+                            daypart.relativeHumidity[daypartIndex],
                             body.daily_forecast.daypart[0].relativeHumidity[1 + i * 2],
                         ),
                     });
