@@ -3243,9 +3243,15 @@ async function checkWeatherVariables() {
             await adapter.setObjectNotExistsAsync(`forecastHourly.${h}h`, {
                 type: 'channel',
                 role: 'forecast',
-                common: { name: `in ${h}h` },
+                common: { name: h === 0 ? 'Next hourly forecast' : `in ${h}h` },
                 native: { location: adapter.config.location },
             });
+            if (h === 0) {
+                const firstHour = await adapter.getObjectAsync('forecastHourly.0h');
+                if (['in 0h', 'Current conditions'].includes(firstHour?.common.name)) {
+                    await adapter.extendObjectAsync('forecastHourly.0h', { common: { name: 'Next hourly forecast' } });
+                }
+            }
             await adapter.setObjectNotExistsAsync(`${id}time`, {
                 type: 'state',
                 common: { name: 'forecast for', role: 'date', type: 'string', read: true, write: false },

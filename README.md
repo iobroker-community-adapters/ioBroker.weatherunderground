@@ -45,6 +45,8 @@ Keep an ioBroker backup before upgrading. For rollback, restore that backup toge
 
 Descriptions use the existing language setting. With current conditions enabled, the adapter makes optional requests for the weather description and air quality (including location resolution) per run using the website key already extracted by the adapter. Missing coordinates, an unavailable key, a rejected request or a missing description leave `forecast.current.weather` as `null` when current observations are processed; they do not discard the PWS measurements or forecasts. A forecast is never substituted for current conditions. Website-key availability is controlled by the provider.
 
+`forecastHourly.0h` is displayed as "Next hourly forecast"; its ID and first hourly forecast values are unchanged. `0h` is the first API response index, not midnight or necessarily the current hour; `.time` gives its forecast timestamp. Existing custom channel names are preserved.
+
 ## Development build
 
 The configuration UI sources are in `admin/src/`. As in ioBroker Admin, generated `admin/custom/` files are ignored by Git and must not be committed. After `npm ci`, run `npm run build` before testing, packing or locally uploading the adapter. CI builds the UI before adapter tests; `prepublishOnly` rebuilds it before npm publication. The published npm package includes the generated UI and its assets, so installed users do not need build tools. For a source/Git installation, first run `npm ci`, `npm run build` and `npm pack` in the source checkout, then install the resulting tarball with ioBroker. An unbuilt Git checkout has no generated configuration UI.
@@ -62,6 +64,7 @@ The settings preview shows representative numeric icons matching the current run
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Display the first hourly forecast as "Next hourly forecast" while preserving its 0h ID and custom channel names
 - (reloxx13) Correct weather state roles and update existing object roles without changing IDs, types, units or user metadata (#328)
 - (reloxx13) Fix numeric weather icon URLs and align the settings preview (#216)
 - (reloxx13) Add the current EPA air quality index without replacing PWS measurements (#220)
