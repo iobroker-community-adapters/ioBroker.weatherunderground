@@ -12,7 +12,7 @@
 **This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 ioBroker Adapter to load 24h weather forecast for your location from [Weather Underground](http://www.wunderground.com/).
-The adapter loads all 15min (default) daily and hourly forecast data.
+The adapter retrieves daily and hourly forecast data once per hour by default. The schedule can be changed in the instance settings.
 
 ## Notes
 You can use this adapter with providing an official "PWS owner" API-key or leave API key empty to use keys extracted out of the WU webpage.
