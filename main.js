@@ -1486,7 +1486,7 @@ async function parseNewResult(body, cb) {
                     });
                     await adapter.setStateAsync(`forecastHourly.${i}h.fctcode`, {
                         ack: true,
-                        val: null
+                        val: body.hourly_forecast.iconCode?.[i] ?? null
                     });
                     await adapter.setStateAsync(`forecastHourly.${i}h.sky`, {
                         ack: true,
