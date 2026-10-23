@@ -35,58 +35,25 @@ If both fields contain different nonempty keys, neither is discarded automatical
 
 Keep an ioBroker backup before upgrading. For rollback, restore that backup together with the old adapter version: the old version reads only `apikey`. Manually encrypted keys from modified or unreleased versions require their original encryption metadata; they cannot be identified reliably after an upgrade has overwritten that metadata.
 
+## Weather descriptions
+
+- `forecast.current.weather` contains the localized current weather description, such as "Cloudy/Wind". It comes from Weather Company's geocode-based current conditions, using the coordinates returned by the station observation. Temperature, humidity, wind and other measurements still come from the configured PWS; the description can represent a different observation time and source.
+- `forecast.current.iconURL` uses the icon code from the same optional current-conditions response; without a valid code it is `null`.
+- `forecast.current.airQualityIndex` contains the numeric EPA air quality index for the station coordinates, obtained through Weather Company location resolution and its separate air-quality product. This is an index, not a pollutant concentration or a measurement from the PWS. Missing, invalid or unavailable air-quality data produces `null`.
+- `forecast.0d.state` through `forecast.5d.state` keep the complete daily forecast narrative.
+- `forecast.0d.stateShort` through `forecast.5d.stateShort` contain the short forecast description. Each uses the same daytime or remaining nighttime period as the corresponding narrative and icon. A provider response without a supported short description produces `null`.
+
+Descriptions use the existing language setting. With current conditions enabled, the adapter makes optional requests for the weather description and air quality (including location resolution) per run using the website key already extracted by the adapter. Missing coordinates, an unavailable key, a rejected request or a missing description leave `forecast.current.weather` as `null` when current observations are processed; they do not discard the PWS measurements or forecasts. A forecast is never substituted for current conditions. Website-key availability is controlled by the provider.
+
 ## Development build
 
 The configuration UI sources are in `admin/src/`. As in ioBroker Admin, generated `admin/custom/` files are ignored by Git and must not be committed. After `npm ci`, run `npm run build` before testing, packing or locally uploading the adapter. CI builds the UI before adapter tests; `prepublishOnly` rebuilds it before npm publication. The published npm package includes the generated UI and its assets, so installed users do not need build tools. For a source/Git installation, first run `npm ci`, `npm run build` and `npm pack` in the source checkout, then install the resulting tarball with ioBroker. An unbuilt Git checkout has no generated configuration UI.
 
 ## Icon Sets
 
-There are some different Icon Sets available when using "Legacy API", see below. For the usabe with the new API the image names have changed (see https://docs.google.com/document/d/1dNCf6nF6cjm4oOxQxjtqNuAvG_iEe5f9MQH1xlCeV4s/edit) and are now number based ... they can be downloaded from e.g. https://drive.google.com/drive/folders/0B6fWQWXuE09OOWtBOXJNX190TDQ and could be used as custom set (see below). 
+The current API uses numeric icon codes, such as `32.svg`. Built-in selections A–K use the provider's v4 numeric SVG set with this API. These selections still select their original named GIF files when processing legacy responses; named legacy files cannot be combined with numeric modern codes.
 
-In Adapter settings change "Custom Icon-Base-URL" to one of the available Icon Set on Weatherunderground:
-(source: https://www.wunderground.com/weather/api/d/docs?d=resources/icon-sets )
-
-|    Icon Set   |     		URL	 	   |       Example	 	|
-| ------------- | -------------------------------- | --------------------- 	|
-|	1	|  https://www.wunderground.com/static/i/c/a/   |		![alt text](https://www.wunderground.com/static/i/c/a/partlycloudy.gif) 	|
-|	2	|  https://www.wunderground.com/static/i/c/b/   |		![alt text](https://www.wunderground.com/static/i/c/b/partlycloudy.gif)	|
-|	3	|  https://www.wunderground.com/static/i/c/c/   |		![alt text](https://www.wunderground.com/static/i/c/c/partlycloudy.gif)	|
-|	4	|  https://www.wunderground.com/static/i/c/d/   |		![alt text](https://www.wunderground.com/static/i/c/d/partlycloudy.gif)	|
-|	5	|  https://www.wunderground.com/static/i/c/e/   |		![alt text](https://www.wunderground.com/static/i/c/e/partlycloudy.gif)	|
-|	6	|  https://www.wunderground.com/static/i/c/f/   |		![alt text](https://www.wunderground.com/static/i/c/f/partlycloudy.gif)	|
-|	7	|  https://www.wunderground.com/static/i/c/g/   |		![alt text](https://www.wunderground.com/static/i/c/g/partlycloudy.gif)	|
-|	8	|  https://www.wunderground.com/static/i/c/h/   |		![alt text](https://www.wunderground.com/static/i/c/h/partlycloudy.gif)	|
-|	9	|  https://www.wunderground.com/static/i/c/i/   |		![alt text](https://www.wunderground.com/static/i/c/i/partlycloudy.gif)	|
-|	10	|  https://www.wunderground.com/static/i/c/j/   |		![alt text](https://www.wunderground.com/static/i/c/j/partlycloudy.gif)	|
-|	11	|  https://www.wunderground.com/static/i/c/k/   |		![alt text](https://www.wunderground.com/static/i/c/k/partlycloudy.gif)	|
-
-Or you can aso use your own "custom" icons, for this purpose the following gif-files must be provided within an Base-URL directory  :
-
-|	Icon for Day		|	Icon for night		|
-| -----------------------------	| ----------------------------- |
-|	chanceflurries.gif	|	nt_chanceflurries.gif	|
-|	chancerain.gif		|	nt_chancerain.gif	|
-|	chancesleet.gif		|	nt_chancesleet.gif	|
-|	chancesleet.gif		|	nt_chancesleet.gif	|
-|	chancesnow.gif		|	nt_chancesnow.gif	|
-|	chancetstorms.gif	|	nt_chancetstorms.gif	|
-|	chancetstorms.gif	|	nt_chancetstorms.gif	|
-|	clear.gif		|	nt_clear.gif		|
-|	cloudy.gif		|	nt_cloudy.gif		|
-|	flurries.gif		|	nt_flurries.gif		|
-|	fog.gif			|	nt_fog.gif		|
-|	hazy.gif		|	nt_hazy.gif		|
-|	mostlycloudy.gif	|	nt_mostlycloudy.gif	|
-|	mostlysunny.gif		|	nt_mostlysunny.gif	|
-|	partlycloudy.gif	|	nt_partlycloudy.gif	|
-|	partlysunny.gif		|	nt_partlysunny.gif	|
-|	sleet.gif		|	nt_sleet.gif		|
-|	rain.gif		|	nt_rain.gif		|
-|	sleet.gif		|	nt_sleet.gif		|
-|	partlycloudy.gif	|	nt_partlycloudy.gif	|
-|	sunny.gif		|	nt_sunny.gif		|
-|	tstorms.gif		|	nt_tstorms.gif		|
-|	cloudy.gif 		|	nt_cloudy.gif 		|
+The settings preview shows representative numeric icons matching the current runtime. For a custom set, select Custom and enter its base URL and format (GIF, PNG or SVG). The directory must contain numeric files such as `0.png`, `12.png`, `26.png` and `32.png` for the current API. Existing legacy responses retain their named files, such as `clear.gif` and `nt_clear.gif`. The adapter does not translate numeric codes into legacy filenames. Custom sets are hosted and maintained by their owner.
 
 ## Changelog
 <!--
@@ -96,6 +63,9 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 
 ### **WORK IN PROGRESS**
 - (reloxx13) Correct weather state roles and update existing object roles without changing IDs, types, units or user metadata (#328)
+- (reloxx13) Fix numeric weather icon URLs and align the settings preview (#216)
+- (reloxx13) Add the current EPA air quality index without replacing PWS measurements (#220)
+- (reloxx13) Add localized current weather descriptions and separate short daily forecast descriptions while preserving PWS measurements and full narratives (#388)
 - (reloxx13) End failed or stalled initialization reliably and cancel startup delays and provider requests during shutdown (#224)
 - (reloxx13) Automatically migrate existing API keys to a new encrypted and protected configuration field
 - (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options

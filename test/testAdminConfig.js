@@ -132,19 +132,29 @@ describe('JSON configuration migration', () => {
         assert.equal(initialSettings({ location: '', nonMetric: true }, { tempUnit: '°C' }).nonMetric, true);
     });
 
-    it('previews every stock set and every custom image format with the runtime gif fallback', () => {
-        for (const iconSet of 'abcdefghijk') {
-            const urls = previewUrls({ iconSet });
-            assert.equal(urls.length, 19);
-            assert.equal(urls[0].src, `https://www.wunderground.com/static/i/c/${iconSet}/chanceflurries.gif`);
-        }
-        for (const extension of ['gif', 'png', 'svg', 'jpg', undefined]) {
-            for (const base of ['https://icons.example', 'https://icons.example/']) {
-                const urls = previewUrls({ iconSet: '', custom_icon_base_url: base, custom_icon_format: extension });
-                assert.equal(urls[0].src, `https://icons.example/chanceflurries.${extension || 'gif'}`);
+    it('previews numeric filenames matching runtime, regardless of saved legacy API flags', () => {
+        const resolveIconUrl = require('../lib/icon-url');
+        for (const iconSet of [...'abcdefghijk', '']) {
+            for (const useLegacyApi of [true, false, undefined]) {
+                for (const extension of ['gif', 'png', 'svg', 'jpg', undefined]) {
+                    for (const base of ['', 'https://icons.example', ' https://icons.example/// ']) {
+                        const data = {
+                            iconSet,
+                            useLegacyApi,
+                            custom_icon_base_url: base,
+                            custom_icon_format: extension,
+                        };
+                        const urls = previewUrls(data);
+                        assert.equal(urls.length, 4);
+                        assert.equal(urls[0].name, '0');
+                        for (const icon of urls) {
+                            assert.equal(icon.src, resolveIconUrl(icon.name, data));
+                        }
+                    }
+                }
             }
         }
-        assert.deepEqual(plain(previewUrls({ iconSet: '' })), []);
+        assert.equal(previewUrls({ iconSet: 'c' })[3].src, 'https://www.wunderground.com/static/i/c/v4/32.svg');
     });
 
     it('passes initial defaults through the official onChange and forceUpdate callbacks', () => {

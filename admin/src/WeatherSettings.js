@@ -1,26 +1,6 @@
 import React from 'react';
 
-const icons = [
-    'chanceflurries',
-    'chancerain',
-    'chancesleet',
-    'chancesnow',
-    'chancetstorms',
-    'clear',
-    'cloudy',
-    'flurries',
-    'fog',
-    'hazy',
-    'mostlycloudy',
-    'mostlysunny',
-    'partlycloudy',
-    'partlysunny',
-    'sleet',
-    'rain',
-    'snow',
-    'sunny',
-    'tstorms',
-];
+const icons = [0, 12, 26, 32];
 
 /**
  * Apply the legacy first-load defaults without changing existing settings.
@@ -67,17 +47,13 @@ export function initialSettings(data, system) {
  * @returns {object[]} icon names and preview URLs
  */
 export function previewUrls(data) {
-    let base = data.iconSet
-        ? `https://www.wunderground.com/static/i/c/${data.iconSet}/`
-        : (data.custom_icon_base_url || '').trim();
-    if (!base) {
-        return [];
-    }
-    if (!base.endsWith('/')) {
-        base += '/';
-    }
-    const extension = data.iconSet ? 'gif' : data.custom_icon_format || 'gif';
-    return icons.map(icon => ({ name: icon, src: `${base}${icon}.${extension}` }));
+    // Runtime always uses the new API, even if a saved useLegacyApi flag is true.
+    const base = !data.iconSet && (data.custom_icon_base_url || '').trim().replace(/\/+$/, '');
+    const extension = base ? data.custom_icon_format || 'gif' : 'svg';
+    return icons.map(icon => ({
+        name: String(icon),
+        src: `${base || 'https://www.wunderground.com/static/i/c/v4'}/${icon}.${extension}`,
+    }));
 }
 
 class WeatherSettings extends React.Component {

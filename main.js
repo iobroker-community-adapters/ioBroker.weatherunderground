@@ -25,6 +25,7 @@ const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const axios = require('axios');
 const crypto = require('node:crypto');
 const migrateApiKey = require('./lib/migrate-api-key');
+const resolveIconUrl = require('./lib/icon-url');
 const adapterName = require('./package.json').name.split('.').pop();
 let adapter;
 
@@ -393,43 +394,24 @@ function getKeysAndData(cb) {
             getLegacyWuData(cb);
         } else {
             adapter.log.debug('Use New API');
-            getNewWuDataCurrentObservations(data =>
+            getNewWuDataCurrentObservations(data => {
+                const currentConditions = getNewWuDataCurrentConditions(data);
                 getNewWuDataDailyForecast(data, data =>
-                    getNewWuDataHourlyForecast(data, data => parseNewResult(data, cb)),
-                ),
-            );
+                    getNewWuDataHourlyForecast(data, data => {
+                        currentConditions.then(() => {
+                            if (!stopInProgress) {
+                                parseNewResult(data, cb);
+                            }
+                        });
+                    }),
+                );
+            });
         }
     });
 }
 
 function handleIconUrl(original) {
-    if (!original) {
-        return original;
-    }
-    let iconSet = adapter.config.iconSet;
-    if (typeof original !== 'string') {
-        original = original.toString();
-    }
-    // old url https://icons.wxug.com
-    // new url https://www.wunderground.com/static
-    if (original.match(/^[0-9]{1,4}$/)) {
-        original = `https://www.wunderground.com/static/i/c/v4/${original}.svg`;
-        if (iconSet === 'i') {
-            iconSet = null;
-        }
-    }
-    if (iconSet) {
-        original = `https://www.wunderground.com/static/i/c/${encodeURIComponent(iconSet)}/${original.substring(original.lastIndexOf('/') + 1)}`;
-    } else if (adapter.config.custom_icon_base_url) {
-        const pos = original.lastIndexOf('.');
-
-        if (original.substring(pos + 1) !== adapter.config.custom_icon_format) {
-            original = original.replace(/\.\w+$/, `.${adapter.config.custom_icon_format}`);
-        }
-
-        original = adapter.config.custom_icon_base_url + original.substring(original.lastIndexOf('/') + 1);
-    }
-    return original;
+    return resolveIconUrl(original, adapter.config);
 }
 
 function getApiKey(cb) {
@@ -1000,6 +982,7 @@ async function parseLegacyResult(body, cb) {
                         ack: true,
                         val: _(`state_${body.forecast.simpleforecast.forecastday[i].icon}`),
                     });
+                    await adapter.setStateAsync(`forecast.${i}d.stateShort`, { ack: true, val: null });
                     await adapter.setStateAsync(`forecast.${i}d.iconURL`, {
                         ack: true,
                         val: handleIconUrl(body.forecast.simpleforecast.forecastday[i].icon_url),
@@ -1279,7 +1262,19 @@ async function parseNewResult(body, cb) {
 
                 await adapter.setStateAsync('forecast.current.weather', {
                     ack: true,
-                    val: null,
+                    val:
+                        typeof body.current_conditions?.wxPhraseLong === 'string' &&
+                        body.current_conditions.wxPhraseLong.trim()
+                            ? body.current_conditions.wxPhraseLong
+                            : null,
+                });
+                const airQualityIndex = body.air_quality?.globalairquality?.airQualityIndex;
+                await adapter.setStateAsync('forecast.current.airQualityIndex', {
+                    ack: true,
+                    val:
+                        typeof airQualityIndex === 'number' && Number.isFinite(airQualityIndex)
+                            ? airQualityIndex
+                            : null,
                 });
                 await adapter.setStateAsync('forecast.current.temp', {
                     ack: true,
@@ -1345,9 +1340,13 @@ async function parseNewResult(body, cb) {
                     val: body.current_observation.metric.precipTotal,
                 });
 
+                const iconCode = body.current_conditions?.iconCode;
                 await adapter.setStateAsync('forecast.current.iconURL', {
                     ack: true,
-                    val: null,
+                    val:
+                        Number.isInteger(iconCode) && iconCode >= 0 && iconCode <= 9999
+                            ? handleIconUrl(iconCode)
+                            : null,
                 });
                 await adapter.setStateAsync('forecast.current.forecastURL', {
                     ack: true,
@@ -1524,6 +1523,11 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: daypart.narrative[daypartIndex],
                     });
+                    const phrase = daypart.wxPhraseLong?.[daypartIndex];
+                    await adapter.setStateAsync(`forecast.${i}d.stateShort`, {
+                        ack: true,
+                        val: typeof phrase === 'string' && phrase.trim() ? phrase : null,
+                    });
                     await adapter.setStateAsync(`forecast.${i}d.iconURL`, {
                         ack: true,
                         val: handleIconUrl(daypart.iconCode[daypartIndex]),
@@ -1653,6 +1657,7 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: body.daily_forecast2[i].narrative,
                     });
+                    await adapter.setStateAsync(`forecast.${i}d.stateShort`, { ack: true, val: null });
                     await adapter.setStateAsync(`forecast.${i}d.iconURL`, {
                         ack: true,
                         val: handleIconUrl(
@@ -1959,6 +1964,62 @@ function modifyExtractedUrl(url) {
         url = url.replace('?', '?numericPrecision=decimal&');
     }
     return url;
+}
+
+async function getNewWuDataCurrentConditions(weatherData) {
+    const observation = weatherData?.current_observation;
+    if (
+        stopInProgress ||
+        !adapter.config.current ||
+        !newWebKey?.trim() ||
+        !Number.isFinite(observation?.lat) ||
+        !Number.isFinite(observation?.lon) ||
+        Math.abs(observation.lat) > 90 ||
+        Math.abs(observation.lon) > 180
+    ) {
+        return;
+    }
+
+    async function request(path, params) {
+        if (stopInProgress) {
+            return;
+        }
+        try {
+            const response = await axios.get(`https://api.weather.com${path}`, {
+                params: { ...params, language: lang, format: 'json', apiKey: newWebKey },
+                signal: requestAbortController?.signal,
+                timeout: 15000,
+                validateStatus: status => status === 200,
+            });
+            if (!stopInProgress) {
+                return response.data;
+            }
+        } catch (error) {
+            if (!stopInProgress) {
+                adapter.log.debug(
+                    `WU optional ${path} request failed: ${error.response ? error.response.status : error.code || '--'}`,
+                );
+            }
+        }
+    }
+
+    const geocode = `${observation.lat},${observation.lon}`;
+    await Promise.all([
+        request('/v3/wx/observations/current', { geocode, units: nonMetric ? 'e' : 'm' }).then(data => {
+            if (!stopInProgress) {
+                weatherData.current_conditions = data;
+            }
+        }),
+        request('/v3/location/point', { geocode, locationType: 'pws' }).then(async location => {
+            const placeId = location?.location?.placeId;
+            if (typeof placeId === 'string' && placeId.trim() && !stopInProgress) {
+                const data = await request('/v3/wx/globalAirQuality', { placeid: placeId, scale: 'EPA' });
+                if (!stopInProgress) {
+                    weatherData.air_quality = data;
+                }
+            }
+        }),
+    ]);
 }
 
 function getNewWuDataCurrentObservations(cb) {
@@ -2293,9 +2354,24 @@ async function checkWeatherVariables() {
         });
         await adapter.setObjectNotExistsAsync('forecast.current.weather', {
             type: 'state',
-            common: { name: 'Weather (engl.)', role: 'weather.state', type: 'string', read: true, write: false },
+            common: { name: 'Weather', role: 'weather.state', type: 'string', read: true, write: false },
             native: { id: 'current_observation.weather' },
         });
+        await adapter.setObjectNotExistsAsync('forecast.current.airQualityIndex', {
+            type: 'state',
+            common: {
+                name: 'Air quality index (EPA)',
+                role: 'value.airquality',
+                type: 'number',
+                read: true,
+                write: false,
+            },
+            native: { id: 'globalairquality.airQualityIndex' },
+        });
+        const weatherObject = await adapter.getObjectAsync('forecast.current.weather');
+        if (weatherObject?.common.name === 'Weather (engl.)') {
+            await adapter.extendObjectAsync('forecast.current.weather', { common: { name: 'Weather' } });
+        }
         if (nonMetric) {
             await adapter.setObjectNotExistsAsync('forecast.current.temp', {
                 type: 'state',
@@ -3020,6 +3096,17 @@ async function checkWeatherVariables() {
                     write: false,
                 },
                 native: { id: `${id}state` },
+            });
+            await adapter.setObjectNotExistsAsync(`${id}stateShort`, {
+                type: 'state',
+                common: {
+                    name: 'Short weather forecast',
+                    type: 'string',
+                    role: `weather.title.forecast.${p}`,
+                    read: true,
+                    write: false,
+                },
+                native: { id: `${id}wxPhraseLong` },
             });
             await adapter.setObjectNotExistsAsync(`${id}iconURL`, {
                 type: 'state',

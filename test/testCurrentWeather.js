@@ -1,0 +1,294 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const { createRequire } = require('node:module');
+
+const main = path.join(__dirname, '..', 'main.js');
+const adapterRequire = createRequire(main);
+
+function harness(config = {}, get = async (_url, _options) => ({ data: { wxPhraseLong: 'Partly cloudy' } })) {
+    const states = {};
+    const logs = [];
+    const requests = [];
+    const context = vm.createContext({
+        require: name => {
+            if (name === '@iobroker/adapter-core') {
+                return {};
+            }
+            if (name === 'axios') {
+                return {
+                    get: (url, options) => {
+                        requests.push({ url, options });
+                        return get(url, options);
+                    },
+                };
+            }
+            return adapterRequire(name);
+        },
+        module: { parent: true, exports: {} },
+        AbortController,
+        URL,
+        testAdapter: {
+            config: { current: true, ...config },
+            log: Object.fromEntries(
+                ['debug', 'info', 'warn', 'error'].map(level => [level, message => logs.push(message)]),
+            ),
+            setStateAsync: async (id, state) => {
+                assert.equal(state.ack, true);
+                states[id] = state.val;
+            },
+        },
+    });
+    vm.runInContext(
+        `${fs.readFileSync(main, 'utf8')}
+        adapter = testAdapter;
+        requestAbortController = new AbortController();
+        newWebKey = 'synthetic-web-key';
+        officialApiKey = 'synthetic-pws-key';
+        errorCounter = 2;
+        lang = 'de-DE';
+    `,
+        context,
+    );
+    return { context, states, logs, requests, run: code => vm.runInContext(code, context) };
+}
+
+function observation(lat = 52, lon = 13) {
+    return {
+        current_observation: {
+            lat,
+            lon,
+            neighborhood: 'Synthetic station',
+            stationID: 'TEST0001',
+            obsTimeLocal: '2026-10-23 12:00:00',
+            obsTimeUtc: '2026-10-23T10:00:00Z',
+            humidity: 61,
+            winddir: 90,
+            solarRadiation: 12,
+            uv: 1,
+            metric: {
+                elev: 10,
+                temp: 17,
+                windSpeed: 3,
+                windGust: 4,
+                pressure: 1012,
+                dewpt: 9,
+                windChill: 16,
+                heatIndex: 18,
+                precipRate: 0,
+                precipTotal: 2,
+            },
+        },
+    };
+}
+
+const flush = () => new Promise(resolve => setImmediate(resolve));
+
+describe('current weather description', () => {
+    it('updates only the old stock weather label, preserving custom names', async () => {
+        for (const name of ['Weather (engl.)', 'My weather', { en: 'Custom weather' }]) {
+            const h = harness();
+            const updates = [];
+            h.context.testAdapter.setObjectNotExistsAsync = async () => {};
+            h.context.testAdapter.getObjectAsync = async () => ({ common: { name } });
+            h.context.testAdapter.extendObjectAsync = async (id, object) => updates.push({ id, object });
+            await h.run('checkWeatherVariables()');
+            assert.equal(updates.length, name === 'Weather (engl.)' ? 1 : 0);
+            if (updates.length) {
+                assert.equal(updates[0].id, 'forecast.current.weather');
+                assert.equal(updates[0].object.common.name, 'Weather');
+            }
+        }
+    });
+
+    it('requests localized conditions using station coordinates and the website key', async () => {
+        const h = harness();
+        const data = observation(0, 0);
+        h.context.body = data;
+        await h.run('getNewWuDataCurrentConditions(body)');
+        assert.equal(h.requests.length, 2);
+        const { url, options } = h.requests[0];
+        const request = new URL(url);
+        if (options.params) {
+            for (const [key, value] of Object.entries(options.params)) {
+                request.searchParams.set(key, String(value));
+            }
+        }
+        assert.equal(request.origin + request.pathname, 'https://api.weather.com/v3/wx/observations/current');
+        assert.equal(request.searchParams.get('geocode'), '0,0');
+        assert.equal(request.searchParams.get('language'), 'de-DE');
+        assert.equal(request.searchParams.get('format'), 'json');
+        assert.equal(request.searchParams.get('units'), 'm');
+        assert.equal(request.searchParams.get('apiKey'), 'synthetic-web-key');
+        assert.equal(options.timeout, 15000);
+        assert.equal(options.signal instanceof AbortSignal, true);
+        assert.equal(options.validateStatus(200), true);
+        for (const status of [204, 401, 403, 500]) {
+            assert.equal(options.validateStatus(status), false);
+        }
+        assert.equal(data.current_conditions.wxPhraseLong, 'Partly cloudy');
+        assert.equal(data.current_observation.metric.temp, 17);
+        assert.equal(h.run('officialApiKey'), 'synthetic-pws-key');
+        assert.equal(h.run('errorCounter'), 2);
+    });
+
+    it('uses imperial units when configured by the adapter', async () => {
+        const h = harness();
+        h.context.body = observation();
+        h.run('nonMetric = true');
+        await h.run('getNewWuDataCurrentConditions(body)');
+        const { url, options } = h.requests[0];
+        assert.equal(options.params?.units || new URL(url).searchParams.get('units'), 'e');
+    });
+
+    it('skips disabled current data, missing keys and invalid coordinates', async () => {
+        for (const { config, key, lat, lon } of [
+            { config: { current: false }, key: 'key', lat: 52, lon: 13 },
+            { key: '', lat: 52, lon: 13 },
+            { key: '   ', lat: 52, lon: 13 },
+            { key: 'key', lat: undefined, lon: 13 },
+            { key: 'key', lat: 52, lon: null },
+            { key: 'key', lat: '52', lon: 13 },
+            { key: 'key', lat: NaN, lon: 13 },
+            { key: 'key', lat: Infinity, lon: 13 },
+            { key: 'key', lat: 91, lon: 13 },
+            { key: 'key', lat: 52, lon: -181 },
+        ]) {
+            const h = harness(config);
+            h.context.body = observation();
+            h.context.body.current_observation.lat = lat;
+            h.context.body.current_observation.lon = lon;
+            h.context.key = key;
+            h.run('newWebKey = key');
+            await h.run('getNewWuDataCurrentConditions(body)');
+            assert.equal(h.requests.length, 0, `unexpected request for ${JSON.stringify({ lat, lon })}`);
+        }
+    });
+
+    it('isolates optional provider errors without leaking request secrets', async () => {
+        for (const status of [204, 401, 403, 500, undefined]) {
+            const h = harness({}, async () => {
+                throw Object.assign(new Error('https://api.weather.com/?apiKey=synthetic-web-key&geocode=52,13'), {
+                    response: status ? { status } : undefined,
+                });
+            });
+            const data = observation();
+            h.context.body = data;
+            await h.run('getNewWuDataCurrentConditions(body)');
+            assert.equal(h.requests.length, 2);
+            assert.equal(data.current_conditions, undefined);
+            assert.equal(data.current_observation.metric.temp, 17);
+            assert.equal(h.run('officialApiKey'), 'synthetic-pws-key');
+            assert.equal(h.run('errorCounter'), 2);
+            assert.equal(h.logs.join(' ').includes('synthetic-web-key'), false);
+            assert.equal(h.logs.join(' ').includes('52,13'), false);
+        }
+    });
+
+    it('ignores an optional response completed after shutdown', async () => {
+        const response = Promise.withResolvers();
+        const h = harness({}, () => response.promise);
+        h.context.body = observation();
+        const pending = h.run('getNewWuDataCurrentConditions(body)');
+        h.run('stopInProgress = true');
+        response.resolve({ data: { wxPhraseLong: 'Late result' } });
+        await pending;
+        assert.equal(h.context.body.current_conditions, undefined);
+    });
+
+    it('cancels the optional request through the shared shutdown signal', async () => {
+        const h = harness(
+            {},
+            (_url, options) =>
+                new Promise((_resolve, reject) => {
+                    options.signal.addEventListener('abort', () => reject(new Error('Canceled')), { once: true });
+                }),
+        );
+        h.context.body = observation();
+        const pending = h.run('getNewWuDataCurrentConditions(body)');
+        h.run('stopInProgress = true; requestAbortController.abort()');
+        await pending;
+        assert.equal(h.requests[0].options.signal.aborted, true);
+        assert.equal(h.context.body.current_conditions, undefined);
+        assert.deepEqual(h.logs, []);
+    });
+
+    it('writes only a nonempty conditions phrase while preserving PWS measurements', async () => {
+        for (const phrase of ['Partly cloudy', undefined, null, '', '   ', 123]) {
+            const h = harness();
+            h.context.body = { ...observation(), current_conditions: { wxPhraseLong: phrase, temperature: 99 } };
+            await h.run('parseNewResult(body)');
+            assert.equal(h.states['forecast.current.weather'], phrase === 'Partly cloudy' ? phrase : null);
+            assert.equal(h.states['forecast.current.temp'], 17);
+            assert.equal(h.states['forecast.current.relativeHumidity'], 61);
+            assert.equal(h.states['forecast.current.pressure'], 1012);
+        }
+    });
+
+    it('uses only a valid current conditions icon code, including zero', async () => {
+        for (const iconCode of [0, 12, undefined, null, '', '12', -1, 1.5, 10000, NaN]) {
+            const h = harness();
+            h.context.body = { ...observation(), current_conditions: { iconCode } };
+            await h.run('parseNewResult(body)');
+            assert.equal(
+                h.states['forecast.current.iconURL'],
+                iconCode === 0 || iconCode === 12 ? `https://www.wunderground.com/static/i/c/v4/${iconCode}.svg` : null,
+            );
+        }
+    });
+
+    it('does not parse results or call completion after shutdown during requests', async () => {
+        const response = Promise.withResolvers();
+        const h = harness({}, () => response.promise);
+        h.context.body = observation();
+        h.context.events = [];
+        h.context.finishDaily = undefined;
+        h.run(`
+            getApiKey = cb => cb();
+            getNewWuDataCurrentObservations = cb => cb(body);
+            getNewWuDataDailyForecast = (data, cb) => { finishDaily = () => cb(data); };
+            getNewWuDataHourlyForecast = (data, cb) => cb(data);
+            parseNewResult = async (_data, cb) => { events.push('parse'); cb(); };
+            getKeysAndData(() => events.push('callback'));
+            stopInProgress = true;
+            finishDaily();
+        `);
+        response.resolve({ data: { wxPhraseLong: 'Late result' } });
+        await flush();
+        assert.deepEqual(Array.from(h.context.events), []);
+    });
+
+    for (const first of ['conditions', 'forecast']) {
+        it(`waits for both request branches when ${first} finishes first`, async () => {
+            const conditions = Promise.withResolvers();
+            const h = harness({}, () => conditions.promise);
+            h.context.body = observation();
+            h.context.events = [];
+            h.context.finishDaily = undefined;
+            h.run(`
+                getApiKey = cb => cb();
+                getNewWuDataCurrentObservations = cb => cb(body);
+                getNewWuDataDailyForecast = (data, cb) => { finishDaily = () => cb(data); };
+                getNewWuDataHourlyForecast = (data, cb) => { events.push('hourly'); cb(data); };
+                parseNewResult = async (data, cb) => { events.push(data.current_conditions.wxPhraseLong); cb(); };
+                getKeysAndData(() => events.push('callback'));
+            `);
+            assert.equal(h.requests.length, 2);
+            if (first === 'conditions') {
+                conditions.resolve({ data: { wxPhraseLong: 'Cloudy' } });
+            } else {
+                h.run('finishDaily()');
+            }
+            await flush();
+            assert.equal(h.context.events.includes('callback'), false);
+            if (first === 'conditions') {
+                h.run('finishDaily()');
+            } else {
+                conditions.resolve({ data: { wxPhraseLong: 'Cloudy' } });
+            }
+            await flush();
+            assert.deepEqual(Array.from(h.context.events), ['hourly', 'Cloudy', 'callback']);
+        });
+    }
+});
