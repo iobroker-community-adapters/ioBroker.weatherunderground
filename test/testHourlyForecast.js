@@ -8,6 +8,15 @@ const main = path.join(__dirname, '..', 'main.js');
 const source = fs.readFileSync(main, 'utf8');
 const adapterRequire = createRequire(main);
 
+/**
+ * @param {object} [options]
+ * @param {boolean} [options.enabled]
+ * @param {string} [options.station]
+ * @param {{lat: number, lon: number}} [options.observation]
+ * @param {string} [options.url]
+ * @param {boolean} [options.nonMetric]
+ * @param {unknown} [options.error]
+ */
 function fetchHourly({ enabled = true, station = '', observation, url = '', nonMetric = false, error } = {}) {
     const requests = [];
     const weatherData = observation ? { current_observation: observation } : {};
