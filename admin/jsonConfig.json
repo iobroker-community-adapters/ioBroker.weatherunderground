@@ -1,0 +1,296 @@
+{
+    "type": "panel",
+    "i18n": true,
+    "items": {
+        "_defaults": {
+            "type": "custom",
+            "name": "WeatherUndergroundConfig/Components/WeatherSettings",
+            "url": "custom/remoteEntry.js",
+            "bundlerType": "module",
+            "doNotSave": true,
+            "xs": 12,
+            "custom": {
+                "mode": "defaults"
+            },
+            "guiApi": 2,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        },
+        "apikey": {
+            "type": "password",
+            "label": "weatherunderground_apikey",
+            "xs": 12,
+            "sm": 6,
+            "visible": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "_apikeyInfo": {
+            "type": "staticText",
+            "text": "weatherunderground_apikey_info",
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        },
+        "_apikeyInfo1": {
+            "type": "staticText",
+            "text": "weatherunderground_apikey_info_1",
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        },
+        "forecast_periods_txt": {
+            "type": "checkbox",
+            "label": "weatherunderground_forecast_periods_txt",
+            "xs": 12,
+            "sm": 6,
+            "default": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "forecast_periods": {
+            "type": "checkbox",
+            "label": "weatherunderground_forecast_periods",
+            "xs": 12,
+            "sm": 6,
+            "default": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "forecast_hourly": {
+            "type": "checkbox",
+            "label": "weatherunderground_forecast_hourly",
+            "xs": 12,
+            "sm": 6,
+            "default": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "current": {
+            "type": "checkbox",
+            "label": "weatherunderground_current",
+            "xs": 12,
+            "sm": 6,
+            "default": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "country": {
+            "type": "text",
+            "label": "weatherunderground_country",
+            "xs": 12,
+            "sm": 6,
+            "default": "DE",
+            "help": "weatherunderground_country_info",
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "location": {
+            "type": "text",
+            "label": "weatherunderground_location",
+            "xs": 12,
+            "sm": 6,
+            "help": "weatherunderground_location_info",
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "station": {
+            "type": "text",
+            "label": "weatherunderground_station",
+            "xs": 12,
+            "sm": 6,
+            "hidden": "!data.current",
+            "help": "weatherunderground_station_info",
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "_stationInfo": {
+            "type": "staticText",
+            "text": "weatherunderground_Station - only for current conditions data",
+            "hidden": "!data.current",
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        },
+        "language": {
+            "type": "select",
+            "label": "weatherunderground_language",
+            "xs": 12,
+            "sm": 6,
+            "options": [
+                {
+                    "value": "DL",
+                    "label": "deutsch"
+                },
+                {
+                    "value": "EN",
+                    "label": "english"
+                },
+                {
+                    "value": "RU",
+                    "label": "русский"
+                },
+                {
+                    "value": "NL",
+                    "label": "Nederlands"
+                }
+            ],
+            "default": "DL",
+            "noTranslation": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "nonMetric": {
+            "type": "checkbox",
+            "label": "weatherunderground_Use non-metric system",
+            "xs": 12,
+            "sm": 6,
+            "default": false,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "_icons": {
+            "type": "header",
+            "text": "weatherunderground_Icons",
+            "size": 2,
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        },
+        "iconSet": {
+            "type": "select",
+            "label": "weatherunderground_Icon set",
+            "xs": 12,
+            "sm": 6,
+            "options": [
+                {
+                    "value": "a",
+                    "label": "A"
+                },
+                {
+                    "value": "b",
+                    "label": "B"
+                },
+                {
+                    "value": "c",
+                    "label": "C"
+                },
+                {
+                    "value": "d",
+                    "label": "D"
+                },
+                {
+                    "value": "e",
+                    "label": "E"
+                },
+                {
+                    "value": "f",
+                    "label": "F"
+                },
+                {
+                    "value": "g",
+                    "label": "G"
+                },
+                {
+                    "value": "h",
+                    "label": "H"
+                },
+                {
+                    "value": "i",
+                    "label": "I"
+                },
+                {
+                    "value": "j",
+                    "label": "J"
+                },
+                {
+                    "value": "k",
+                    "label": "K"
+                },
+                {
+                    "value": "",
+                    "label": "weatherunderground_custom"
+                }
+            ],
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "custom_icon_base_url": {
+            "type": "text",
+            "label": "weatherunderground_custom_icon_base_url",
+            "xs": 12,
+            "sm": 6,
+            "hidden": "!!data.iconSet",
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "custom_icon_format": {
+            "type": "select",
+            "label": "weatherunderground_custom_icon_format",
+            "xs": 12,
+            "sm": 6,
+            "options": [
+                {
+                    "value": "gif",
+                    "label": "gif"
+                },
+                {
+                    "value": "png",
+                    "label": "png"
+                },
+                {
+                    "value": "svg",
+                    "label": "svg"
+                },
+                {
+                    "value": "jpg",
+                    "label": "jpg"
+                }
+            ],
+            "default": "gif",
+            "hidden": "!!data.iconSet",
+            "noTranslation": true,
+            "md": 6,
+            "lg": 6,
+            "xl": 6
+        },
+        "_preview": {
+            "type": "custom",
+            "name": "WeatherUndergroundConfig/Components/WeatherSettings",
+            "url": "custom/remoteEntry.js",
+            "bundlerType": "module",
+            "doNotSave": true,
+            "xs": 12,
+            "custom": {
+                "mode": "preview"
+            },
+            "guiApi": 2,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
+        }
+    }
+}

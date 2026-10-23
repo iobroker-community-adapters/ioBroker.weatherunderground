@@ -13,15 +13,14 @@ describe('API key lookup', () => {
         it(`normalizes ${JSON.stringify(station)} without a dashboard request`, () => {
             const calls = [];
             vm.runInNewContext(
-                source +
-                    `
+                `${source}
                 adapter = { config: { useLegacyApi: false, station: testStation } };
                 getStationKey = () => { throw new Error('unexpected dashboard request'); };
                 getWebsiteKey = callback => { testCalls.push(adapter.config.station); callback(); };
                 getApiKey(() => testCalls.push('done'));
             `,
                 {
-                    require: (name) => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
+                    require: name => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
                     module: { parent: true, exports: {} },
                     testStation: station,
                     testCalls: calls,
@@ -35,15 +34,14 @@ describe('API key lookup', () => {
         it(`fetches ${previousApi ? 'dashboard and website' : 'only website'} keys in ${previousApi ? 'previous' : 'new'} API mode`, () => {
             const calls = [];
             vm.runInNewContext(
-                source +
-                    `
+                `${source}
                 adapter = { config: { useLegacyApi: testPreviousApi } };
                 getStationKey = callback => { testCalls.push('dashboard'); callback(); };
                 getWebsiteKey = callback => { testCalls.push('website'); callback(); };
                 getApiKey(() => testCalls.push('done'));
             `,
                 {
-                    require: (name) => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
+                    require: name => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
                     module: { parent: true, exports: {} },
                     testPreviousApi: previousApi,
                     testCalls: calls,

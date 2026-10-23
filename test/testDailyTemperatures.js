@@ -13,8 +13,8 @@ const fixture = require('./fixtures/issue250-daily-forecast.json');
 async function parseDaily(forecast) {
     const states = new Map();
     const errors = [];
-    await vm.runInNewContext(source + '\nadapter = testAdapter; parseNewResult(testBody);', {
-        require: (name) => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
+    await vm.runInNewContext(`${source}\nadapter = testAdapter; parseNewResult(testBody);`, {
+        require: name => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
         module: { parent: true, exports: {} },
         testBody: { daily_forecast: forecast },
         testAdapter: {
@@ -57,8 +57,11 @@ describe('daily forecast temperatures', () => {
         it(`retains temperatureMax/temperatureMin when calendar-day ${absent} are unavailable`, async () => {
             const forecast = structuredClone(fixture.daily_forecast);
             for (const field of ['calendarDayTemperatureMax', 'calendarDayTemperatureMin']) {
-                if (absent === 'arrays') delete forecast[field];
-                else forecast[field] = absent === 'entries' ? [] : Array(6).fill(null);
+                if (absent === 'arrays') {
+                    delete forecast[field];
+                } else {
+                    forecast[field] = absent === 'entries' ? [] : Array(6).fill(null);
+                }
             }
             const states = await parseDaily(forecast);
             for (let i = 0; i < 6; i++) {

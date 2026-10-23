@@ -9,21 +9,20 @@ const source = fs.readFileSync(main, 'utf8');
 const adapterRequire = createRequire(main);
 
 /**
- * @param {object} [options]
- * @param {boolean} [options.enabled]
- * @param {string} [options.station]
- * @param {{lat: number, lon: number}} [options.observation]
- * @param {string} [options.url]
- * @param {boolean} [options.nonMetric]
- * @param {unknown} [options.error]
+ * @param {object} [options] Request setup.
+ * @param {boolean} [options.enabled] Whether hourly forecasts are enabled.
+ * @param {string} [options.station] Configured synthetic station ID.
+ * @param {{lat: number, lon: number}} [options.observation] Current station coordinates.
+ * @param {string} [options.url] Previously scraped forecast URL.
+ * @param {boolean} [options.nonMetric] Whether imperial units are requested.
+ * @param {unknown} [options.error] Simulated provider failure.
  */
 function fetchHourly({ enabled = true, station = '', observation, url = '', nonMetric = false, error } = {}) {
     const requests = [];
     const weatherData = observation ? { current_observation: observation } : {};
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         vm.runInNewContext(
-            source +
-                `
+            `${source}
             adapter = testAdapter;
             newWebKey = 'website-key';
             officialApiKey = 'owner-key';
@@ -33,16 +32,21 @@ function fetchHourly({ enabled = true, station = '', observation, url = '', nonM
             getNewWuDataHourlyForecast(testData, testCallback);
         `,
             {
-                require: (name) => {
-                    if (name === '@iobroker/adapter-core') return {};
-                    if (name === 'axios')
+                require: name => {
+                    if (name === '@iobroker/adapter-core') {
+                        return {};
+                    }
+                    if (name === 'axios') {
                         return {
-                            get: async (requested) => {
+                            get: async requested => {
                                 requests.push(requested);
-                                if (error) throw error;
+                                if (error) {
+                                    throw error;
+                                }
                                 return { data: { temperature: [8] } };
                             },
                         };
+                    }
                     return adapterRequire(name);
                 },
                 module: { parent: true, exports: {} },
@@ -53,7 +57,7 @@ function fetchHourly({ enabled = true, station = '', observation, url = '', nonM
                 testNonMetric: nonMetric,
                 testUrl: url,
                 testData: weatherData,
-                testCallback: (data) => resolve({ data, requests }),
+                testCallback: data => resolve({ data, requests }),
             },
         );
     });

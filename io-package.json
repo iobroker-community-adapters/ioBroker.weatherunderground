@@ -169,7 +169,7 @@
     "dataSource": "poll",
     "tier": 2,
     "adminUI": {
-      "config": "materialize"
+      "config": "json"
     }
   },
   "native": {
