@@ -59,6 +59,8 @@ let forecastDailyUrl;
 let forecastHourlyUrl;
 let errorCounter = 0;
 let forceTimeout = null;
+let cancelDelay = null;
+let requestAbortController;
 
 let stopInProgress = false;
 
@@ -96,28 +98,48 @@ function time2date(date) {
 }
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(() => !stopInProgress && resolve(), ms));
+    return new Promise(resolve => {
+        const timeout = setTimeout(() => {
+            cancelDelay = null;
+            resolve();
+        }, ms);
+        cancelDelay = () => {
+            clearTimeout(timeout);
+            cancelDelay = null;
+            resolve();
+        };
+    });
 }
 
 function startAdapter(options) {
     options = options || {};
     Object.assign(options, { name: adapterName });
     adapter = new utils.Adapter(options);
+    requestAbortController = new AbortController();
 
     adapter.on('unload', callback => {
         stopInProgress = true;
         forceTimeout && clearTimeout(forceTimeout);
+        forceTimeout = null;
+        cancelDelay && cancelDelay();
+        requestAbortController.abort();
         callback && callback();
     });
 
     adapter.on('ready', async () => {
         try {
             const migration = await migrateApiKey(adapter);
+            if (stopInProgress) {
+                return;
+            }
             if (migration) {
                 adapter.terminate(0);
                 return;
             }
         } catch (error) {
+            if (stopInProgress) {
+                return;
+            }
             adapter.log.error(error.message);
             adapter.terminate(1);
             return;
@@ -131,20 +153,32 @@ function startAdapter(options) {
         if (!officialApiKey) {
             try {
                 const instObj = await adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
+                if (stopInProgress) {
+                    return;
+                }
                 if (instObj && instObj.common && instObj.common.schedule && instObj.common.schedule === '12 * * * *') {
                     instObj.common.schedule = `${Math.floor(Math.random() * 60)} * * * *`;
                     adapter.log.info(`Default schedule found and adjusted to spread calls better over the full hour!`);
                     await adapter.setForeignObjectAsync(`system.adapter.${adapter.namespace}`, instObj);
+                    if (stopInProgress) {
+                        return;
+                    }
                     adapter.terminate ? adapter.terminate(0) : process.exit(0);
                     return;
                 }
             } catch (err) {
+                if (stopInProgress) {
+                    return;
+                }
                 adapter.log.error(`Could not check or adjust the schedule: ${err.message}`);
             }
 
             const delay = Math.floor(Math.random() * 30000);
             adapter.log.debug(`Delay execution by ${delay}ms to better spread API calls`);
             await sleep(delay);
+            if (stopInProgress) {
+                return;
+            }
         }
 
         adapter.config.language = adapter.config.language || 'DL';
@@ -211,7 +245,30 @@ function startAdapter(options) {
 
         nonMetric = !!adapter.config.nonMetric;
 
-        await checkWeatherVariables();
+        // force terminate after 1min
+        forceTimeout = setTimeout(() => {
+            forceTimeout = null;
+            stopInProgress = true;
+            requestAbortController.abort();
+            adapter.log.warn('force terminate');
+            adapter.terminate ? adapter.terminate(0) : process.exit(0);
+        }, 60000);
+
+        try {
+            await checkWeatherVariables();
+        } catch (error) {
+            if (stopInProgress) {
+                return;
+            }
+            forceTimeout && clearTimeout(forceTimeout);
+            forceTimeout = null;
+            adapter.log.error(`Could not initialize weather objects: ${error.message}`);
+            adapter.terminate(1);
+            return;
+        }
+        if (stopInProgress) {
+            return;
+        }
 
         adapter.getState('currentStationKey', (err, state) => {
             if (!err && state && state.val) {
@@ -298,6 +355,9 @@ function startAdapter(options) {
                                 }
 
                                 getKeysAndData(() => {
+                                    if (stopInProgress) {
+                                        return;
+                                    }
                                     forceTimeout && clearTimeout(forceTimeout);
                                     forceTimeout = setTimeout(() => adapter.stop(), 2000);
                                 });
@@ -307,21 +367,15 @@ function startAdapter(options) {
                 });
             });
         });
-
-        // force terminate after 1min
-        // don't know why it does not terminate by itself...
-        forceTimeout = setTimeout(() => {
-            forceTimeout = null;
-            stopInProgress = true;
-            adapter.log.warn('force terminate');
-            adapter.terminate ? adapter.terminate(0) : process.exit(0);
-        }, 60000);
     });
 
     return adapter;
 }
 
 function getKeysAndData(cb) {
+    if (stopInProgress) {
+        return;
+    }
     if (errorCounter > 2) {
         if (adapter.config.useLegacyApi) {
             adapter.config.useLegacyApi = false;
@@ -411,10 +465,14 @@ function getStationKey(cb) {
     axios
         .get(url, {
             headers: requestHeaders,
+            signal: requestAbortController?.signal,
             timeout: 15000,
             validateStatus: status => status === 200,
         })
         .then(response => {
+            if (stopInProgress) {
+                return;
+            }
             const body = response.data;
             const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
             if (!scriptFile || !scriptFile[1]) {
@@ -445,6 +503,7 @@ function getStationKey(cb) {
             adapter.log.debug(`get PWS dashboard script`);
             return axios.get(scriptFile[1], {
                 headers: requestHeaders,
+                signal: requestAbortController?.signal,
                 timeout: 15000,
                 validateStatus: status => status === 200,
             });
@@ -479,6 +538,9 @@ function getStationKey(cb) {
             return cb && cb();
         })
         .catch(error => {
+            if (stopInProgress) {
+                return;
+            }
             // ERROR
             adapter.log.error(
                 `Unable to get PWS dashboard script: ${error.response ? error.response.status : error.code || '--'}`,
@@ -509,6 +571,7 @@ function getWebsiteKey(cb, tryQ) {
     axios
         .get(url, {
             headers: requestHeaders,
+            signal: requestAbortController?.signal,
             timeout: 15000,
             validateStatus: status => status === 200,
         })
@@ -592,6 +655,9 @@ function getWebsiteKey(cb, tryQ) {
             return cb && cb();
         })
         .catch(error => {
+            if (stopInProgress) {
+                return;
+            }
             if (error.response && error.response.status === 404 && !tryQ) {
                 getWebsiteKey(cb, true);
             } else if (error.response && error.response.status === 404) {
@@ -1842,6 +1908,7 @@ function getLegacyWuData(cb) {
     axios
         .get(url, {
             headers: requestHeaders,
+            signal: requestAbortController?.signal,
             timeout: 15000,
             validateStatus: status => status === 200,
         })
@@ -1860,6 +1927,9 @@ function getLegacyWuData(cb) {
             }
         })
         .catch(error => {
+            if (stopInProgress) {
+                return;
+            }
             if (error.response && error.response.status === 401) {
                 adapter.log.info('Key rejected, resetting legacy key and trying again ...');
                 pwsStationKey = '';
@@ -1909,6 +1979,7 @@ function getNewWuDataCurrentObservations(cb) {
     axios
         .get(url, {
             headers: requestHeaders,
+            signal: requestAbortController?.signal,
             timeout: 15000,
             validateStatus: status => status === 200,
         })
@@ -1925,6 +1996,9 @@ function getNewWuDataCurrentObservations(cb) {
             cb && cb(weatherData);
         })
         .catch(error => {
+            if (stopInProgress) {
+                return;
+            }
             if (error.response && error.response.status === 401) {
                 if (officialApiKey) {
                     adapter.log.error('Please check your PWS Owner Key! Using key extracted from web page for now!');
@@ -1974,6 +2048,7 @@ function getNewWuDataDailyForecast(weatherData, cb) {
         axios
             .get(url, {
                 headers: requestHeaders,
+                signal: requestAbortController?.signal,
                 timeout: 15000,
                 validateStatus: status => status === 200,
             })
@@ -1994,6 +2069,9 @@ function getNewWuDataDailyForecast(weatherData, cb) {
                 cb && cb(weatherData);
             })
             .catch(error => {
+                if (stopInProgress) {
+                    return;
+                }
                 if (error.response && error.response.status === 401) {
                     if (officialApiKey) {
                         adapter.log.error('Please check your PWS Owner Key! Using key extracted from webpage for now!');
@@ -2033,6 +2111,7 @@ function getNewWuDataHourlyForecast(weatherData, cb) {
         axios
             .get(url, {
                 headers: requestHeaders,
+                signal: requestAbortController?.signal,
                 timeout: 15000,
                 validateStatus: status => status === 200,
             })
@@ -2044,6 +2123,9 @@ function getNewWuDataHourlyForecast(weatherData, cb) {
                 cb && cb(weatherData);
             })
             .catch(error => {
+                if (stopInProgress) {
+                    return;
+                }
                 if (error.response && error.response.status === 401) {
                     if (officialApiKey) {
                         adapter.log.error('Please check your PWS Owner Key! Using key extracted from webpage for now!');

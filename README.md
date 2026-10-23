@@ -95,6 +95,7 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) End failed or stalled initialization reliably and cancel startup delays and provider requests during shutdown (#224)
 - (reloxx13) Automatically migrate existing API keys to a new encrypted and protected configuration field
 - (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options
 - (reloxx13) Correct hourly forecast provider paths for metric and non-metric units
