@@ -153,6 +153,7 @@ describe('remaining daily forecast', () => {
     it('creates daily short phrase objects only for enabled forecasts and preserves user metadata', async () => {
         const objects = new Map();
         const existing = { type: 'state', common: { name: 'User label', custom: { history: { enabled: true } } } };
+        const expected = structuredClone(existing);
         objects.set('forecast.0d.stateShort', existing);
         for (const enabled of [false, true]) {
             await vm.runInNewContext(`${source}\nadapter = testAdapter; checkWeatherVariables();`, {
@@ -177,6 +178,6 @@ describe('remaining daily forecast', () => {
         assert.equal(object.common.read, true);
         assert.equal(object.common.write, false);
         assert.equal(objects.has('forecastPeriod.0p.stateShort'), false);
-        assert.equal(objects.get('forecast.0d.stateShort'), existing);
+        assert.deepEqual(objects.get('forecast.0d.stateShort'), expected);
     });
 });

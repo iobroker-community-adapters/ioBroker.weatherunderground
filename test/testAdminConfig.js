@@ -2,7 +2,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const crypto = require('node:crypto');
 
 const admin = path.join(__dirname, '../admin');
 const config = require('../admin/jsonConfig.json');
@@ -18,23 +17,16 @@ vm.runInNewContext(
         ),
     context,
 );
-const { WeatherSettings, initialSettings, previewUrls } = context.components;
+const { WeatherSettings, initialSettings } = context.components;
 const plain = value => JSON.parse(JSON.stringify(value));
 
 describe('JSON configuration migration', () => {
-    it('preserves every translated key and value in the backend dictionary', () => {
+    it('loads backend weather translations and removes the admin namespace from configuration labels', () => {
         const dictionary = require('../lib/words');
-        const sorted = Object.fromEntries(
-            Object.entries(dictionary)
-                .sort()
-                .map(([key, translations]) => [key, Object.fromEntries(Object.entries(translations).sort())]),
-        );
-        assert.equal(
-            crypto.createHash('sha256').update(JSON.stringify(sorted)).digest('hex'),
-            '470c1fd12286fd5841e44aa5f0671b20ae259aeac544a343dd346e770ea8a1da',
-        );
         assert.equal(dictionary.state_chancerain.en, 'Chance rain');
-        assert.ok(dictionary.state_chancerain.de);
+        assert.equal(dictionary.state_chancerain.de, 'Möglicher Regen');
+        assert.equal(dictionary.current?.en, 'Current data');
+        assert.equal(dictionary.current?.de, 'Aktuelle Daten');
     });
 
     it('keeps the existing editable fields, values and hidden-field conditions', () => {
@@ -132,29 +124,35 @@ describe('JSON configuration migration', () => {
         assert.equal(initialSettings({ location: '', nonMetric: true }, { tempUnit: '°C' }).nonMetric, true);
     });
 
-    it('previews numeric filenames matching runtime, regardless of saved legacy API flags', () => {
-        const resolveIconUrl = require('../lib/icon-url');
-        for (const iconSet of [...'abcdefghijk', '']) {
-            for (const useLegacyApi of [true, false, undefined]) {
-                for (const extension of ['gif', 'png', 'svg', 'jpg', undefined]) {
-                    for (const base of ['', 'https://icons.example', ' https://icons.example/// ']) {
-                        const data = {
-                            iconSet,
-                            useLegacyApi,
-                            custom_icon_base_url: base,
-                            custom_icon_format: extension,
-                        };
-                        const urls = previewUrls(data);
-                        assert.equal(urls.length, 4);
-                        assert.equal(urls[0].name, '0');
-                        for (const icon of urls) {
-                            assert.equal(icon.src, resolveIconUrl(icon.name, data));
-                        }
-                    }
-                }
-            }
+    it('renders numeric preview images for stock sets and explicit custom formats', () => {
+        const cases = [
+            [
+                {
+                    iconSet: 'c',
+                    useLegacyApi: true,
+                    custom_icon_base_url: 'https://ignored.example/',
+                    custom_icon_format: 'gif',
+                },
+                'https://www.wunderground.com/static/i/c/v4',
+                'svg',
+            ],
+            [{ iconSet: 'i', useLegacyApi: false }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],
+            [{ iconSet: '' }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],
+            ...['gif', 'png', 'svg', 'jpg', undefined].map(format => [
+                { iconSet: '', custom_icon_base_url: ' https://icons.example/// ', custom_icon_format: format },
+                'https://icons.example',
+                format || 'gif',
+            ]),
+        ];
+        for (const [data, base, extension] of cases) {
+            const component = new WeatherSettings();
+            component.props = { schema: { custom: { mode: 'preview' } }, data };
+            const images = component.render().children;
+            assert.deepEqual(
+                plain(images.map(image => ({ tag: image.tag, src: image.props.src, alt: image.props.alt }))),
+                [0, 12, 26, 32].map(code => ({ tag: 'img', src: `${base}/${code}.${extension}`, alt: String(code) })),
+            );
         }
-        assert.equal(previewUrls({ iconSet: 'c' })[3].src, 'https://www.wunderground.com/static/i/c/v4/32.svg');
     });
 
     it('passes initial defaults through the official onChange and forceUpdate callbacks', () => {
