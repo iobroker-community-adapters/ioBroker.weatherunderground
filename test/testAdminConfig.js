@@ -25,8 +25,8 @@ describe('JSON configuration migration', () => {
         const dictionary = require('../lib/words');
         assert.equal(dictionary.state_chancerain.en, 'Chance rain');
         assert.equal(dictionary.state_chancerain.de, 'Möglicher Regen');
-        assert.equal(dictionary.current?.en, 'Current data');
-        assert.equal(dictionary.current?.de, 'Aktuelle Daten');
+        assert.equal(dictionary.current?.en, 'Current station measurements');
+        assert.equal(dictionary.current?.de, 'Aktuelle Stationsmesswerte');
     });
 
     it('keeps the existing editable fields, values and hidden-field conditions', () => {
@@ -46,10 +46,14 @@ describe('JSON configuration migration', () => {
                 'language',
                 'location',
                 'nonMetric',
+                'regionalCurrent',
                 'station',
             ].sort(),
         );
         assert.equal(config.items.apiKey.type, 'password');
+        assert.equal(require('../io-package.json').native.regionalCurrent, false);
+        assert.equal(config.items.regionalCurrent.type, 'checkbox');
+        assert.equal(config.items.regionalCurrent.disabled, '!data.current');
         assert.equal(config.items.station.hidden, '!data.current');
         assert.equal(config.items.custom_icon_base_url.hidden, '!!data.iconSet');
         assert.equal(config.items.custom_icon_format.hidden, '!!data.iconSet');

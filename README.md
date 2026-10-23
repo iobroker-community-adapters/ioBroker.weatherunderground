@@ -24,11 +24,13 @@ For the current development version:
 
 ## Notes
 
-An official PWS owner API key is optional. With a configured station and current observations enabled, it is used for PWS observations. Forecasts, current weather descriptions/icons and air quality use the website key extracted from Weather Underground, even when an owner key is supplied. Leaving the owner key empty also uses the website key for observations. Availability of that key and the individual products is controlled by the provider.
+An official PWS owner API key is optional. With a configured station and current observations enabled, it is used for PWS observations. Forecasts and the optional regional current weather/air-quality products use the website key extracted from Weather Underground, even when an owner key is supplied. Leaving the owner key empty also uses the website key for observations. Availability of that key and the individual products is controlled by the provider.
 
 ## Configuration
 
 The instance settings use JSON Config. The new API-key field is encrypted in storage and protected from ordinary foreign-adapter access. Existing keys are transferred automatically to this field; no separate migration command or key re-entry is needed.
+
+**Current station measurements** controls measured values from a private weather station (PWS), rather than forecasts. Hourly and daily forecasts have independent switches. Even when current station measurements are disabled, station observations are still fetched to obtain coordinates for forecasts. The historical state prefix `forecast.current` contains current observations, despite its name; these IDs are retained for compatibility. **Regional current weather and air quality** is an additional opt-in switch (`regionalCurrent`, disabled by default) and requires current station measurements to be enabled. It adds up to three requests per run using the website key for regional weather descriptions, icons, visibility and air quality. Leaving it off preserves PWS measurements and makes no regional product requests; regional states are `null` when current observations are processed.
 
 Station settings appear when current observations are enabled. Choose an icon set or select Custom to enter an icon base URL and format. Hidden fields retain their values. When the location is empty, the dialog uses the system coordinates and selects non-metric units if the system uses Fahrenheit. A saved location and its units remain unchanged.
 
@@ -46,19 +48,21 @@ Keep an ioBroker backup before upgrading. For rollback, restore that backup toge
 
 ## Weather descriptions
 
+The current regional states below require **Regional current weather and air quality** to be enabled. PWS observations and forecast descriptions use their existing switches.
+
 - `forecast.current.weather` contains the localized current weather description, such as "Cloudy/Wind". It comes from Weather Company's geocode-based current conditions, using the coordinates returned by the station observation. Temperature, humidity, wind and other measurements still come from the configured PWS; the description can represent a different observation time and source.
 - `forecast.current.iconURL` uses the icon code from the same optional current-conditions response; without a valid code it is `null`.
 - `forecast.current.airQualityIndex` contains the numeric EPA air quality index for the station coordinates, obtained through Weather Company location resolution and its separate air-quality product. This is an index, not a pollutant concentration or a measurement from the PWS. Missing, invalid or unavailable air-quality data produces `null`.
 - `forecast.0d.state` through `forecast.5d.state` keep the complete daily forecast narrative.
 - `forecast.0d.stateShort` through `forecast.5d.stateShort` contain the short forecast description. Each uses the same daytime or remaining nighttime period as the corresponding narrative and icon. A provider response without a supported short description produces `null`.
 
-Descriptions use the existing language setting. With current conditions enabled, the adapter makes optional requests for the weather description and air quality (including location resolution) per run using the website key already extracted by the adapter. Missing coordinates, an unavailable key, a rejected request or a missing description leave `forecast.current.weather` as `null` when current observations are processed; they do not discard the PWS measurements or forecasts. A forecast is never substituted for current conditions. Website-key availability is controlled by the provider.
+Descriptions use the existing language setting. With current PWS measurements and the regional option enabled, the adapter makes optional requests for the weather description, visibility and air quality (including location resolution) per run using the website key already extracted by the adapter. Missing coordinates, an unavailable key, a rejected request or a missing description leave `forecast.current.weather` as `null` when current observations are processed; they do not discard the PWS measurements or forecasts. A forecast is never substituted for current conditions. Website-key availability is controlled by the provider.
 
 `forecastHourly.0h` is displayed as "Next hourly forecast"; its ID and first hourly forecast values are unchanged. `0h` is the first API response index, not midnight or necessarily the current hour; `.time` gives its forecast timestamp. Existing custom channel names are preserved.
 
 ## Additional forecast and air-quality states
 
-All additions use the existing configuration switches. Hourly and daily additions reuse forecast responses; current regional weather and air quality add up to three optional requests per run (current conditions, location resolution and air quality):
+Hourly and daily additions reuse forecast responses and their existing configuration switches. PWS quality control uses the current PWS measurements switch. Regional visibility, weather and air-quality states require the separate regional option, which adds up to three optional requests per run (current conditions, location resolution and air quality):
 
 | States | Values |
 | --- | --- |
@@ -100,6 +104,7 @@ The old A–K directories contain named legacy files such as `clear.gif` and `nt
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Make regional current weather, visibility and air quality opt-in; clarify PWS, forecast coverage and icon settings
 - (reloxx13) Show zero UV index and solar radiation instead of blank readings
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
 - (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata

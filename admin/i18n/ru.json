@@ -1,5 +1,5 @@
 {
-    "weatherunderground_Icon set": "Набор иконок (только устаревший API)",
+    "weatherunderground_Icon set": "Набор значков",
     "weatherunderground_Icons": "Иконки",
     "weatherunderground_Station - only for current conditions data": "Станция - только для данных о текущих условиях",
     "weatherunderground_Use non-metric system": "Используйте имперские единицы измерения (°F, мили)",
@@ -8,13 +8,13 @@
     "weatherunderground_apikey_info_1": "Если оставить пустым, текущий общий ключ будет извлечен из веб-страницы WU",
     "weatherunderground_country": "Страна",
     "weatherunderground_country_info": "Пожалуйста, введите двухбуквенный код страны, для которой вы запрашиваете данные.",
-    "weatherunderground_current": "Текущие данные",
+    "weatherunderground_current": "Текущие измерения станции",
     "weatherunderground_custom": "пользовательский набор",
     "weatherunderground_custom_icon_base_url": "Пользовательский значок-базовый URL-адрес",
     "weatherunderground_custom_icon_format": "Пользовательский значок-формат",
-    "weatherunderground_forecast_hourly": "Прогноз на сегодня ежечасно",
-    "weatherunderground_forecast_periods": "Прогноз на следующие 4 дня",
-    "weatherunderground_forecast_periods_txt": "Прогноз как текст на следующие 4 дня и 4 ночи",
+    "weatherunderground_forecast_hourly": "Почасовой прогноз (до 36 часов)",
+    "weatherunderground_forecast_periods": "Ежедневный прогноз (6 дат)",
+    "weatherunderground_forecast_periods_txt": "Текстовый прогноз (до 6 дней и ночей)",
     "weatherunderground_language": "Язык",
     "weatherunderground_location": "Местоположение",
     "weatherunderground_location_info": "Выберите свое местоположение по имени (например, «Берлин»), Код аэропорта (например, «ZRH»), координаты (например, «47.3145359,8.4159812»).",
@@ -39,5 +39,9 @@
     "state_tstorms": "Шторм",
     "weatherunderground_station": "Станция",
     "weatherunderground_station_info": "Если вы оставите станцию пустой, то ближайшая станция в соответствии с местоположением выбора будет выбрана автоматически. Если вас не устраивает этот выбор, вы можете вставить здесь код станции вашей предпочтительной станции (например, «IAARGAUB5»). Вы можете найти эти коды на <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - щелкните по станции и найдите идентификатор станции («Station ID»).",
-    "weatherunderground_useLegacyApi": "Используйте устаревшие API WU"
+    "weatherunderground_useLegacyApi": "Используйте устаревшие API WU",
+    "weatherunderground_regionalCurrent": "Текущая региональная погода и качество воздуха",
+    "weatherunderground_regionalCurrent_info": "Необязательно; нужны текущие измерения PWS. До 3 дополнительных запросов за запуск с ключом сайта для региональной погоды, значков, видимости и качества воздуха. По умолчанию выключено; измерения PWS не меняются.",
+    "weatherunderground_iconSet_info": "A–K используют одинаковые значки SVG v4 с текущим API. Выберите собственный набор для своих значков.",
+    "weatherunderground_current_info": "Измеренные значения частной метеостанции (PWS), а не прогноз. Почасовой и ежедневный прогнозы имеют отдельные переключатели. Даже при отключении этой опции наблюдения станции загружаются для получения координат прогнозов."
 }

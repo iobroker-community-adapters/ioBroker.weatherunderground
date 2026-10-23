@@ -30,7 +30,7 @@ function harness(config = {}, get = async (_url, _options) => ({ data: { wxPhras
         AbortController,
         URL,
         testAdapter: {
-            config: { current: true, ...config },
+            config: { current: true, regionalCurrent: true, ...config },
             log: Object.fromEntries(
                 ['debug', 'info', 'warn', 'error'].map(level => [level, message => logs.push(message)]),
             ),
@@ -160,7 +160,8 @@ describe('current weather description', () => {
             const h = harness();
             const updates = [];
             h.context.testAdapter.setObjectNotExistsAsync = async () => {};
-            h.context.testAdapter.getObjectAsync = async () => ({ common: { name } });
+            h.context.testAdapter.getObjectAsync = async id =>
+                id === 'forecast.current.weather' ? { common: { name } } : null;
             h.context.testAdapter.extendObjectAsync = async (id, object) => updates.push({ id, object });
             await h.run('checkWeatherVariables()');
             assert.equal(updates.length, name === 'Weather (engl.)' ? 1 : 0);
@@ -168,6 +169,46 @@ describe('current weather description', () => {
                 assert.equal(updates[0].id, 'forecast.current.weather');
                 assert.equal(updates[0].object.common.name, 'Weather');
             }
+        }
+    });
+
+    it('clarifies observation channel names without changing IDs or user metadata', async () => {
+        for (const custom of [false, true]) {
+            const h = harness();
+            const objects = new Map([
+                [
+                    'forecast',
+                    {
+                        common: {
+                            name: custom ? 'My weather' : 'Forecast for next 4 days days and current conditions',
+                            custom: { kept: true },
+                        },
+                    },
+                ],
+                [
+                    'forecast.current',
+                    { common: { name: custom ? 'My station' : 'Current conditions', custom: { kept: true } } },
+                ],
+            ]);
+            h.context.testAdapter.setObjectNotExistsAsync = async (id, object) => {
+                if (!objects.has(id)) {
+                    objects.set(id, object);
+                }
+            };
+            h.context.testAdapter.getObjectAsync = async id => objects.get(id);
+            h.context.testAdapter.extendObjectAsync = async (id, patch) =>
+                Object.assign(objects.get(id).common, patch.common);
+            await h.run('checkWeatherVariables()');
+            assert.equal(
+                objects.get('forecast').common.name,
+                custom ? 'My weather' : 'Weather observations and forecasts',
+            );
+            assert.equal(
+                objects.get('forecast.current').common.name,
+                custom ? 'My station' : 'Current weather observations',
+            );
+            assert.equal(objects.get('forecast').common.custom.kept, true);
+            assert.equal(objects.get('forecast.current').common.custom.kept, true);
         }
     });
 
@@ -209,6 +250,28 @@ describe('current weather description', () => {
         await h.run('getNewWuDataCurrentConditions(body)');
         const { url, options } = h.requests[0];
         assert.equal(options.params?.units || new URL(url).searchParams.get('units'), 'e');
+    });
+
+    it('requires opt-in for regional requests while retaining PWS data and clearing old regional values', async () => {
+        for (const regionalCurrent of [undefined, false]) {
+            const h = harness({ regionalCurrent });
+            h.context.body = {
+                ...observation(),
+                current_conditions: { wxPhraseLong: 'Cloudy', iconCode: 26, visibility: 10 },
+                air_quality: { globalairquality: { airQualityIndex: 42 } },
+            };
+            await h.run('parseNewResult(body)');
+            assert.equal(h.states['forecast.current.airQualityIndex'], 42);
+
+            h.context.body = observation();
+            await h.run('getNewWuDataCurrentConditions(body);');
+            await h.run('parseNewResult(body)');
+            assert.equal(h.requests.length, 0);
+            assert.equal(h.states['forecast.current.temp'], 17);
+            for (const field of ['weather', 'iconURL', 'visibility', 'airQualityIndex']) {
+                assert.equal(h.states[`forecast.current.${field}`], null, field);
+            }
+        }
     });
 
     it('skips disabled current data, missing keys and invalid coordinates', async () => {

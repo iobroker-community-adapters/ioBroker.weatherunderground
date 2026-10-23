@@ -2058,6 +2058,7 @@ async function getNewWuDataCurrentConditions(weatherData) {
     if (
         stopInProgress ||
         !adapter.config.current ||
+        adapter.config.regionalCurrent !== true ||
         !newWebKey?.trim() ||
         !Number.isFinite(observation?.lat) ||
         !Number.isFinite(observation?.lon) ||
@@ -2314,14 +2315,14 @@ async function checkWeatherVariables() {
             type: 'device',
             role: 'forecast',
             common: {
-                name: 'Forecast for next 4 days days and current conditions',
+                name: 'Weather observations and forecasts',
             },
             native: { location: adapter.config.location },
         });
         await adapter.setObjectNotExistsAsync('forecast.current', {
             type: 'channel',
             common: {
-                name: 'Current conditions',
+                name: 'Current weather observations',
                 role: 'weather',
             },
             native: { location: adapter.config.location },
@@ -2927,7 +2928,7 @@ async function checkWeatherVariables() {
         await adapter.setObjectNotExistsAsync('forecast', {
             type: 'device',
             role: 'forecast',
-            common: { name: 'Forecast for next 4 days days and current conditions' },
+            common: { name: 'Weather observations and forecasts' },
             native: { location: adapter.config.location },
         });
 
@@ -3380,6 +3381,18 @@ async function checkWeatherVariables() {
                 },
                 native: { id: `${id}minhumidity` },
             });
+        }
+    }
+
+    if (adapter.config.current || adapter.config.forecast_periods) {
+        for (const [objectId, previousName, name] of [
+            ['forecast', 'Forecast for next 4 days days and current conditions', 'Weather observations and forecasts'],
+            ['forecast.current', 'Current conditions', 'Current weather observations'],
+        ]) {
+            const object = await adapter.getObjectAsync(objectId);
+            if (object?.common.name === previousName) {
+                await adapter.extendObjectAsync(objectId, { common: { name } });
+            }
         }
     }
 

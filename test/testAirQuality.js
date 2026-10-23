@@ -43,7 +43,7 @@ function harness(
         AbortController,
         URL,
         testAdapter: {
-            config: { current: true, ...config },
+            config: { current: true, regionalCurrent: true, ...config },
             log: Object.fromEntries(
                 ['debug', 'info', 'warn', 'error'].map(level => [level, message => logs.push(message)]),
             ),

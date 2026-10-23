@@ -1,5 +1,5 @@
 {
-    "weatherunderground_Icon set": "Conjunto de ícones (somente API legada)",
+    "weatherunderground_Icon set": "Conjunto de ícones",
     "weatherunderground_Icons": "Ícones",
     "weatherunderground_Station - only for current conditions data": "Estação - apenas para dados de condições atuais",
     "weatherunderground_Use non-metric system": "Use unidades imperiais (°F, milhas)",
@@ -8,13 +8,13 @@
     "weatherunderground_apikey_info_1": "Se deixado em branco, a chave geral atual é tentada para extrair da página da Web da WU",
     "weatherunderground_country": "País",
     "weatherunderground_country_info": "Insira um código de país de duas letras do país para o qual você solicita dados.",
-    "weatherunderground_current": "Dados atuais",
+    "weatherunderground_current": "Medições atuais da estação",
     "weatherunderground_custom": "conjunto personalizado",
     "weatherunderground_custom_icon_base_url": "Ícone Personalizado-Base-URL",
     "weatherunderground_custom_icon_format": "Formato de ícone personalizado",
-    "weatherunderground_forecast_hourly": "Previsão horária hoje",
-    "weatherunderground_forecast_periods": "Previsão para os próximos 4 dias",
-    "weatherunderground_forecast_periods_txt": "Previsão como texto para os próximos 4 dias e noites",
+    "weatherunderground_forecast_hourly": "Previsão horária (até 36 horas)",
+    "weatherunderground_forecast_periods": "Previsão diária (6 datas)",
+    "weatherunderground_forecast_periods_txt": "Previsão em texto (até 6 dias e noites)",
     "weatherunderground_language": "Língua",
     "weatherunderground_location": "Localização",
     "weatherunderground_location_info": "Selecione sua localização por nome (por exemplo, \"Berlim\"), código de aeroporto (por exemplo, \"ZRH\"), coordenadas (por exemplo, \"47.3145359.8.4159812\").",
@@ -39,5 +39,9 @@
     "state_tstorms": "Tempestades",
     "weatherunderground_station": "Estação",
     "weatherunderground_station_info": "Se você deixar a estação vazia, a estação mais próxima, de acordo com a localização da oferta, será selecionada automaticamente. Se não estiver satisfeito com esta opção, pode introduzir aqui o código da estação da sua estação preferida (por exemplo, \"IAARGAUB5\"). Você pode encontrar esses códigos, por exemplo no <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - clique em uma estação e procure a \"ID da estação\"",
-    "weatherunderground_useLegacyApi": "Use APIs herdadas do WU"
+    "weatherunderground_useLegacyApi": "Use APIs herdadas do WU",
+    "weatherunderground_regionalCurrent": "Tempo regional atual e qualidade do ar",
+    "weatherunderground_regionalCurrent_info": "Opcional; requer medições PWS atuais. Até 3 pedidos adicionais por execução com a chave do site para tempo regional, ícones, visibilidade e qualidade do ar. Desativado por padrão; as medições PWS permanecem inalteradas.",
+    "weatherunderground_iconSet_info": "A–K usam os mesmos ícones SVG v4 com a API atual. Selecione Personalizado para os seus próprios ícones.",
+    "weatherunderground_current_info": "Valores medidos por uma estação meteorológica privada (PWS), não uma previsão. As previsões horárias e diárias têm opções independentes. Mesmo com esta opção desativada, são obtidas observações da estação para determinar as coordenadas das previsões."
 }

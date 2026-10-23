@@ -1,5 +1,5 @@
 {
-    "weatherunderground_Icon set": "图标集（仅限旧版API）",
+    "weatherunderground_Icon set": "图标集",
     "weatherunderground_Icons": "图示",
     "weatherunderground_Station - only for current conditions data": "站-仅用于当前状况数据",
     "weatherunderground_Use non-metric system": "使用英制单位（°F，英里）",
@@ -8,13 +8,13 @@
     "weatherunderground_apikey_info_1": "如果留空，则尝试从WU网页中提取当前的常规密钥",
     "weatherunderground_country": "国家",
     "weatherunderground_country_info": "请输入您请求数据的国家/地区的双字母国家/地区代码.",
-    "weatherunderground_current": "当前数据",
+    "weatherunderground_current": "当前气象站测量值",
     "weatherunderground_custom": "定制集",
     "weatherunderground_custom_icon_base_url": "自定义图标库URL",
     "weatherunderground_custom_icon_format": "自定义图标格式",
-    "weatherunderground_forecast_hourly": "今日每小时预报",
-    "weatherunderground_forecast_periods": "未来4天的预测",
-    "weatherunderground_forecast_periods_txt": "未来4天和晚上以文本形式进行预测",
+    "weatherunderground_forecast_hourly": "逐小时预报（最多 36 小时）",
+    "weatherunderground_forecast_periods": "每日预报（6 个日期）",
+    "weatherunderground_forecast_periods_txt": "文字预报（最多 6 个昼夜）",
     "weatherunderground_language": "语",
     "weatherunderground_location": "地点",
     "weatherunderground_location_info": "通过名称（例如“柏林”），机场代码（例如“ ZRH”），坐标（例如“ 47.3145359、8.4159812”）选择您的位置.",
@@ -39,5 +39,9 @@
     "state_tstorms": "暴风雨",
     "weatherunderground_station": "电台",
     "weatherunderground_station_info": "如果您将桩号留空，那么将根据给定位置自动选择最近的桩号。",
-    "weatherunderground_useLegacyApi": "使用旧版WU API"
+    "weatherunderground_useLegacyApi": "使用旧版WU API",
+    "weatherunderground_regionalCurrent": "当前区域天气和空气质量",
+    "weatherunderground_regionalCurrent_info": "可选；需要启用当前 PWS 测量值。每次运行使用网站密钥额外发送最多 3 个请求，获取区域天气、图标、能见度和空气质量。默认关闭；PWS 测量值保持不变。",
+    "weatherunderground_iconSet_info": "当前 API 中 A–K 均使用相同的 v4 SVG 图标。选择自定义以使用自己的图标。",
+    "weatherunderground_current_info": "私人气象站（PWS）的实测值，并非天气预报。逐小时和每日预报有独立开关。即使关闭此选项，仍会获取气象站观测数据，以取得预报所需的坐标。"
 }

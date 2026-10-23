@@ -191,6 +191,8 @@ describe('remaining daily forecast', () => {
                 testAdapter: {
                     config: { forecast_periods: enabled },
                     log: { debug() {} },
+                    getObjectAsync: async id => objects.get(id),
+                    extendObjectAsync: async (id, patch) => Object.assign(objects.get(id).common, patch.common),
                     setObjectNotExistsAsync: async (id, object) => {
                         if (!objects.has(id)) {
                             objects.set(id, object);

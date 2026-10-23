@@ -84,7 +84,20 @@
             "default": true,
             "md": 6,
             "lg": 6,
-            "xl": 6
+            "xl": 6,
+            "help": "weatherunderground_current_info"
+        },
+        "regionalCurrent": {
+            "type": "checkbox",
+            "label": "weatherunderground_regionalCurrent",
+            "help": "weatherunderground_regionalCurrent_info",
+            "disabled": "!data.current",
+            "default": false,
+            "xs": 12,
+            "sm": 12,
+            "md": 12,
+            "lg": 12,
+            "xl": 12
         },
         "country": {
             "type": "text",
@@ -234,7 +247,8 @@
             ],
             "md": 6,
             "lg": 6,
-            "xl": 6
+            "xl": 6,
+            "help": "weatherunderground_iconSet_info"
         },
         "custom_icon_base_url": {
             "type": "text",
