@@ -112,6 +112,7 @@ describe('automatic API key migration', () => {
             const testModule = { parent: true, exports: {} };
             const factory = vm.runInNewContext(`${fs.readFileSync(main, 'utf8')}\nmodule.exports;`, {
                 module: testModule,
+                AbortController,
                 require: name => {
                     if (name === '@iobroker/adapter-core') {
                         return {
