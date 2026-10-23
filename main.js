@@ -321,8 +321,13 @@ function handleIconUrl(original) {
 }
 
 function getApiKey(cb) {
-    getStationKey(() =>
-        getWebsiteKey( () => cb()));
+    if (adapter.config.station) {
+        adapter.config.station = adapter.config.station.trim().replace(/^pws:/, '').trim();
+    }
+    if (!adapter.config.useLegacyApi) {
+        return getWebsiteKey(cb);
+    }
+    getStationKey(() => getWebsiteKey(cb));
 }
 
 function getStationKey(cb) {
@@ -333,10 +338,6 @@ function getStationKey(cb) {
     let url = 'https://www.wunderground.com/dashboard/pws/IBERLIN1658';
 
     if (adapter.config.station) {
-        adapter.config.station = adapter.config.station.trim();
-        if (adapter.config.station.startsWith('pws:')) {
-            adapter.config.station = adapter.config.station.substr(4).trim();
-        }
         if (/[^A-Z0-9]/.test(adapter.config.station)) {
             adapter.log.info(`Please check the configured station-id "${adapter.config.station}" if it do not work because usually station ids consist of capital letters and numbers only!`)
         }
