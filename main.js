@@ -3020,7 +3020,7 @@ async function checkWeatherVariables() {
 }
 
 // If started as allInOne/compact mode => return function to create instance
-if (module && module.parent) {
+if (module && /** @type {NodeJS.Module} */ (module).parent) {
     module.exports = startAdapter;
 } else {
     // or start the instance directly
