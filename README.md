@@ -58,7 +58,7 @@ Descriptions use the existing language setting. With current conditions enabled,
 
 ## Additional forecast and air-quality states
 
-All additions use the existing requests and configuration switches:
+All additions use the existing configuration switches. Hourly and daily additions reuse forecast responses; current regional weather and air quality add up to three optional requests per run (current conditions, location resolution and air quality):
 
 | States | Values |
 | --- | --- |
@@ -67,15 +67,7 @@ All additions use the existing requests and configuration switches:
 | `forecast.current` | `qualityControl` (raw PWS quality-control code), `airQualityCategory`, `primaryPollutant`, `airQualitySource`, `airQualityMessage`, `airQualitySensitiveMessage` |
 | `forecast.current.airQuality.CO`, `.NO2`, `.O3`, `.PM10`, `.PM2_5`, `.SO2` | `amount` (concentration in µg/m³), `index` (EPA pollutant index), `category` |
 
-Sun and moon times retain the provider's ISO timestamp and UTC offset. An event can be unavailable, for example when the moon does not rise or set during that calendar day. Missing or malformed optional values clear to `null`; zero remains a valid numeric value. Concentrations are accepted only when the provider reports µg/m³; an unsupported unit leaves `amount` null while its index and category remain available. AQ information and current visibility are regional products, not PWS measurements. Other current measurements retain their PWS source; the raw quality-control code is not interpreted or used to discard measurements.
-
-### Null values
-
-- Current visibility now uses the already requested regional current-conditions response. It stays null when that product has no valid value.
-- Daily `windDegreesMax` and numeric `windDirectionMax` now use the direction of the day/night period with the greatest available wind speed, not the largest compass angle. Both retain their existing numeric type; a missing direction is not guessed from a slower period.
-- Expired daytime precipitation/snow and unavailable astronomical events remain null. They are not zero measurements.
-- `forecast.current.forecastURL` and `historyURL` remain null: the modern observation response does not supply the old API's page links. The adapter does not invent a replacement URL.
-- Missing weather descriptions, icons or AQ products remain null, independently of available PWS measurements.
+Sun and moon times include the provider's UTC offset. Air-quality data and current visibility are regional values; station measurements come from the configured PWS.
 
 ## Development build
 
@@ -105,9 +97,6 @@ The old A–K directories contain named legacy files such as `clear.gif` and `nt
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
-- (reloxx13) Show zero UV index and solar radiation instead of blank readings
-- (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
-- (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata
 -->
 
 ### **WORK IN PROGRESS**
@@ -309,6 +298,8 @@ config dialog fixed
 initial release with all basics to load WU-forecast data
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
+
+[Older changes](CHANGELOG_OLD.md)
 
 ## License
 
