@@ -169,11 +169,11 @@
     "dataSource": "poll",
     "tier": 2,
     "adminUI": {
-      "config": "materialize"
+      "config": "json"
     }
   },
   "native": {
-    "apikey": "",
+    "apiKey": "",
     "location": "",
     "station": "",
     "language": "DL",
@@ -188,5 +188,11 @@
     "iconSet": "i"
   },
   "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [],
+  "encryptedNative": [
+    "apiKey"
+  ],
+  "protectedNative": [
+    "apiKey"
+  ]
 }

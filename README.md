@@ -17,6 +17,28 @@ The adapter retrieves daily and hourly forecast data once per hour by default. T
 ## Notes
 You can use this adapter with providing an official "PWS owner" API-key or leave API key empty to use keys extracted out of the WU webpage.
 
+## Configuration
+
+The instance settings use JSON Config. The new API-key field is encrypted in storage and protected from ordinary foreign-adapter access. Existing keys are transferred automatically to this field; no separate migration command or key re-entry is needed.
+
+Station settings appear when current observations are enabled. Choose an icon set or select Custom to enter an icon base URL and format. Hidden fields retain their values. When the location is empty, the dialog uses the system coordinates and selects non-metric units if the system uses Fahrenheit. A saved location and its units remain unchanged.
+
+## Automatic API-key migration
+
+Released versions stored the key in `apikey`. This version uses `apiKey`, declared in both `encryptedNative` and `protectedNative`. The old field is retained during the upgrade so it cannot be mistaken for ciphertext.
+
+On the first adapter start, the adapter transfers the old key using the controller configuration API. The controller encrypts `apiKey` and clears `apikey` in the same configuration write; weather requests wait until migration is complete. Opening settings before that start also transfers the key into the new field in the form. Saving uses Admin encryption and clears the old field in the same save. An empty key remains empty, and completed migrations are not repeated.
+
+Until that first start or settings save, the legacy field keeps its previous plaintext storage and access behavior. Disabled instances are migrated when they are first started or their settings are saved.
+
+If both fields contain different nonempty keys, neither is discarded automatically. Migration failures stop weather requests and produce a message without key values. Do not edit an old configuration dialog across an adapter upgrade; reopen it after upgrading.
+
+Keep an ioBroker backup before upgrading. For rollback, restore that backup together with the old adapter version: the old version reads only `apikey`. Manually encrypted keys from modified or unreleased versions require their original encryption metadata; they cannot be identified reliably after an upgrade has overwritten that metadata.
+
+## Development build
+
+The configuration UI sources are in `admin/src/`. As in ioBroker Admin, generated `admin/custom/` files are ignored by Git and must not be committed. After `npm ci`, run `npm run build` before testing, packing or locally uploading the adapter. CI builds the UI before adapter tests; `prepublishOnly` rebuilds it before npm publication. The published npm package includes the generated UI and its assets, so installed users do not need build tools. For a source/Git installation, first run `npm ci`, `npm run build` and `npm pack` in the source checkout, then install the resulting tarball with ioBroker. An unbuilt Git checkout has no generated configuration UI.
+
 ## Icon Sets
 
 There are some different Icon Sets available when using "Legacy API", see below. For the usabe with the new API the image names have changed (see https://docs.google.com/document/d/1dNCf6nF6cjm4oOxQxjtqNuAvG_iEe5f9MQH1xlCeV4s/edit) and are now number based ... they can be downloaded from e.g. https://drive.google.com/drive/folders/0B6fWQWXuE09OOWtBOXJNX190TDQ and could be used as custom set (see below). 
@@ -73,6 +95,15 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Automatically migrate existing API keys to a new encrypted and protected configuration field
+- (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options
+- (reloxx13) Correct hourly forecast provider paths for metric and non-metric units
+- (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
+- (reloxx13) Fix hourly forecast requests using the supported endpoint and current station coordinates (#497)
+- (reloxx13) Skip the unused PWS dashboard request when using the new API (#498)
+- (reloxx13) Populate hourly forecast weather codes, including code zero (#499)
+- (reloxx13) Use calendar-day minimum and maximum forecast temperatures (#500)
+- (reloxx13) Correct the documented default refresh interval to once per hour (#501)
 - (copilot) Adapter requires node.js >= 22 now
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (copilot) Adapter requires admin >= 7.7.22 now
@@ -157,8 +188,11 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 ### 3.0.13 (2019-07-10)
 * (Apollon77) Fix error in image url handling
 
-### 3.0.11/12 (2019-07-09)
+### 3.0.12 (2019-07-09)
 * (Apollon77) Re-Fetch PWS station key on Error 401
+
+### 3.0.11 (2019-06-04)
+* (Apollon77) Use a fallback ID after the dashboard fallback page became unavailable
 
 ### 3.0.10 (2019-05-27)
 * (Apollon77) Adopt logic to WU changes
@@ -256,7 +290,7 @@ initial release with all basics to load WU-forecast data
 
 The MIT License (MIT)
 
-Copyright (c) 2024-2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>
+Copyright (c) 2024-2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2015-2023 dschaedl <daniel.schaedler@gmail.com>, iobroker-community-adapters
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -30,10 +30,12 @@ async function parseHourly(iconCode, enabled = true) {
     ]) {
         hourly[field] = Array(36).fill(1);
     }
-    if (iconCode !== undefined) hourly.iconCode = iconCode;
+    if (iconCode !== undefined) {
+        hourly.iconCode = iconCode;
+    }
 
-    await vm.runInNewContext(source + '\nadapter = testAdapter; parseNewResult(testBody);', {
-        require: (name) => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
+    await vm.runInNewContext(`${source}\nadapter = testAdapter; parseNewResult(testBody);`, {
+        require: name => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
         module: { parent: true, exports: {} },
         testAdapter: {
             config: { forecast_hourly: enabled },

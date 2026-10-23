@@ -21,15 +21,20 @@ function forecast(expiredDaytime) {
         windSpeed: 12,
         windDirection: 270,
         relativeHumidity: 50,
-    }))
+    })) {
         daypart[key] = Array(12).fill(value);
+    }
     Object.assign(daypart, {
         iconCode: [32, 31, ...daypart.iconCode.slice(2)],
         narrative: ['Sunny', 'Clear tonight', ...daypart.narrative.slice(2)],
         relativeHumidity: [50, 65, ...daypart.relativeHumidity.slice(2)],
         windDirection: [270, 90, ...daypart.windDirection.slice(2)],
     });
-    if (expiredDaytime) for (const values of Object.values(daypart)) values[0] = null;
+    if (expiredDaytime) {
+        for (const values of Object.values(daypart)) {
+            values[0] = null;
+        }
+    }
     return {
         daily_forecast: {
             validTimeLocal: Array.from({ length: 6 }, (_, i) => `2026-10-${22 + i}T07:00:00+0200`),
@@ -47,13 +52,12 @@ function parse(body, enabled = true) {
     const errors = [];
     return new Promise((resolve, reject) => {
         vm.runInNewContext(
-            source +
-                `
+            `${source}
             adapter = testAdapter;
             parseNewResult(testBody).then(testDone, testReject);
         `,
             {
-                require: (name) => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
+                require: name => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
                 module: { parent: true, exports: {} },
                 testAdapter: {
                     config: { forecast_periods: enabled },

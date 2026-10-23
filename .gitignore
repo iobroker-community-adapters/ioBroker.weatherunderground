@@ -17,3 +17,6 @@ admin/i18n/flat.txt
 admin/i18n/*/flat.txt
 #ignore .commitinfo created by ioBroker release script
 .commitinfo
+
+# Generated configuration UI (built before testing/publishing)
+/admin/custom/
