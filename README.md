@@ -99,6 +99,11 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 - (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options
 - (reloxx13) Correct hourly forecast provider paths for metric and non-metric units
 - (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
+- (reloxx13) Fix hourly forecast requests using the supported endpoint and current station coordinates (#497)
+- (reloxx13) Skip the unused PWS dashboard request when using the new API (#498)
+- (reloxx13) Populate hourly forecast weather codes, including code zero (#499)
+- (reloxx13) Use calendar-day minimum and maximum forecast temperatures (#500)
+- (reloxx13) Correct the documented default refresh interval to once per hour (#501)
 - (copilot) Adapter requires node.js >= 22 now
 - (iobroker-bot) Adapter requires node.js >= 20 now.
 - (copilot) Adapter requires admin >= 7.7.22 now
