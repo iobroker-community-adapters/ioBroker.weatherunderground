@@ -139,31 +139,24 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 -->
 
 ### **WORK IN PROGRESS**
-- (reloxx13) Explain configuration switches, data sources, provider endpoints and request counts; simplify translated help texts and group location fields as Country/Language and Location/Station
-- (reloxx13) Hide the redundant icon-set selector; show custom URL/format fields and let a nonempty URL select custom icons in runtime and preview
-- (reloxx13) Make regional current weather, visibility and air quality opt-in; clarify PWS, forecast coverage and icon settings
-- (reloxx13) Show zero UV index and solar radiation instead of blank readings
-- (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
-- (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata
-- (reloxx13) Refresh documented requirements, forecast coverage, API-key usage and build instructions
-- (reloxx13) Display the first hourly forecast as "Next hourly forecast" while preserving its 0h ID and custom channel names
-- (reloxx13) Correct weather state roles and update existing object roles without changing IDs, types, units or user metadata (#328)
-- (reloxx13) Fix numeric weather icon URLs and align the settings preview (#216)
-- (reloxx13) Add the current EPA air quality index without replacing PWS measurements (#220)
-- (reloxx13) Add localized current weather descriptions and separate short daily forecast descriptions while preserving PWS measurements and full narratives (#388)
-- (reloxx13) End failed or stalled initialization reliably and cancel startup delays and provider requests during shutdown (#224)
-- (reloxx13) Automatically migrate existing API keys to a new encrypted and protected configuration field
-- (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options
-- (reloxx13) Correct hourly forecast provider paths for metric and non-metric units
-- (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
-- (reloxx13) Fix hourly forecast requests using the supported endpoint and current station coordinates (#497)
-- (reloxx13) Skip the unused PWS dashboard request when using the new API (#498)
-- (reloxx13) Populate hourly forecast weather codes, including code zero (#499)
+- (reloxx13) Add opt-in regional weather descriptions, icons, visibility and detailed EPA air quality without replacing station measurements (#220, #388)
+- (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events and PWS quality status
+- (reloxx13) Add short daily descriptions while preserving full narratives and consistent day/night selection (#388)
+- (reloxx13) Match maximum-wind direction to the highest wind speed and preserve its numeric type
+- (reloxx13) Show zero UV index and solar radiation when station fields are missing or null
+- (reloxx13) Fix numeric icon URLs and previews; select custom icons by URL and correct existing icon URL object types without replacing user metadata (#216)
+- (reloxx13) Rename the first hourly forecast to "Next hourly forecast" while preserving its 0h ID and custom names
+- (reloxx13) Correct weather state roles without changing IDs, types, units or user metadata (#328)
+- (reloxx13) End failed initialization reliably and cancel startup delays and provider requests during shutdown (#224)
+- (reloxx13) Automatically migrate API keys to encrypted and protected storage
+- (reloxx13) Replace the legacy settings dialog with JSON Config; clarify translated labels, help texts and field grouping
+- (reloxx13) Document configuration switches, data sources, endpoints, request savings, API keys and source builds; correct the default refresh interval to once per hour (#501)
+- (reloxx13) Fix hourly forecast requests, station coordinates and metric/non-metric provider paths (#497)
+- (reloxx13) Skip the unused PWS dashboard request (#498)
+- (reloxx13) Populate hourly weather codes, including zero (#499)
 - (reloxx13) Use calendar-day minimum and maximum forecast temperatures (#500)
-- (reloxx13) Correct the documented default refresh interval to once per hour (#501)
-- (copilot) Adapter requires node.js >= 22 now
-- (copilot) Adapter requires admin >= 7.7.22 now
-- (copilot) Adapter requires js-controller >= 6.0.11 now
+- (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
+- (copilot) Require Node.js >= 22, Admin >= 7.7.22 and js-controller >= 6.0.11
 
 ### 3.7.0 (2024-04-13)
 * (mcm1957) Adapter requires node.js 18 and js-controller >= 5 now
