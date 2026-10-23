@@ -8,11 +8,18 @@
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/weatherunderground/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
+> [!IMPORTANT]
+> This adapter cannot be installed from github
+
+## Sentry
+
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information on how to disable the error reporting, see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+
+## Functionality
+
 Current station measurements, up to 36 hourly forecasts and six daily forecasts from [Weather Underground](https://www.wunderground.com/), with optional regional weather and air-quality data from Weather Company.
 
 Data is retrieved once per hour by default. Change the instance schedule to adjust the frequency.
-
-**Sentry reports exceptions and code errors to the developers.** See the [Sentry plugin documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry) for details and how to disable reporting.
 
 ## Requirements
 
