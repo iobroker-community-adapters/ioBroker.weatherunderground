@@ -178,7 +178,6 @@ describe('scheduled termination (#224)', () => {
     for (const schedule of ['0 * * * *', '12 * * * *']) {
         it(`does not adjust schedule or create a delay after unload during schedule read (${schedule})`, async () => {
             const run = setup({ apiKey: '' });
-            /** @type {(value: { common: { schedule: string } }) => void} */
             let finishRead;
             run.adapter.getForeignObjectAsync = () =>
                 new Promise(resolve => {
@@ -198,7 +197,6 @@ describe('scheduled termination (#224)', () => {
     }
 
     it('does not resume startup after unload during key migration', async () => {
-        /** @type {(value: boolean) => void} */
         let finishMigration;
         const run = setup({
             migration: () =>
