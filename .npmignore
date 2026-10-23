@@ -11,3 +11,5 @@ package-lock.json
 weatherunderground.njsproj
 .idea
 node_modules
+tsconfig.json
+tsconfig.check.json
