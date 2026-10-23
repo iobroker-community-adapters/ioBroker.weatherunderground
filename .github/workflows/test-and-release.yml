@@ -32,7 +32,9 @@ jobs:
                   type-checking: true
                   # Uncomment the following line if your adapter cannot be installed using 'npm ci'
                   # install-command: 'npm install'
-                  lint: tfalse
+                  lint: true
+            - name: Build settings
+              run: npm run build
 
     # Runs adapter tests on all supported node versions and OSes
     adapter-tests:
@@ -50,6 +52,7 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
                   os: ${{ matrix.os }}
+                  build: true
                   # Uncomment the following line if your adapter cannot be installed using 'npm ci'
                   # install-command: 'npm install'
 
