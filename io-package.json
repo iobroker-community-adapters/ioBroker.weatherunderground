@@ -188,5 +188,11 @@
     "iconSet": "i"
   },
   "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [],
+  "encryptedNative": [
+    "apikey"
+  ],
+  "protectedNative": [
+    "apikey"
+  ]
 }

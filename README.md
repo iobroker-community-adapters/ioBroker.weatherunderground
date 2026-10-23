@@ -19,9 +19,27 @@ You can use this adapter with providing an official "PWS owner" API-key or leave
 
 ## Configuration
 
-The instance settings use JSON Config. Existing settings remain available without re-entry. The API-key input is hidden by default; this alone does not encrypt an existing stored key.
+The instance settings use JSON Config. The API key is encrypted in storage and protected from ordinary foreign-adapter access. Existing installations must complete the pre-upgrade migration below before installing this version; masking the password input alone does not encrypt an old stored key.
 
 Station settings appear when current observations are enabled. Choose an icon set or select Custom to enter an icon base URL and format. Hidden fields retain their values. When the location is empty, the dialog uses the system coordinates and selects non-metric units if the system uses Fahrenheit. A saved location and its units remain unchanged.
+
+## Required API-key migration before upgrading
+
+Run this **before installing the new adapter version**, while the old instance metadata still describes how each key is stored. Running it only after the update is too late: the new encryption flags cannot identify an old plaintext key reliably. New installations do not need this step.
+
+1. Create an ioBroker backup with `iobroker backup`. Keep it private: it contains credentials and the system secret needed to restore them.
+2. Close all Weather Underground settings dialogs. Stop/disable **every** Weather Underground instance, including instances on other hosts, and wait until they are no longer running. Keep them stopped and do not edit their configuration until the migration and update finish.
+3. Copy `lib/migrate-api-key.js` from the new, reviewed adapter sources into the **currently installed old adapter's** `lib/` directory. Copying this one file does not install the new adapter metadata. Do not install the new package to obtain the migration command.
+4. From your ioBroker installation directory run:
+
+   ```sh
+   node node_modules/iobroker.weatherunderground/lib/migrate-api-key.js --install
+   ```
+
+   The command migrates all existing Weather Underground instances and verifies each write. It does not start weather requests or print key values. It requires a nonempty existing system secret and stopped instances. It preserves other configuration, adds both key-protection flags, encrypts keys previously marked as plaintext, and leaves already-encrypted keys unchanged. Repeating it is safe while the old adapter version is still installed. The command refuses to run if the installed `io-package.json` already declares API-key encryption. If it fails, keep instances stopped, correct the reported problem and repeat the migration **before** updating.
+5. After successful migration, install the new adapter version. Open and save settings once to verify the configuration, then re-enable the instances that were enabled previously. Do not re-enter existing keys.
+
+For rollback, keep instances stopped and restore the pre-migration ioBroker backup together with the old adapter version; restore the key and its encryption metadata together. Do not remove encryption flags from an encrypted value. If this version was already installed without the migration, stop and restore the pre-upgrade backup before retrying; this command does not guess the lost plaintext/ciphertext distinction.
 
 ## Icon Sets
 
@@ -79,6 +97,7 @@ Or you can aso use your own "custom" icons, for this purpose the following gif-f
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Encrypt and protect configured API keys; existing installations require the documented one-time migration before upgrading
 - (reloxx13) Replace the legacy settings dialog with JSON Config and preserve existing translations and options
 - (reloxx13) Correct hourly forecast provider paths for metric and non-metric units
 - (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
