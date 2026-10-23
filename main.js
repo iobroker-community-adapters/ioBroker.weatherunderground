@@ -567,7 +567,7 @@ function getWebsiteKey(cb, tryQ) {
             if (body) {
                 body = body.replace(/&q;/g, '"').replace(/&a;/g, '&');
             }
-            const data = body.match(/api\.weather\.com\/.*apiKey=([0-9a-zA-Z]{32}).*/);
+            const data = body.match(/"API_KEY"\s*:\s*"([0-9a-zA-Z]{32})"/);
             if (!data || !data[1]) {
                 return cb && cb();
             }
@@ -2179,7 +2179,6 @@ function getNewWuDataDailyForecast(weatherData, cb) {
         let url;
         if (
             adapter.config.station &&
-            officialApiKey &&
             weatherData.current_observation &&
             weatherData.current_observation.lon !== undefined &&
             weatherData.current_observation.lat !== undefined

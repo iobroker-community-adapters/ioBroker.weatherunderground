@@ -36,7 +36,7 @@ async function exercise(action, outcome) {
                         }
                         if (outcome === 'website') {
                             return Promise.resolve({
-                                data: `"https://api.weather.com/v2/pws/observations/current?apiKey=${webKey}" "https://api.weather.com/v3/wx/forecast/daily/5day?apiKey=${webKey}" "https://api.weather.com/v3/wx/forecast/hourly/2day?apiKey=${webKey}"`,
+                                data: `{"API_KEY":"${webKey}","API_URL":"https://api.weather.com"}`,
                             });
                         }
                         if (outcome === 'station') {
