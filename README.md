@@ -1,21 +1,30 @@
 ![Logo](admin/wu.png)
 # ioBroker.weatherunderground
 
-![Number of Installations](http://iobroker.live/badges/weatherunderground-installed.svg)
-![Number of Installations](http://iobroker.live/badges/weatherunderground-stable.svg)
-[![NPM version](http://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
+![Number of Installations](https://iobroker.live/badges/weatherunderground-installed.svg)
+![Number of Installations](https://iobroker.live/badges/weatherunderground-stable.svg)
+[![NPM version](https://img.shields.io/npm/v/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
 ![Test and Release](https://github.com/iobroker-community-adapters/iobroker.weatherunderground/workflows/Test%20and%20Release/badge.svg)
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/weatherunderground/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)!
 
-ioBroker Adapter to load 24h weather forecast for your location from [Weather Underground](http://www.wunderground.com/).
+ioBroker adapter for current observations, up to 36 hours of hourly forecasts and six daily forecasts for your location from [Weather Underground](https://www.wunderground.com/).
 The adapter retrieves daily and hourly forecast data once per hour by default. The schedule can be changed in the instance settings.
 
+## Requirements
+
+For the current development version:
+
+- Node.js **22 or newer**
+- js-controller **6.0.11 or newer**
+- Admin **7.7.22 or newer**
+
 ## Notes
-You can use this adapter with providing an official "PWS owner" API-key or leave API key empty to use keys extracted out of the WU webpage.
+
+An official PWS owner API key is optional. With a configured station and current observations enabled, it is used for PWS observations. Forecasts, current weather descriptions/icons and air quality use the website key extracted from Weather Underground, even when an owner key is supplied. Leaving the owner key empty also uses the website key for observations. Availability of that key and the individual products is controlled by the provider.
 
 ## Configuration
 
@@ -49,13 +58,27 @@ Descriptions use the existing language setting. With current conditions enabled,
 
 ## Development build
 
+Use Node.js 22.12 or newer within the supported runtime range for source builds; the Vite build tooling has a higher minimum than the adapter runtime. The CI build/check job uses Node.js 24; adapter tests also cover Node.js 22 and 26.
+
 The configuration UI sources are in `admin/src/`. As in ioBroker Admin, generated `admin/custom/` files are ignored by Git and must not be committed. After `npm ci`, run `npm run build` before testing, packing or locally uploading the adapter. CI builds the UI before adapter tests; `prepublishOnly` rebuilds it before npm publication. The published npm package includes the generated UI and its assets, so installed users do not need build tools. For a source/Git installation, first run `npm ci`, `npm run build` and `npm pack` in the source checkout, then install the resulting tarball with ioBroker. An unbuilt Git checkout has no generated configuration UI.
 
 ## Icon Sets
 
-The current API uses numeric icon codes, such as `32.svg`. Built-in selections A–K use the provider's v4 numeric SVG set with this API. These selections still select their original named GIF files when processing legacy responses; named legacy files cannot be combined with numeric modern codes.
+The adapter currently uses the new Weather Company API, which returns numeric icon codes. All built-in selections **A–K use the same v4 SVG icons** with this API; switching between A–K does not change their appearance. The selections remain compatible with saved configuration.
 
-The settings preview shows representative numeric icons matching the current runtime. For a custom set, select Custom and enter its base URL and format (GIF, PNG or SVG). The directory must contain numeric files such as `0.png`, `12.png`, `26.png` and `32.png` for the current API. Existing legacy responses retain their named files, such as `clear.gif` and `nt_clear.gif`. The adapter does not translate numeric codes into legacy filenames. Custom sets are hosted and maintained by their owner.
+For example, code `32` produces [32.svg](https://www.wunderground.com/static/i/c/v4/32.svg). The settings preview uses representative numeric icons from the same set.
+
+For your own icons, select **Custom**, enter the base URL and choose GIF, PNG or SVG. Host a file for each numeric code returned by the provider; for example:
+
+| Setting | Example |
+| --- | --- |
+| Custom Icon-Base-URL | `https://example.com/weather-icons/` |
+| Format | PNG |
+| Result for code 32 | `https://example.com/weather-icons/32.png` |
+
+The preview samples codes `0`, `12`, `26` and `32`; these are examples, not the complete set of required files. Custom icons are hosted and maintained by their owner.
+
+The old A–K directories contain named legacy files such as `clear.gif` and `nt_clear.gif`. They are not suitable as Custom base URLs for the current API: `https://www.wunderground.com/static/i/c/a/32.svg`, for example, returns Access Denied. The adapter does not translate numeric codes into legacy filenames. Handling of named files is retained for legacy responses, but the current runtime uses the new API.
 
 ## Changelog
 <!--
@@ -64,6 +87,7 @@ The settings preview shows representative numeric icons matching the current run
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Refresh documented requirements, forecast coverage, API-key usage and build instructions
 - (reloxx13) Display the first hourly forecast as "Next hourly forecast" while preserving its 0h ID and custom channel names
 - (reloxx13) Correct weather state roles and update existing object roles without changing IDs, types, units or user metadata (#328)
 - (reloxx13) Fix numeric weather icon URLs and align the settings preview (#216)
@@ -80,10 +104,8 @@ The settings preview shows representative numeric icons matching the current run
 - (reloxx13) Use calendar-day minimum and maximum forecast temperatures (#500)
 - (reloxx13) Correct the documented default refresh interval to once per hour (#501)
 - (copilot) Adapter requires node.js >= 22 now
-- (iobroker-bot) Adapter requires node.js >= 20 now.
 - (copilot) Adapter requires admin >= 7.7.22 now
 - (copilot) Adapter requires js-controller >= 6.0.11 now
-- (copilot) Adapter requires admin >= 7.6.17 now
 
 ### 3.7.0 (2024-04-13)
 * (mcm1957) Adapter requires node.js 18 and js-controller >= 5 now
