@@ -54,7 +54,7 @@ Hidden settings retain their saved values. The dialog groups Country/Language an
 The adapter also reads the key used by the Weather Underground website:
 
 - Station observations use the owner key when a station and `current` are configured; otherwise they use the website key.
-- Daily forecasts use the owner key when a station, its coordinates and an owner key are available; otherwise they use the extracted website URL/key.
+- Daily forecasts use station coordinates with the owner key when available, or the website key otherwise. Without station coordinates, they use the extracted website URL/key.
 - Hourly forecasts and regional products use the website key, even with an owner key configured.
 
 Key and product availability are controlled by the provider. The retained `useLegacyApi` key has no effect: the runtime always disables the former API.
@@ -139,6 +139,8 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Read the website API key from the current Weather Underground page configuration (#509)
+- (reloxx13) Request daily forecasts using station coordinates and the website key when no owner key is configured (#509)
 - (reloxx13) Add opt-in regional weather descriptions, icons, visibility and detailed EPA air quality without replacing station measurements (#220, #388)
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events and PWS quality status
 - (reloxx13) Add short daily descriptions while preserving full narratives and consistent day/night selection (#388)
