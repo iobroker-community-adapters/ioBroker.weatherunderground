@@ -26,6 +26,8 @@ const axios = require('axios');
 const crypto = require('node:crypto');
 const migrateApiKey = require('./lib/migrate-api-key');
 const resolveIconUrl = require('./lib/icon-url');
+const airQualityPollutants = { CO: 'CO', NO2: 'NO2', O3: 'O3', PM10: 'PM10', PM2_5: 'PM2.5', SO2: 'SO2' };
+
 const adapterName = require('./package.json').name.split('.').pop();
 let adapter;
 
@@ -1276,6 +1278,44 @@ async function parseNewResult(body, cb) {
                             ? airQualityIndex
                             : null,
                 });
+                const airQuality = body.air_quality?.globalairquality;
+                for (const [state, value] of [
+                    ['airQualityCategory', airQuality?.airQualityCategory],
+                    ['primaryPollutant', airQuality?.primaryPollutant],
+                    ['airQualitySource', airQuality?.source],
+                    ['airQualityMessage', airQuality?.messages?.General?.text],
+                    ['airQualitySensitiveMessage', airQuality?.messages?.['Sensitive Group']?.text],
+                ]) {
+                    await adapter.setStateAsync(`forecast.current.${state}`, {
+                        ack: true,
+                        val: typeof value === 'string' && value.trim() ? value : null,
+                    });
+                }
+                for (const [id, key] of Object.entries(airQualityPollutants)) {
+                    const pollutant = airQuality?.pollutants?.[key];
+                    for (const [field, value] of [
+                        ['amount', ['µg/m3', 'µg/m³'].includes(pollutant?.unit) ? pollutant?.amount : null],
+                        ['index', pollutant?.index],
+                        ['category', pollutant?.category],
+                    ]) {
+                        await adapter.setStateAsync(`forecast.current.airQuality.${id}.${field}`, {
+                            ack: true,
+                            val:
+                                field === 'category'
+                                    ? typeof value === 'string' && value.trim()
+                                        ? value
+                                        : null
+                                    : typeof value === 'number' && Number.isFinite(value)
+                                      ? value
+                                      : null,
+                        });
+                    }
+                }
+                const qualityControl = body.current_observation.qcStatus;
+                await adapter.setStateAsync('forecast.current.qualityControl', {
+                    ack: true,
+                    val: typeof qualityControl === 'number' && Number.isFinite(qualityControl) ? qualityControl : null,
+                });
                 await adapter.setStateAsync('forecast.current.temp', {
                     ack: true,
                     val: body.current_observation.metric.temp,
@@ -1320,7 +1360,11 @@ async function parseNewResult(body, cb) {
                 });
                 await adapter.setStateAsync('forecast.current.visibility', {
                     ack: true,
-                    val: null,
+                    val:
+                        typeof body.current_conditions?.visibility === 'number' &&
+                        Number.isFinite(body.current_conditions.visibility)
+                            ? body.current_conditions.visibility
+                            : null,
                 });
                 await adapter.setStateAsync('forecast.current.solarRadiation', {
                     ack: true,
@@ -1498,6 +1542,24 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: time2date(new Date(body.daily_forecast.validTimeLocal[i])),
                     });
+                    for (const [state, field] of [
+                        ['sunrise', 'sunriseTimeLocal'],
+                        ['sunset', 'sunsetTimeLocal'],
+                        ['moonrise', 'moonriseTimeLocal'],
+                        ['moonset', 'moonsetTimeLocal'],
+                        ['moonPhase', 'moonPhase'],
+                    ]) {
+                        const value = body.daily_forecast[field]?.[i];
+                        await adapter.setStateAsync(`forecast.${i}d.${state}`, {
+                            ack: true,
+                            val:
+                                typeof value === 'string' &&
+                                value.trim() &&
+                                (state === 'moonPhase' || Number.isFinite(Date.parse(value)))
+                                    ? value
+                                    : null,
+                        });
+                    }
                     await adapter.setStateAsync(`forecast.${i}d.tempMax`, {
                         ack: true,
                         val:
@@ -1568,24 +1630,29 @@ async function parseNewResult(body, cb) {
                         val: body.daily_forecast.daypart[0].qpfSnow[1 + i * 2],
                     });
 
+                    const dayWind = daypart.windSpeed?.[i * 2];
+                    const nightWind = daypart.windSpeed?.[i * 2 + 1];
+                    const maxWindIndex =
+                        Number.isFinite(dayWind) && (!Number.isFinite(nightWind) || dayWind >= nightWind)
+                            ? i * 2
+                            : i * 2 + 1;
+                    const maxWindSpeed = daypart.windSpeed?.[maxWindIndex];
+                    const direction = daypart.windDirection?.[maxWindIndex];
+                    const maxWindDegrees =
+                        Number.isFinite(maxWindSpeed) &&
+                        typeof direction === 'number' &&
+                        Number.isFinite(direction) &&
+                        direction >= 0 &&
+                        direction <= 360
+                            ? direction
+                            : null;
                     await adapter.setStateAsync(`forecast.${i}d.windSpeedMax`, {
                         ack: true,
-                        val: Math.max(
-                            daypart.windSpeed[daypartIndex],
-                            body.daily_forecast.daypart[0].windSpeed[1 + i * 2],
-                        ),
+                        val: Number.isFinite(maxWindSpeed) ? maxWindSpeed : null,
                     });
-                    await adapter.setStateAsync(`forecast.${i}d.windDirectionMax`, {
-                        ack: true,
-                        val: Math.max(
-                            daypart.windDirection[daypartIndex],
-                            body.daily_forecast.daypart[0].windDirection[1 + i * 2],
-                        ),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.windDegreesMax`, {
-                        ack: true,
-                        val: null,
-                    });
+                    // Preserve the existing numeric windDirectionMax contract.
+                    await adapter.setStateAsync(`forecast.${i}d.windDirectionMax`, { ack: true, val: maxWindDegrees });
+                    await adapter.setStateAsync(`forecast.${i}d.windDegreesMax`, { ack: true, val: maxWindDegrees });
 
                     await adapter.setStateAsync(`forecast.${i}d.windSpeed`, {
                         ack: true,
@@ -1778,6 +1845,26 @@ async function parseNewResult(body, cb) {
                         ack: true,
                         val: body.hourly_forecast.iconCode?.[i] ?? null,
                     });
+                    for (const [state, field, type] of [
+                        ['windGust', 'windGust', 'number'],
+                        ['dewPoint', 'temperatureDewPoint', 'number'],
+                        ['windChill', 'temperatureWindChill', 'number'],
+                        ['stateShort', 'wxPhraseLong', 'string'],
+                        ['precipitationType', 'precipType', 'string'],
+                    ]) {
+                        const value = body.hourly_forecast[field]?.[i];
+                        await adapter.setStateAsync(`forecastHourly.${i}h.${state}`, {
+                            ack: true,
+                            val:
+                                type === 'number'
+                                    ? typeof value === 'number' && Number.isFinite(value)
+                                        ? value
+                                        : null
+                                    : typeof value === 'string' && value.trim()
+                                      ? value
+                                      : null,
+                        });
+                    }
                     await adapter.setStateAsync(`forecastHourly.${i}h.sky`, {
                         ack: true,
                         val: body.hourly_forecast.cloudCover[i],
@@ -2368,6 +2455,55 @@ async function checkWeatherVariables() {
             },
             native: { id: 'globalairquality.airQualityIndex' },
         });
+        for (const [state, name, field] of [
+            ['airQualityCategory', 'Air quality category', 'airQualityCategory'],
+            ['primaryPollutant', 'Primary air pollutant', 'primaryPollutant'],
+            ['airQualitySource', 'Air quality source', 'source'],
+            ['airQualityMessage', 'Air quality advice', 'messages.General.text'],
+            ['airQualitySensitiveMessage', 'Air quality advice for sensitive groups', 'messages.Sensitive Group.text'],
+        ]) {
+            await adapter.setObjectNotExistsAsync(`forecast.current.${state}`, {
+                type: 'state',
+                common: { name, role: 'text', type: 'string', read: true, write: false },
+                native: { id: `globalairquality.${field}` },
+            });
+        }
+        await adapter.setObjectNotExistsAsync('forecast.current.airQuality', {
+            type: 'channel',
+            common: { name: 'Air quality pollutants' },
+            native: {},
+        });
+        for (const [id, key] of Object.entries(airQualityPollutants)) {
+            const prefix = `forecast.current.airQuality.${id}`;
+            await adapter.setObjectNotExistsAsync(prefix, {
+                type: 'channel',
+                common: { name: key },
+                native: {},
+            });
+            for (const [field, name, type, role] of [
+                ['amount', `${key} concentration`, 'number', 'value'],
+                ['index', `${key} air quality index (EPA)`, 'number', 'value.airquality'],
+                ['category', `${key} air quality category`, 'string', 'text'],
+            ]) {
+                await adapter.setObjectNotExistsAsync(`${prefix}.${field}`, {
+                    type: 'state',
+                    common: {
+                        name,
+                        type,
+                        role,
+                        ...(field === 'amount' ? { unit: 'µg/m³' } : {}),
+                        read: true,
+                        write: false,
+                    },
+                    native: { id: `globalairquality.pollutants.${key}.${field}` },
+                });
+            }
+        }
+        await adapter.setObjectNotExistsAsync('forecast.current.qualityControl', {
+            type: 'state',
+            common: { name: 'PWS quality control status', type: 'number', role: 'value', read: true, write: false },
+            native: { id: 'current_observation.qcStatus' },
+        });
         const weatherObject = await adapter.getObjectAsync('forecast.current.weather');
         if (weatherObject?.common.name === 'Weather (engl.)') {
             await adapter.extendObjectAsync('forecast.current.weather', { common: { name: 'Weather' } });
@@ -2671,12 +2807,16 @@ async function checkWeatherVariables() {
             common: {
                 name: 'URL to current weather icon',
                 role: 'weather.icon',
-                type: 'number',
+                type: 'string',
                 read: true,
                 write: false,
             },
             native: { id: 'current_observation.icon_url' },
         });
+        const iconObject = await adapter.getObjectAsync('forecast.current.iconURL');
+        if (iconObject?.common.type === 'number') {
+            await adapter.extendObjectAsync('forecast.current.iconURL', { common: { type: 'string' } });
+        }
         await adapter.setObjectNotExistsAsync('forecast.current.forecastURL', {
             type: 'state',
             common: {
@@ -2804,6 +2944,19 @@ async function checkWeatherVariables() {
                 common: { name: 'forecast for', type: 'string', role: `date.forecast.${p}`, read: true, write: false },
                 native: { id: `${id}date` },
             });
+            for (const [state, field, name, role] of [
+                ['sunrise', 'sunriseTimeLocal', 'Sunrise', `date.sunrise.forecast.${p}`],
+                ['sunset', 'sunsetTimeLocal', 'Sunset', `date.sunset.forecast.${p}`],
+                ['moonrise', 'moonriseTimeLocal', 'Moonrise', 'date'],
+                ['moonset', 'moonsetTimeLocal', 'Moonset', 'date'],
+                ['moonPhase', 'moonPhase', 'Moon phase', 'text'],
+            ]) {
+                await adapter.setObjectNotExistsAsync(id + state, {
+                    type: 'state',
+                    common: { name, role, type: 'string', read: true, write: false },
+                    native: { id: field },
+                });
+            }
             if (nonMetric) {
                 await adapter.setObjectNotExistsAsync(`${id}tempMax`, {
                     type: 'state',
@@ -3251,6 +3404,33 @@ async function checkWeatherVariables() {
                 if (['in 0h', 'Current conditions'].includes(firstHour?.common.name)) {
                     await adapter.extendObjectAsync('forecastHourly.0h', { common: { name: 'Next hourly forecast' } });
                 }
+            }
+            for (const [state, field, name, role, type, unit] of [
+                ['windGust', 'windGust', 'Wind gust', 'value.speed.wind.gust', 'number', nonMetric ? 'm/h' : 'km/h'],
+                [
+                    'dewPoint',
+                    'temperatureDewPoint',
+                    'Dew point',
+                    'value.temperature.dewpoint',
+                    'number',
+                    nonMetric ? '°F' : '°C',
+                ],
+                [
+                    'windChill',
+                    'temperatureWindChill',
+                    'Wind chill',
+                    'value.temperature.windchill',
+                    'number',
+                    nonMetric ? '°F' : '°C',
+                ],
+                ['stateShort', 'wxPhraseLong', 'Short weather forecast', 'weather.title', 'string'],
+                ['precipitationType', 'precipType', 'Precipitation type', 'text', 'string'],
+            ]) {
+                await adapter.setObjectNotExistsAsync(id + state, {
+                    type: 'state',
+                    common: { name, role, type, ...(unit ? { unit } : {}), read: true, write: false },
+                    native: { id: field },
+                });
             }
             await adapter.setObjectNotExistsAsync(`${id}time`, {
                 type: 'state',

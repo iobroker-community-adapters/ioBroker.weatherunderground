@@ -56,6 +56,28 @@ Descriptions use the existing language setting. With current conditions enabled,
 
 `forecastHourly.0h` is displayed as "Next hourly forecast"; its ID and first hourly forecast values are unchanged. `0h` is the first API response index, not midnight or necessarily the current hour; `.time` gives its forecast timestamp. Existing custom channel names are preserved.
 
+## Additional forecast and air-quality states
+
+All additions use the existing requests and configuration switches:
+
+| States | Values |
+| --- | --- |
+| `forecastHourly.0h` through `forecastHourly.35h` | `windGust`, `dewPoint`, `windChill`, `stateShort` (localized weather text), `precipitationType` (provider code, such as `rain` or `snow`) |
+| `forecast.0d` through `forecast.5d` | `sunrise`, `sunset`, `moonrise`, `moonset`, `moonPhase` |
+| `forecast.current` | `qualityControl` (raw PWS quality-control code), `airQualityCategory`, `primaryPollutant`, `airQualitySource`, `airQualityMessage`, `airQualitySensitiveMessage` |
+| `forecast.current.airQuality.CO`, `.NO2`, `.O3`, `.PM10`, `.PM2_5`, `.SO2` | `amount` (concentration in µg/m³), `index` (EPA pollutant index), `category` |
+
+Sun and moon times retain the provider's ISO timestamp and UTC offset. An event can be unavailable, for example when the moon does not rise or set during that calendar day. Missing or malformed optional values clear to `null`; zero remains a valid numeric value. Concentrations are accepted only when the provider reports µg/m³; an unsupported unit leaves `amount` null while its index and category remain available. AQ information and current visibility are regional products, not PWS measurements. Other current measurements retain their PWS source; the raw quality-control code is not interpreted or used to discard measurements.
+
+### Null values
+
+- Current visibility now uses the already requested regional current-conditions response. It stays null when that product has no valid value.
+- Daily `windDegreesMax` and numeric `windDirectionMax` now use the direction of the day/night period with the greatest available wind speed, not the largest compass angle. Both retain their existing numeric type; a missing direction is not guessed from a slower period.
+- PWS solar radiation and UV remain null when the station supplies null. The adapter does not replace them with regional measurements.
+- Expired daytime precipitation/snow and unavailable astronomical events remain null. They are not zero measurements.
+- `forecast.current.forecastURL` and `historyURL` remain null: the modern observation response does not supply the old API's page links. The adapter does not invent a replacement URL.
+- Missing weather descriptions, icons or AQ products remain null, independently of available PWS measurements.
+
 ## Development build
 
 Use Node.js 22.12 or newer within the supported runtime range for source builds; the Vite build tooling has a higher minimum than the adapter runtime. The CI build/check job uses Node.js 24; adapter tests also cover Node.js 22 and 26.
@@ -84,9 +106,13 @@ The old A–K directories contain named legacy files such as `clear.gif` and `nt
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
+- (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
+- (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
+- (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata
 - (reloxx13) Refresh documented requirements, forecast coverage, API-key usage and build instructions
 - (reloxx13) Display the first hourly forecast as "Next hourly forecast" while preserving its 0h ID and custom channel names
 - (reloxx13) Correct weather state roles and update existing object roles without changing IDs, types, units or user metadata (#328)

@@ -96,7 +96,154 @@ function observation(lat = 52, lon = 13) {
     };
 }
 
+// Synthetic values in the verified globalAirQuality response shape (2026-10-23).
+function qualityDetails() {
+    return {
+        airQualityIndex: 42,
+        airQualityCategory: 'Moderate',
+        primaryPollutant: 'PM2.5',
+        source: 'Synthetic source',
+        messages: { General: { text: 'General advice' }, 'Sensitive Group': { text: 'Sensitive advice' } },
+        pollutants: {
+            CO: { amount: 240, index: 2, category: 'Good', unit: 'µg/m3' },
+            NO2: { amount: 15, index: 12, category: 'Good', unit: 'µg/m3' },
+            O3: { amount: 65, index: 30, category: 'Good', unit: 'µg/m3' },
+            PM10: { amount: 22, index: 20, category: 'Good', unit: 'µg/m3' },
+            'PM2.5': { amount: 18.5, index: 42, category: 'Moderate', unit: 'µg/m3' },
+            SO2: { amount: 4, index: 3, category: 'Good', unit: 'µg/m3' },
+        },
+    };
+}
+
 describe('current air quality', () => {
+    it('publishes AQ descriptions and six pollutant concentrations, indices and categories', async () => {
+        const h = harness();
+        h.context.body = { ...observation(), air_quality: { globalairquality: qualityDetails() } };
+        await h.run('parseNewResult(body)');
+        for (const [name, expected] of [
+            ['airQualityCategory', 'Moderate'],
+            ['primaryPollutant', 'PM2.5'],
+            ['airQualitySource', 'Synthetic source'],
+            ['airQualityMessage', 'General advice'],
+            ['airQualitySensitiveMessage', 'Sensitive advice'],
+        ]) {
+            assert.equal(h.states[`forecast.current.${name}`], expected);
+        }
+        for (const [name, amount, index, category] of [
+            ['CO', 240, 2, 'Good'],
+            ['NO2', 15, 12, 'Good'],
+            ['O3', 65, 30, 'Good'],
+            ['PM10', 22, 20, 'Good'],
+            ['PM2_5', 18.5, 42, 'Moderate'],
+            ['SO2', 4, 3, 'Good'],
+        ]) {
+            const id = `forecast.current.airQuality.${name}`;
+            assert.equal(h.states[`${id}.amount`], amount, id);
+            assert.equal(h.states[`${id}.index`], index, id);
+            assert.equal(h.states[`${id}.category`], category, id);
+        }
+        assert.equal(h.states['forecast.current.airQualityIndex'], 42);
+        assert.equal(h.states['forecast.current.temp'], 17);
+    });
+
+    it('clears stale AQ details and rejects concentration units without losing indices or PWS data', async () => {
+        const h = harness();
+        const quality = qualityDetails();
+        h.context.body = { ...observation(), air_quality: { globalairquality: quality } };
+        await h.run('parseNewResult(body)');
+        Object.assign(quality, {
+            airQualityCategory: '',
+            primaryPollutant: null,
+            source: 12,
+            messages: { General: { text: '   ' }, 'Sensitive Group': { text: false } },
+        });
+        Object.assign(quality.pollutants, {
+            CO: { amount: 0, index: 0, category: 'Good', unit: 'µg/m³' },
+            NO2: { amount: 15, index: 12, category: 'Good', unit: 'ppm' },
+            O3: { amount: '65', index: '30', category: 12, unit: 'µg/m3' },
+            PM10: { amount: Infinity, index: NaN, category: ' ', unit: 'µg/m3' },
+            'PM2.5': null,
+        });
+        delete quality.pollutants.SO2;
+        await h.run('parseNewResult(body)');
+        for (const name of [
+            'airQualityCategory',
+            'primaryPollutant',
+            'airQualitySource',
+            'airQualityMessage',
+            'airQualitySensitiveMessage',
+        ]) {
+            assert.equal(h.states[`forecast.current.${name}`], null, name);
+        }
+        assert.equal(h.states['forecast.current.airQuality.CO.amount'], 0);
+        assert.equal(h.states['forecast.current.airQuality.CO.index'], 0);
+        assert.equal(h.states['forecast.current.airQuality.NO2.amount'], null);
+        assert.equal(h.states['forecast.current.airQuality.NO2.index'], 12);
+        assert.equal(h.states['forecast.current.airQuality.NO2.category'], 'Good');
+        for (const name of ['O3', 'PM10', 'PM2_5', 'SO2']) {
+            for (const field of ['amount', 'index', 'category']) {
+                assert.equal(h.states[`forecast.current.airQuality.${name}.${field}`], null, `${name}.${field}`);
+            }
+        }
+        delete h.context.body.air_quality;
+        await h.run('parseNewResult(body)');
+        assert.equal(h.states['forecast.current.airQuality.CO.amount'], null);
+        assert.equal(h.states['forecast.current.airQuality.NO2.index'], null);
+        assert.equal(h.states['forecast.current.airQuality.CO.category'], null);
+        assert.equal(h.states['forecast.current.airQualityIndex'], null);
+        assert.equal(h.states['forecast.current.temp'], 17);
+    });
+
+    it('creates read-only AQ detail objects with concentration units and preserves user metadata', async () => {
+        const h = harness();
+        const existing = { type: 'state', common: { name: 'My particles', custom: { history: { enabled: true } } } };
+        const expected = structuredClone(existing);
+        const objects = { 'forecast.current.airQuality.PM2_5.amount': existing };
+        h.context.testAdapter.setObjectNotExistsAsync = async (id, object) => {
+            objects[id] ??= object;
+        };
+        h.context.testAdapter.getObjectAsync = async id => objects[id];
+        h.context.testAdapter.extendObjectAsync = async (id, patch) => Object.assign(objects[id].common, patch.common);
+        await h.run('checkWeatherVariables()');
+        for (const name of [
+            'airQualityCategory',
+            'primaryPollutant',
+            'airQualitySource',
+            'airQualityMessage',
+            'airQualitySensitiveMessage',
+        ]) {
+            const object = objects[`forecast.current.${name}`];
+            assert.ok(object, name);
+            assert.equal(object.common.type, 'string', name);
+            assert.equal(object.common.read, true, name);
+            assert.equal(object.common.write, false, name);
+        }
+        assert.equal(objects['forecast.current.airQuality'].type, 'channel');
+        for (const name of ['CO', 'NO2', 'O3', 'PM10', 'PM2_5', 'SO2']) {
+            const id = `forecast.current.airQuality.${name}`;
+            assert.equal(objects[id].type, 'channel', id);
+            for (const [field, type, role, unit] of [
+                ['amount', 'number', 'value', 'µg/m³'],
+                ['index', 'number', 'value.airquality', undefined],
+                ['category', 'string', 'text', undefined],
+            ]) {
+                if (name === 'PM2_5' && field === 'amount') {
+                    continue;
+                }
+                const object = objects[`${id}.${field}`];
+                assert.equal(object.type, 'state', `${id}.${field}`);
+                assert.equal(object.common.type, type, `${id}.${field}`);
+                assert.equal(object.common.role, role, `${id}.${field}`);
+                assert.equal(object.common.unit, unit, `${id}.${field}`);
+                assert.equal(object.common.read, true, `${id}.${field}`);
+                assert.equal(object.common.write, false, `${id}.${field}`);
+            }
+        }
+        assert.deepEqual(objects['forecast.current.airQuality.PM2_5.amount'], expected);
+        assert.equal(objects['forecast.current.airQualityIndex'].common.role, 'value.airquality');
+        assert.equal(objects['forecast.current.airQualityIndex'].common.unit, undefined);
+    });
+
     it('resolves the station location and requests EPA air quality with the website key', async () => {
         const h = harness();
         h.context.body = observation(0, 0);

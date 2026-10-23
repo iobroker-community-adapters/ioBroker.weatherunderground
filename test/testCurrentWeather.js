@@ -86,6 +86,63 @@ function observation(lat = 52, lon = 13) {
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
 describe('current weather description', () => {
+    it('preserves finite provider quality codes and clears unavailable codes', async () => {
+        const h = harness();
+        for (const qcStatus of [1, 0, -1, 2.5, undefined, null, '', '1', NaN, Infinity]) {
+            h.context.body = observation();
+            h.context.body.current_observation.qcStatus = qcStatus;
+            await h.run('parseNewResult(body)');
+            assert.equal(
+                h.states['forecast.current.qualityControl'],
+                typeof qcStatus === 'number' && Number.isFinite(qcStatus) ? qcStatus : null,
+            );
+            assert.equal(h.states['forecast.current.temp'], 17);
+        }
+    });
+
+    it('uses only finite regional visibility, including zero', async () => {
+        for (const visibility of [11.27, 0, undefined, null, '', '11.27', NaN, Infinity]) {
+            const h = harness();
+            h.context.body = { ...observation(), current_conditions: { visibility } };
+            await h.run('parseNewResult(body)');
+            assert.equal(
+                h.states['forecast.current.visibility'],
+                typeof visibility === 'number' && Number.isFinite(visibility) ? visibility : null,
+            );
+            assert.equal(h.states['forecast.current.temp'], 17);
+        }
+        const h = harness();
+        h.context.body = observation();
+        await h.run('parseNewResult(body)');
+        assert.equal(h.states['forecast.current.visibility'], null);
+    });
+
+    it('creates string icon URLs and corrects old number types without changing user metadata', async () => {
+        for (const type of [undefined, 'number', 'string']) {
+            const h = harness();
+            const id = 'forecast.current.iconURL';
+            const existing = type && {
+                type: 'state',
+                common: { type, name: 'My icon', custom: { history: { enabled: true } } },
+            };
+            const objects = new Map(existing ? [[id, existing]] : []);
+            h.context.testAdapter.setObjectNotExistsAsync = async (key, object) => {
+                if (!objects.has(key)) {
+                    objects.set(key, object);
+                }
+            };
+            h.context.testAdapter.getObjectAsync = async key => objects.get(key);
+            h.context.testAdapter.extendObjectAsync = async (key, object) =>
+                Object.assign(objects.get(key).common, object.common);
+            await h.run('checkWeatherVariables()');
+            assert.equal(objects.get(id).common.type, 'string');
+            if (existing) {
+                assert.equal(objects.get(id).common.name, 'My icon');
+                assert.deepEqual(objects.get(id).common.custom, { history: { enabled: true } });
+            }
+        }
+    });
+
     it('updates only the old stock weather label, preserving custom names', async () => {
         for (const name of ['Weather (engl.)', 'My weather', { en: 'Custom weather' }]) {
             const h = harness();

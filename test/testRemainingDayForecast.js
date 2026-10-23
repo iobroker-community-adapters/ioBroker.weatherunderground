@@ -84,6 +84,32 @@ function parse(body, enabled = true) {
 }
 
 describe('remaining daily forecast', () => {
+    const windCases = [
+        { speeds: [30, 10], directions: [10, 350], expectedSpeed: 30, expectedDirection: 10 },
+        { speeds: [10, 30], directions: [350, 10], expectedSpeed: 30, expectedDirection: 10 },
+        { speeds: [20, 20], directions: [10, 350], expectedSpeed: 20, expectedDirection: 10 },
+        { speeds: [0, null], directions: [0, 350], expectedSpeed: 0, expectedDirection: 0 },
+        { speeds: [null, 0], directions: [350, 0], expectedSpeed: 0, expectedDirection: 0 },
+        { speeds: [NaN, Infinity], directions: [10, 350], expectedSpeed: null, expectedDirection: null },
+        { speeds: [null, undefined], directions: [10, 350], expectedSpeed: null, expectedDirection: null },
+        { speeds: ['30', 10], directions: [350, 10], expectedSpeed: 10, expectedDirection: 10 },
+        { speeds: [30, 10], directions: [null, 350], expectedSpeed: 30, expectedDirection: null },
+        { speeds: [30, 10], directions: [NaN, 350], expectedSpeed: 30, expectedDirection: null },
+        { speeds: [30, 10], directions: ['10', 350], expectedSpeed: 30, expectedDirection: null },
+    ];
+    for (const { speeds, directions, expectedSpeed, expectedDirection } of windCases) {
+        it(`keeps maximum wind directions with the strongest valid period (${JSON.stringify([speeds, directions])})`, async () => {
+            const body = forecast(false);
+            body.daily_forecast.daypart[0].windSpeed.splice(0, 2, ...speeds);
+            body.daily_forecast.daypart[0].windDirection.splice(0, 2, ...directions);
+            const { states, errors } = await parse(body);
+            assert.deepEqual(errors, []);
+            assert.equal(states['forecast.0d.windSpeedMax'], expectedSpeed);
+            assert.equal(states['forecast.0d.windDirectionMax'], expectedDirection);
+            assert.equal(states['forecast.0d.windDegreesMax'], expectedDirection);
+        });
+    }
+
     it('uses tonight when the provider has removed the expired daytime period', async () => {
         const { states, errors } = await parse(forecast(true));
         assert.deepEqual(errors, []);
@@ -95,6 +121,9 @@ describe('remaining daily forecast', () => {
         assert.equal(states['forecast.0d.windSpeed'], 12);
         assert.equal(states['forecast.0d.windDirection'], 'O');
         assert.equal(states['forecast.0d.windDegrees'], 90);
+        assert.equal(states['forecast.0d.windSpeedMax'], 12);
+        assert.equal(states['forecast.0d.windDirectionMax'], 90);
+        assert.equal(states['forecast.0d.windDegreesMax'], 90);
         assert.equal(states['forecast.0d.humidity'], 65);
         assert.equal(states['forecast.0d.humidityMin'], 65);
         assert.equal(states['forecast.0d.precipitationDay'], null);
