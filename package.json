@@ -65,7 +65,8 @@
     "check": "tsc --noEmit -p tsconfig.check.json",
     "lint": "eslint -c eslint.config.mjs .",
     "translate": "translate-adapter",
-    "release": "release-script"
+    "release": "release-script",
+    "prepublishOnly": "npm run build"
   },
   "bugs": {
     "url": "https://github.com/iobroker-community-adapters/ioBroker.weatherunderground/issues"

@@ -41,6 +41,10 @@ Run this **before installing the new adapter version**, while the old instance m
 
 For rollback, keep instances stopped and restore the pre-migration ioBroker backup together with the old adapter version; restore the key and its encryption metadata together. Do not remove encryption flags from an encrypted value. If this version was already installed without the migration, stop and restore the pre-upgrade backup before retrying; this command does not guess the lost plaintext/ciphertext distinction.
 
+## Development build
+
+The configuration UI sources are in `admin/src/`. As in ioBroker Admin, generated `admin/custom/` files are ignored by Git and must not be committed. After `npm ci`, run `npm run build` before testing, packing or locally uploading the adapter. CI builds the UI before adapter tests; `prepublishOnly` rebuilds it before npm publication. The published npm package includes the generated UI and its assets, so installed users do not need build tools. For a source/Git installation, first run `npm ci`, `npm run build` and `npm pack` in the source checkout, then install the resulting tarball with ioBroker. An unbuilt Git checkout has no generated configuration UI.
+
 ## Icon Sets
 
 There are some different Icon Sets available when using "Legacy API", see below. For the usabe with the new API the image names have changed (see https://docs.google.com/document/d/1dNCf6nF6cjm4oOxQxjtqNuAvG_iEe5f9MQH1xlCeV4s/edit) and are now number based ... they can be downloaded from e.g. https://drive.google.com/drive/folders/0B6fWQWXuE09OOWtBOXJNX190TDQ and could be used as custom set (see below). 

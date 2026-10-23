@@ -32,6 +32,9 @@ describe('published package', function () {
             ]) {
                 assert.ok(files.includes(required), `${required} must ship`);
             }
+            for (const asset of fs.readdirSync(path.join(root, 'admin/custom/assets'))) {
+                assert.ok(files.includes(`admin/custom/assets/${asset}`), `${asset} build asset must ship`);
+            }
             for (const language of ['en', 'de', 'es', 'fr', 'it', 'nl', 'pl', 'pt', 'ru', 'uk', 'zh-cn']) {
                 assert.ok(files.includes(`admin/i18n/${language}.json`), `${language} translations must ship`);
             }
