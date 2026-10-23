@@ -73,7 +73,6 @@ Sun and moon times retain the provider's ISO timestamp and UTC offset. An event 
 
 - Current visibility now uses the already requested regional current-conditions response. It stays null when that product has no valid value.
 - Daily `windDegreesMax` and numeric `windDirectionMax` now use the direction of the day/night period with the greatest available wind speed, not the largest compass angle. Both retain their existing numeric type; a missing direction is not guessed from a slower period.
-- PWS solar radiation and UV remain null when the station supplies null. The adapter does not replace them with regional measurements.
 - Expired daytime precipitation/snow and unavailable astronomical events remain null. They are not zero measurements.
 - `forecast.current.forecastURL` and `historyURL` remain null: the modern observation response does not supply the old API's page links. The adapter does not invent a replacement URL.
 - Missing weather descriptions, icons or AQ products remain null, independently of available PWS measurements.
@@ -106,11 +105,13 @@ The old A–K directories contain named legacy files such as `clear.gif` and `nt
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
+- (reloxx13) Show zero UV index and solar radiation instead of blank readings
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
 - (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Show zero UV index and solar radiation instead of blank readings
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events; PWS quality status and detailed EPA pollutant states
 - (reloxx13) Restore current visibility and maximum-wind direction values; correct existing current icon URL objects to string type while preserving user metadata
 - (reloxx13) Refresh documented requirements, forecast coverage, API-key usage and build instructions

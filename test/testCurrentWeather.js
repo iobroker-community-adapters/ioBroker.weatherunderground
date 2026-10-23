@@ -86,6 +86,18 @@ function observation(lat = 52, lon = 13) {
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
 describe('current weather description', () => {
+    it('uses zero for missing PWS UV and solar radiation without replacing supplied measurements', async () => {
+        const h = harness();
+        for (const value of [null, undefined, 0, 12.5]) {
+            h.context.body = observation();
+            h.context.body.current_observation.solarRadiation = value;
+            h.context.body.current_observation.uv = value;
+            await h.run('parseNewResult(body)');
+            assert.equal(h.states['forecast.current.solarRadiation'], value == null ? 0 : value);
+            assert.equal(h.states['forecast.current.UV'], value == null ? 0 : value);
+        }
+    });
+
     it('preserves finite provider quality codes and clears unavailable codes', async () => {
         const h = harness();
         for (const qcStatus of [1, 0, -1, 2.5, undefined, null, '', '1', NaN, Infinity]) {

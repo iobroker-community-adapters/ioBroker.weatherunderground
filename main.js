@@ -1368,11 +1368,11 @@ async function parseNewResult(body, cb) {
                 });
                 await adapter.setStateAsync('forecast.current.solarRadiation', {
                     ack: true,
-                    val: body.current_observation.solarRadiation,
+                    val: body.current_observation.solarRadiation ?? 0,
                 });
                 await adapter.setStateAsync('forecast.current.UV', {
                     ack: true,
-                    val: body.current_observation.uv,
+                    val: body.current_observation.uv ?? 0,
                 });
 
                 await adapter.setStateAsync('forecast.current.precipitationHour', {
