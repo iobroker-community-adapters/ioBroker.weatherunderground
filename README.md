@@ -23,7 +23,7 @@ Data is retrieved once per hour by default. Change the instance schedule to adju
 
 ## Requirements
 
-The current development version requires Node.js **22+**, js-controller **6.0.11+** and Admin **7.7.22+**.
+The current development version requires Node.js **22+**, js-controller **6.0.11+** and Admin **8.2.0+**.
 
 ## Configuration
 
@@ -146,6 +146,7 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 -->
 
 ### **WORK IN PROGRESS**
+- (mcm1957) Adapter requires Node.js >= 22, Admin >= 8.2.0 and js-controller >= 6.0.11 now
 - (reloxx13) Read the website API key from the current Weather Underground page configuration (#509)
 - (reloxx13) Request daily forecasts using station coordinates and the website key when no owner key is configured (#509)
 - (reloxx13) Add opt-in regional weather descriptions, icons, visibility and detailed EPA air quality without replacing station measurements (#220, #388)
@@ -165,7 +166,6 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 - (reloxx13) Populate hourly weather codes, including zero (#499)
 - (reloxx13) Use calendar-day minimum and maximum forecast temperatures (#500)
 - (reloxx13) Limit the npm package to runtime and configuration assets and enable shared ESLint checks in CI
-- (copilot) Require Node.js >= 22, Admin >= 7.7.22 and js-controller >= 6.0.11
 
 ### 3.7.0 (2024-04-13)
 * (mcm1957) Adapter requires node.js 18 and js-controller >= 5 now
