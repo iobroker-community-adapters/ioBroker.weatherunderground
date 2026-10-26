@@ -62,7 +62,6 @@ let forecastDailyUrl;
 let forecastHourlyUrl;
 let errorCounter = 0;
 let forceTimeout = null;
-let cancelDelay = null;
 let requestAbortController;
 
 let stopInProgress = false;
@@ -100,21 +99,6 @@ function time2date(date) {
     //return date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear();
 }
 
-function sleep(ms) {
-    // adapter.delay() stays pending on unload; settle ready when this delay is cancelled.
-    return new Promise(resolve => {
-        const timeout = adapter.setTimeout(() => {
-            cancelDelay = null;
-            resolve();
-        }, ms);
-        cancelDelay = () => {
-            adapter.clearTimeout(timeout);
-            cancelDelay = null;
-            resolve();
-        };
-    });
-}
-
 function startAdapter(options) {
     options = options || {};
     Object.assign(options, { name: adapterName });
@@ -125,7 +109,6 @@ function startAdapter(options) {
         stopInProgress = true;
         forceTimeout && adapter.clearTimeout(forceTimeout);
         forceTimeout = null;
-        cancelDelay && cancelDelay();
         requestAbortController.abort();
         callback && callback();
     });
@@ -179,7 +162,7 @@ function startAdapter(options) {
 
             const delay = Math.floor(Math.random() * 30000);
             adapter.log.debug(`Delay execution by ${delay}ms to better spread API calls`);
-            await sleep(delay);
+            await adapter.delay(delay);
             if (stopInProgress) {
                 return;
             }

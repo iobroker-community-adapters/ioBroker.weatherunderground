@@ -144,6 +144,9 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (reloxx13) Use the controller-managed startup delay instead of a custom wait function
+
 ### 4.0.0 (2026-10-26)
 - (reloxx13) Use adapter-managed timers and termination while preserving cancellation during shutdown
 - (mcm1957) Adapter requires Node.js >= 22, Admin >= 8.2.0 and js-controller >= 6.0.11 now
