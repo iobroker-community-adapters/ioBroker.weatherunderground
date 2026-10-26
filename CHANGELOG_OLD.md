@@ -1,4 +1,9 @@
 # Older changes
+## 3.4.3 (2023-08-15)
+* (Aplollon77) Translations have been updated (#159)
+* (mcm1957) The testenvironment has been updated to use node 16/18/20
+* (bluefox) Dependencies have been updated
+
 ## 3.4.2 (2022-04-26)
 * (Apollon77) Added special logging when no current observation data are available because Station most likely offline to reduce confusion
 

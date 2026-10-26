@@ -144,7 +144,7 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 4.0.1 (2026-10-26)
 - (reloxx13) Use the controller-managed startup delay instead of a custom wait function
 
 ### 4.0.0 (2026-10-26)
@@ -184,11 +184,6 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 * (waldmensch1) Cloudcover states have been added (PR #178)
 * (mcm1957) Date format has been fixed to avoid incorrect display with newer admin versions (#191)
 * (mcm1957) Forecast urls have been adapted to weatherunderground website changes (#158)
-
-### 3.4.3 (2023-08-15)
-* (Aplollon77) Translations have been updated (#159)
-* (mcm1957) The testenvironment has been updated to use node 16/18/20
-* (bluefox) Dependencies have been updated
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

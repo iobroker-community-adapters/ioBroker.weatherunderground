@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "weatherunderground",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "news": {
+      "4.0.1": {
+        "en": "Use the controller-managed startup delay instead of a custom wait function",
+        "de": "Vom Controller verwaltete Startverzögerung statt eigener Wartefunktion verwenden",
+        "ru": "Используйте задержку запуска, управляемую контроллером, вместо настраиваемой функции ожидания",
+        "pt": "Use o atraso de inicialização do controlador em vez de uma função de espera",
+        "nl": "Gebruik de door de controller beheerde opstartvertraging in plaats van een aangepaste wachtfunctie",
+        "fr": "Utilisez le délai de démarrage géré par la manette au lieu d'une attente personnalisée",
+        "it": "Usa il ritardo di avvio gestito dal controller anziché una funzione di attesa",
+        "es": "Utilice el retraso de inicio gestionado por el mando en lugar de una función de espera",
+        "pl": "Użyj opóźnienia uruchamiania zarządzanego przez kontroler zamiast niestandardowej funkcji oczekiwania",
+        "uk": "Використовуйте затримку запуску, керовану контролером, замість спеціальної функції очікування",
+        "zh-cn": "使用控制器管理的启动延迟而不是自定义的等待功能"
+      },
       "4.0.0": {
         "en": "Use adapter-managed timers and termination while preserving cancellation during shutdown\nAdapter requires Node.js >= 22, Admin >= 8.2.0 and js-controller >= 6.0.11 now\nRead the website API key from the current Weather Underground page configuration (#509)\nRequest daily forecasts using station coordinates and the website key when no owner key is configured (#509)\nAdd opt-in regional weather descriptions, icons, visibility and detailed EPA air quality without replacing station measurements (#220, #388)\nAdd hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events and PWS quality status\nAdd short daily descriptions while preserving full narratives and consistent day/night selection (#388)\nMatch maximum-wind direction to the highest wind speed and preserve its numeric type\nShow zero UV index and solar radiation when station fields are missing or null\nFix numeric icon URLs and previews; select custom icons by URL and correct existing icon URL object types without replacing user metadata (#216)\nRename the first hourly forecast to \"Next hourly forecast\" while preserving its 0h ID and custom names\nCorrect weather state roles without changing IDs, types, units or user metadata (#328)\nEnd failed initialization reliably and cancel startup delays and provider requests during shutdown (#224)\nAutomatically migrate API keys to encrypted and protected storage\nReplace the legacy settings dialog with JSON Config; clarify translated labels, help texts and field grouping\nDocument configuration switches, data sources, endpoints, request savings, API keys and source builds; correct the default refresh interval to once per hour (#501)\nFix hourly forecast requests, station coordinates and metric/non-metric provider paths (#497)\nSkip the unused PWS dashboard request (#498)\nPopulate hourly weather codes, including zero (#499)\nUse calendar-day minimum and maximum forecast temperatures (#500)\nLimit the npm package to runtime and configuration assets and enable shared ESLint checks in CI",
         "de": "Adapter-Timer und kontrolliertes Beenden verwenden; laufende Vorgänge beim Herunterfahren weiterhin abbrechen\nAdapter benötigt jetzt Node.js >= 22, Admin >= 8.2.0 und js-controller >= 6.0.11\nWebsite-API-Schlüssel aus der aktuellen Weather-Underground-Seitenkonfiguration auslesen (#509)\nTagesprognosen ohne eigenen API-Schlüssel anhand der Stationskoordinaten und des Website-Schlüssels abrufen (#509)\nOptionale regionale Wetterbeschreibungen, Symbole, Sichtweite und detaillierte EPA-Luftqualität ergänzen; Stationsmesswerte beibehalten (#220, #388)\nStündliche Böen, Taupunkt, gefühlte Temperatur, Wettertext und Niederschlagsart sowie tägliche Sonnen-/Monddaten und PWS-Qualitätsstatus ergänzen\nKurze Tagesbeschreibungen ergänzen; vollständige Beschreibungen und konsistente Tag-/Nachtauswahl beibehalten (#388)\nWindrichtung des stärksten Winds korrekt zuordnen und numerischen Datentyp beibehalten\nBei fehlenden Stationswerten für UV-Index und Sonneneinstrahlung null anzeigen\nNumerische Symbol-URLs und Vorschauen korrigieren; eigene Symbole per URL auswählen und bestehende Objekttypen unter Erhalt eigener Metadaten berichtigen (#216)\nErste stündliche Prognose in „Nächste stündliche Prognose“ umbenennen; 0h-ID und eigene Namen beibehalten\nWetterzustandsrollen korrigieren; IDs, Typen, Einheiten und eigene Metadaten beibehalten (#328)\nFehlgeschlagene Initialisierung zuverlässig beenden; Startverzögerungen und Anbieteranfragen beim Herunterfahren abbrechen (#224)\nAPI-Schlüssel automatisch in verschlüsselten und zugriffsgeschützten Konfigurationsspeicher migrieren\nAlten Einstellungsdialog durch JSON Config ersetzen; übersetzte Beschriftungen, Hilfetexte und Feldgruppen verbessern\nKonfiguration, Datenquellen, Endpunkte, Anfrageeinsparungen, API-Schlüssel und Quellcode-Builds dokumentieren; Standardintervall auf einmal pro Stunde korrigieren (#501)\nStündliche Prognoseanfragen, Stationskoordinaten und metrische/imperiale Anbieterpfade korrigieren (#497)\nUngenutzte PWS-Dashboard-Anfrage überspringen (#498)\nStündliche Wettercodes einschließlich null übernehmen (#499)\nTagesbezogene Mindest- und Höchsttemperaturen verwenden (#500)\nnpm-Paket auf Laufzeit- und Konfigurationsdateien begrenzen; gemeinsame ESLint-Prüfungen in CI aktivieren",
@@ -80,19 +93,6 @@
         "pl": "Dodano specjalne rejestrowanie, gdy nie są dostępne żadne aktualne dane z obserwacji, ponieważ stacja najprawdopodobniej jest w trybie offline, aby zmniejszyć zamieszanie",
         "zh-cn": "当没有可用的当前观测数据时添加了特殊记录，因为 Station 很可能离线以减少混乱",
         "uk": "Додано спеціальне журналювання, коли поточні дані спостережень недоступні, оскільки станція, швидше за все, не в мережі, щоб зменшити плутанину"
-      },
-      "3.4.1": {
-        "en": "Use axios for communication\nmake sure date states are filled correctly",
-        "de": "Verwenden Sie Axios für die Kommunikation\nStellen Sie sicher, dass die Datumsangaben korrekt ausgefüllt sind",
-        "ru": "Используйте axios для общения\nубедитесь, что состояния даты заполнены правильно",
-        "pt": "Use axios para comunicação\nverifique se os estados de data estão preenchidos corretamente",
-        "nl": "Gebruik axios voor communicatie\nzorg ervoor dat de datumstaten correct zijn ingevuld",
-        "fr": "Utiliser axios pour la communication\nassurez-vous que les états de date sont remplis correctement",
-        "it": "Usa assios per la comunicazione\nassicurati che gli stati della data siano compilati correttamente",
-        "es": "Usa axios para comunicarte\nasegúrese de que los estados de fecha se llenen correctamente",
-        "pl": "Używaj axios do komunikacji\nupewnij się, że stany dat są wypełnione poprawnie",
-        "zh-cn": "使用 axios 进行通信\n确保正确填写日期状态",
-        "uk": "Використовуйте аксіос для спілкування\nпереконайтеся, що стани дат заповнені правильно"
       }
     },
     "titleLang": {
