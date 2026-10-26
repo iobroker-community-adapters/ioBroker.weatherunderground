@@ -146,6 +146,7 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 -->
 
 ### **WORK IN PROGRESS**
+- (reloxx13) Use adapter-managed timers and termination while preserving cancellation during shutdown
 - (mcm1957) Adapter requires Node.js >= 22, Admin >= 8.2.0 and js-controller >= 6.0.11 now
 - (reloxx13) Read the website API key from the current Weather Underground page configuration (#509)
 - (reloxx13) Request daily forecasts using station coordinates and the website key when no owner key is configured (#509)

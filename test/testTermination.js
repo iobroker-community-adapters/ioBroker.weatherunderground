@@ -63,6 +63,12 @@ function setup({
             stopped++;
             handlers.unload(() => {});
         },
+        setTimeout: (fn, ms) => {
+            const id = ++timerId;
+            timers.set(id, { fn, ms });
+            return id;
+        },
+        clearTimeout: id => timers.delete(id),
         getForeignObjectAsync: async () => ({ common: { schedule } }),
         setForeignObjectAsync: async (id, object) => schedules.push([id, object.common.schedule]),
         setObjectNotExistsAsync: async () => {
@@ -107,12 +113,6 @@ function setup({
         module: { parent: true, exports: {} },
         AbortController,
         setImmediate,
-        setTimeout: (fn, ms) => {
-            const id = ++timerId;
-            timers.set(id, { fn, ms });
-            return id;
-        },
-        clearTimeout: id => timers.delete(id),
     });
     factory();
     return {

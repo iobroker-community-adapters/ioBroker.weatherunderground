@@ -101,13 +101,14 @@ function time2date(date) {
 }
 
 function sleep(ms) {
+    // adapter.delay() stays pending on unload; settle ready when this delay is cancelled.
     return new Promise(resolve => {
-        const timeout = setTimeout(() => {
+        const timeout = adapter.setTimeout(() => {
             cancelDelay = null;
             resolve();
         }, ms);
         cancelDelay = () => {
-            clearTimeout(timeout);
+            adapter.clearTimeout(timeout);
             cancelDelay = null;
             resolve();
         };
@@ -122,7 +123,7 @@ function startAdapter(options) {
 
     adapter.on('unload', callback => {
         stopInProgress = true;
-        forceTimeout && clearTimeout(forceTimeout);
+        forceTimeout && adapter.clearTimeout(forceTimeout);
         forceTimeout = null;
         cancelDelay && cancelDelay();
         requestAbortController.abort();
@@ -166,7 +167,7 @@ function startAdapter(options) {
                     if (stopInProgress) {
                         return;
                     }
-                    adapter.terminate ? adapter.terminate(0) : process.exit(0);
+                    adapter.terminate(0);
                     return;
                 }
             } catch (err) {
@@ -249,12 +250,12 @@ function startAdapter(options) {
         nonMetric = !!adapter.config.nonMetric;
 
         // force terminate after 1min
-        forceTimeout = setTimeout(() => {
+        forceTimeout = adapter.setTimeout(() => {
             forceTimeout = null;
             stopInProgress = true;
             requestAbortController.abort();
             adapter.log.warn('force terminate');
-            adapter.terminate ? adapter.terminate(0) : process.exit(0);
+            adapter.terminate(0);
         }, 60000);
 
         try {
@@ -263,7 +264,7 @@ function startAdapter(options) {
             if (stopInProgress) {
                 return;
             }
-            forceTimeout && clearTimeout(forceTimeout);
+            forceTimeout && adapter.clearTimeout(forceTimeout);
             forceTimeout = null;
             adapter.log.error(`Could not initialize weather objects: ${error.message}`);
             adapter.terminate(1);
@@ -361,8 +362,8 @@ function startAdapter(options) {
                                     if (stopInProgress) {
                                         return;
                                     }
-                                    forceTimeout && clearTimeout(forceTimeout);
-                                    forceTimeout = setTimeout(() => adapter.stop(), 2000);
+                                    forceTimeout && adapter.clearTimeout(forceTimeout);
+                                    forceTimeout = adapter.setTimeout(() => adapter.stop(), 2000);
                                 });
                             });
                         });
