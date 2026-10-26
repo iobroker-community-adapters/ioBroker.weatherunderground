@@ -8,15 +8,22 @@
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/weatherunderground/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.weatherunderground.svg)](https://www.npmjs.com/package/iobroker.weatherunderground)
 
+> [!IMPORTANT]
+> This adapter cannot be installed from github
+
+## Sentry
+
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information on how to disable the error reporting, see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+
+## Functionality
+
 Current station measurements, up to 36 hourly forecasts and six daily forecasts from [Weather Underground](https://www.wunderground.com/), with optional regional weather and air-quality data from Weather Company.
 
 Data is retrieved once per hour by default. Change the instance schedule to adjust the frequency.
 
-**Sentry reports exceptions and code errors to the developers.** See the [Sentry plugin documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry) for details and how to disable reporting.
-
 ## Requirements
 
-The current development version requires Node.js **22+**, js-controller **6.0.11+** and Admin **7.7.22+**.
+The current development version requires Node.js **22+**, js-controller **6.0.11+** and Admin **8.2.0+**.
 
 ## Configuration
 
@@ -54,7 +61,7 @@ Hidden settings retain their saved values. The dialog groups Country/Language an
 The adapter also reads the key used by the Weather Underground website:
 
 - Station observations use the owner key when a station and `current` are configured; otherwise they use the website key.
-- Daily forecasts use the owner key when a station, its coordinates and an owner key are available; otherwise they use the extracted website URL/key.
+- Daily forecasts use station coordinates with the owner key when available, or the website key otherwise. Without station coordinates, they use the extracted website URL/key.
 - Hourly forecasts and regional products use the website key, even with an owner key configured.
 
 Key and product availability are controlled by the provider. The retained `useLegacyApi` key has no effect: the runtime always disables the former API.
@@ -140,6 +147,8 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 
 ### **WORK IN PROGRESS**
 - (mcm1957) Adapter requires Node.js >= 22, Admin >= 8.2.0 and js-controller >= 6.0.11 now
+- (reloxx13) Read the website API key from the current Weather Underground page configuration (#509)
+- (reloxx13) Request daily forecasts using station coordinates and the website key when no owner key is configured (#509)
 - (reloxx13) Add opt-in regional weather descriptions, icons, visibility and detailed EPA air quality without replacing station measurements (#220, #388)
 - (reloxx13) Add hourly gust, dew point, wind chill, weather text and precipitation type; daily sun/moon events and PWS quality status
 - (reloxx13) Add short daily descriptions while preserving full narratives and consistent day/night selection (#388)
