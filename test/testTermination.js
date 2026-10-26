@@ -23,6 +23,7 @@ function setup({
 } = {}) {
     const handlers = {};
     const timers = new Map();
+    const delays = new Set();
     const requests = [];
     const terminated = [];
     const errors = [];
@@ -31,6 +32,7 @@ function setup({
     let stopped = 0;
     let initialized = 0;
     let timerId = 0;
+    let unloaded = false;
     let finishObject;
     const checksum = crypto.createHash('md5').update('test-location').digest('hex');
     const states = {
@@ -52,7 +54,18 @@ function setup({
             forecast_hourly: false,
         },
         on: (event, handler) => {
-            handlers[event] = handler;
+            handlers[event] =
+                event === 'unload'
+                    ? callback => {
+                          unloaded = true;
+                          // The controller clears delay timers without resolving their promises on unload.
+                          for (const id of delays) {
+                              timers.delete(id);
+                          }
+                          delays.clear();
+                          handler(callback);
+                      }
+                    : handler;
         },
         log: { debug() {}, info() {}, error: message => errors.push(message), warn: message => warnings.push(message) },
         terminate: code => {
@@ -69,6 +82,16 @@ function setup({
             return id;
         },
         clearTimeout: id => timers.delete(id),
+        delay: ms =>
+            new Promise(resolve => {
+                const id = adapter.setTimeout(() => {
+                    delays.delete(id);
+                    if (!unloaded) {
+                        resolve();
+                    }
+                }, ms);
+                delays.add(id);
+            }),
         getForeignObjectAsync: async () => ({ common: { schedule } }),
         setForeignObjectAsync: async (id, object) => schedules.push([id, object.common.schedule]),
         setObjectNotExistsAsync: async () => {
@@ -162,17 +185,35 @@ describe('scheduled termination (#224)', () => {
         assert.equal(run.requests.length, 0);
     });
 
-    it('cancels the randomized startup delay on unload and settles ready without starting work', async () => {
+    it('unloads during the randomized startup delay without starting work', async () => {
         const run = setup({ apiKey: '' });
-        const ready = run.handlers.ready();
+        run.handlers.ready();
         await flush();
         assert.equal(run.timers.size, 1);
-        run.handlers.unload(() => {});
+        let unloaded = false;
+        run.handlers.unload(() => {
+            unloaded = true;
+        });
+        assert.equal(unloaded, true);
         assert.equal(run.timers.size, 0);
-        await ready;
+        await flush();
         assert.equal(run.initialized, 0);
         assert.equal(run.requests.length, 0);
         assert.equal(run.terminated.length, 0);
+    });
+
+    it('does not start work if a startup delay resolves after unload', async () => {
+        const run = setup({ apiKey: '' });
+        const { promise, resolve } = Promise.withResolvers();
+        run.adapter.delay = () => promise;
+        const ready = run.handlers.ready();
+        await flush();
+        run.handlers.unload(() => {});
+        resolve();
+        await ready;
+        assert.equal(run.initialized, 0);
+        assert.equal(run.requests.length, 0);
+        assert.equal(run.timers.size, 0);
     });
 
     for (const schedule of ['0 * * * *', '12 * * * *']) {
