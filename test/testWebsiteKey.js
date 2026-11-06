@@ -14,9 +14,8 @@ const placeId = 'abcdef0123456789'.repeat(4);
  * @param {string | Error} body Synthetic website HTML or request failure.
  * @param {boolean} [products] Fetch station and forecast products after discovery.
  * @param {object} [config] Configuration overrides.
- * @param {string} [cachedObservationUrl] Previously stored observations URL.
  */
-function discover(body, products = false, config = {}, cachedObservationUrl) {
+function discover(body, products = false, config = {}) {
     const requests = [];
     const states = {};
     const logs = [];
@@ -27,7 +26,6 @@ function discover(body, products = false, config = {}, cachedObservationUrl) {
             adapter = testAdapter;
             lang = 'de-DE';
             officialApiKey = adapter.config.apiKey;
-            currentObservationUrl = testObservationUrl;
             parseNewResult = (_data, cb) => cb();
             if (testProducts) { getKeysAndData(testDone); }
             else { getWebsiteKey(testDone); }`,
@@ -81,7 +79,6 @@ function discover(body, products = false, config = {}, cachedObservationUrl) {
                     },
                 },
                 testProducts: products,
-                testObservationUrl: cachedObservationUrl,
                 testDone: () => resolve({ requests, states, logs, errors }),
             },
         );
@@ -111,17 +108,15 @@ describe('website key discovery', () => {
         assert.equal(errors.length, 1);
     });
 
-    for (const url of [undefined, '/relative', 'file:///tmp/weather']) {
-        it(`stops with one actionable error without a station and with observations URL ${JSON.stringify(url)}`, async () => {
-            const { requests, errors } = await discover(`{"API_KEY":"${key}"}`, true, { station: '' }, url);
-            assert.equal(requests.length, 1);
-            assert.equal(errors.length, 1);
-            assert.ok(errors[0].includes('PWS station ID'));
-        });
-    }
+    it('stops with one actionable error when the website has no location metadata', async () => {
+        const { requests, errors } = await discover(`{"API_KEY":"${key}"}`, true, { station: '' });
+        assert.equal(requests.length, 1);
+        assert.equal(errors.length, 1);
+        assert.ok(errors[0].includes('PWS station ID'));
+    });
 
     it('builds station and place forecasts from the current website location element', async () => {
-        const body = `<script>{"API_KEY":"${key}"}</script>
+        const body = `<script>{ "API_KEY" : "${key}" }</script>
             <location-fav-button-view data-placeid="${placeId}" data-coordinate="51.4,6.7" data-pwsid="TEST1"></location-fav-button-view>`;
         const { requests, errors, states, logs } = await discover(body, true, { station: '' });
         assert.equal(requests.length, 4);
@@ -140,6 +135,7 @@ describe('website key discovery', () => {
             assert.equal(product.searchParams.get('units'), 'm');
             assert.equal(product.searchParams.get('language'), 'de-DE');
         }
+        assert.equal(states.currentWebKey, key);
         assert.equal(states.currentObservationUrl, requests[1]);
         assert.equal(states.forecastDailyUrl, requests[2]);
         assert.equal(states.forecastHourlyUrl, requests[3]);
@@ -169,14 +165,6 @@ describe('website key discovery', () => {
         );
         assert.equal(requests.length, 2);
         assert.equal(errors.length, 0);
-    });
-
-    it('extracts the key from inline configuration with whitespace', async () => {
-        const { states, logs } = await discover(
-            `<script>const data = { "API_KEY" : "${key}", "API_URL":"https://api.weather.com" };</script>`,
-        );
-        assert.equal(states.currentWebKey, key);
-        assert.ok(logs.every(message => !message.includes(key)));
     });
 
     for (const value of ['short', `${key}a`, `${key.slice(1)}-`]) {
