@@ -24,6 +24,7 @@
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const axios = require('axios');
 const crypto = require('node:crypto');
+const { URL, URLSearchParams } = require('node:url');
 const migrateApiKey = require('./lib/migrate-api-key');
 const resolveIconUrl = require('./lib/icon-url');
 const airQualityPollutants = { CO: 'CO', NO2: 'NO2', O3: 'O3', PM10: 'PM10', PM2_5: 'PM2.5', SO2: 'SO2' };
@@ -371,7 +372,7 @@ function getKeysAndData(cb) {
             return cb();
         }
     }
-    getApiKey(() => {
+    getApiKey(discoveryError => {
         if (stopInProgress) {
             return;
         }
@@ -380,6 +381,25 @@ function getKeysAndData(cb) {
             getLegacyWuData(cb);
         } else {
             adapter.log.debug('Use New API');
+            if (!adapter.config.station) {
+                const requiredUrls = [currentObservationUrl];
+                if (adapter.config.forecast_periods || adapter.config.forecast_periods_txt) {
+                    requiredUrls.push(forecastDailyUrl);
+                }
+                if (adapter.config.forecast_hourly) {
+                    requiredUrls.push(forecastHourlyUrl);
+                }
+                if (
+                    requiredUrls.some(url => !URL.canParse(url) || !['http:', 'https:'].includes(new URL(url).protocol))
+                ) {
+                    if (!discoveryError) {
+                        adapter.log.error(
+                            'Unable to resolve the required Weather Underground data URLs. Check the configured location or configure a PWS station ID. Skipping data requests for this run.',
+                        );
+                    }
+                    return cb();
+                }
+            }
             getNewWuDataCurrentObservations(data => {
                 const currentConditions = getNewWuDataCurrentConditions(data);
                 getNewWuDataDailyForecast(data, data =>
@@ -569,9 +589,26 @@ function getWebsiteKey(cb, tryQ) {
                 },
             );
 
-            const currentObservation = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/observations\/current[^"]+)"/);
-            if (currentObservation && currentObservation[1]) {
-                currentObservationUrl = currentObservation[1];
+            const location = body.match(/<location-fav-button-view\b[^>]*>/i)?.[0] || '';
+            const station = location.match(/\bdata-pwsid=["']([a-z0-9_-]{1,64})["']/i)?.[1];
+            const placeId = location.match(/\bdata-placeid=["']([a-f0-9]{64})["']/i)?.[1];
+            const productUrl = (path, params) => {
+                const url = new URL(path, 'https://api.weather.com');
+                url.search = new URLSearchParams({
+                    ...params,
+                    language: lang,
+                    format: 'json',
+                    units: nonMetric ? 'e' : 'm',
+                    apiKey: newWebKey,
+                }).toString();
+                return url.href;
+            };
+
+            if (station) {
+                currentObservationUrl = productUrl('/v2/pws/observations/current', {
+                    stationId: station,
+                    numericPrecision: 'decimal',
+                });
                 adapter.log.debug(`fetched current observations URL from WU weather page`);
                 adapter.setObjectNotExists(
                     'currentObservationUrl',
@@ -586,10 +623,8 @@ function getWebsiteKey(cb, tryQ) {
                 );
             }
 
-            const forecastDaily = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/daily\/[^"]+)"/);
-            //adapter.log.debug('body match forecast: ' + data);
-            if (forecastDaily && forecastDaily[1]) {
-                forecastDailyUrl = forecastDaily[1];
+            if (placeId) {
+                forecastDailyUrl = productUrl('/v3/wx/forecast/daily/5day', { placeid: placeId });
                 adapter.log.debug(`fetched daily forecast URL from WU weather page`);
                 adapter.setObjectNotExists(
                     'forecastDailyUrl',
@@ -604,9 +639,8 @@ function getWebsiteKey(cb, tryQ) {
                 );
             }
 
-            const forecastHourly = body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/hourly\/[^"]+)"/);
-            if (forecastHourly && forecastHourly[1]) {
-                forecastHourlyUrl = forecastHourly[1];
+            if (placeId) {
+                forecastHourlyUrl = productUrl('/v3/wx/forecast/hourly/2day', { placeid: placeId });
                 adapter.log.debug(`fetched hourly forecast URL from WU weather page`);
                 adapter.setObjectNotExists(
                     'forecastHourlyUrl',
@@ -632,13 +666,13 @@ function getWebsiteKey(cb, tryQ) {
                 adapter.log.error(
                     'The given Location can not be found. Please check on https://wunderground.com or try geo coordinates (lat,lon) or nearby cities!',
                 );
-                return cb && cb();
+                return cb && cb(error);
             } else {
                 // ERROR
                 adapter.log.error(
                     `Unable to get WU weather page: ${error.response ? error.response.status : error.code || '--'}`,
                 );
-                return cb && cb();
+                return cb && cb(error);
             }
         });
 }

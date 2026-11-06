@@ -11,11 +11,13 @@ describe('published package', function () {
         const development = fs.mkdtempSync(path.join(root, 'package-check-development-'));
         try {
             fs.writeFileSync(path.join(development, 'must-not-ship.js'), 'development only');
-            const [pack] = JSON.parse(
-                execSync('npm pack --dry-run --json --ignore-scripts', {
-                    cwd: root,
-                    encoding: 'utf8',
-                }),
+            const [pack] = Object.values(
+                JSON.parse(
+                    execSync('npm pack --dry-run --json --ignore-scripts', {
+                        cwd: root,
+                        encoding: 'utf8',
+                    }),
+                ),
             );
             const files = pack.files.map(file => file.path);
             for (const required of [

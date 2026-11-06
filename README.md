@@ -66,6 +66,8 @@ The adapter also reads the key used by the Weather Underground website:
 
 Key and product availability are controlled by the provider. The retained `useLegacyApi` key has no effect: the runtime always disables the former API.
 
+Without a configured station ID, the adapter uses the station and place ID from the website for the configured location to build the product URLs. If required product URLs are unavailable, it skips data requests and logs one error per scheduled run. Check the configured location or select a PWS station ID.
+
 ## Data sources and requests
 
 The direct product endpoints use `https://api.weather.com`:
@@ -143,6 +145,7 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22.19.0 now
+- (reloxx13) Fix location-based website URL discovery and avoid cascading errors when required URLs are unavailable (#509)
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
