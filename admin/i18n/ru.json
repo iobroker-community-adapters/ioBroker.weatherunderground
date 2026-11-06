@@ -39,7 +39,6 @@
     "state_tstorms": "Шторм",
     "weatherunderground_station": "Станция",
     "weatherunderground_station_info": "Если вы оставите станцию пустой, то ближайшая станция в соответствии с местоположением выбора будет выбрана автоматически. Если вас не устраивает этот выбор, вы можете вставить здесь код станции вашей предпочтительной станции (например, «IAARGAUB5»). Вы можете найти эти коды на <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - щелкните по станции и найдите идентификатор станции («Station ID»).",
-    "weatherunderground_useLegacyApi": "Используйте устаревшие API WU",
     "weatherunderground_regionalCurrent": "Дополнительные данные о погоде и качестве воздуха",
     "weatherunderground_regionalCurrent_info": "Дополняет данные станции описанием погоды, значком, видимостью и качеством воздуха в окрестностях. Эти данные предоставляет Weather Company. До 3 дополнительных запросов за запуск.",
     "weatherunderground_iconSet_info": "A–K используют одинаковые значки SVG v4 с текущим API. Выберите собственный набор для своих значков.",

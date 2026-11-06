@@ -88,7 +88,6 @@ describe('JSON configuration migration', () => {
             nonMetric: false,
             iconSet: '',
             country: 'NL',
-            useLegacyApi: false,
             current: false,
             station: 'PWS',
             custom_icon_base_url: 'https://icons.example/',
@@ -121,7 +120,6 @@ describe('JSON configuration migration', () => {
             iconSet: 'i',
             nonMetric: false,
             country: 'DE',
-            useLegacyApi: true,
         });
         assert.equal(initialSettings({ iconSet: undefined }, {}).iconSet, 'i');
         assert.equal(initialSettings({ iconSet: '' }, {}).iconSet, '');
@@ -133,14 +131,13 @@ describe('JSON configuration migration', () => {
             [
                 {
                     iconSet: 'c',
-                    useLegacyApi: true,
                     custom_icon_base_url: 'https://custom.example/',
                     custom_icon_format: 'gif',
                 },
                 'https://custom.example',
                 'gif',
             ],
-            [{ iconSet: 'i', useLegacyApi: false }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],
+            [{ iconSet: 'i' }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],
             [{ iconSet: '' }, 'https://www.wunderground.com/static/i/c/v4', 'svg'],
             ...['gif', 'png', 'svg', 'jpg', undefined].map(format => [
                 { iconSet: '', custom_icon_base_url: ' https://icons.example/// ', custom_icon_format: format },

@@ -39,7 +39,6 @@
     "state_tstorms": "tempeste",
     "weatherunderground_station": "Stazione",
     "weatherunderground_station_info": "Se lasci la stazione vuota, la stazione più vicina in base alla posizione di assegnazione viene selezionata automaticamente. Se non sei soddisfatto di questa scelta, puoi inserire qui il codice della stazione della tua stazione preferita (ad esempio \"IAARGAUB5\"). Puoi trovare questi codici, ad es. nella <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - fai clic su una stazione e cerca \"ID stazione\"",
-    "weatherunderground_useLegacyApi": "Utilizzare le API WU legacy",
     "weatherunderground_regionalCurrent": "Dati aggiuntivi sul meteo e sulla qualità dell’aria",
     "weatherunderground_regionalCurrent_info": "Integra i dati della stazione con descrizione del meteo, icona, visibilità e qualità dell’aria della zona. Questi dati sono forniti da Weather Company. Fino a 3 richieste aggiuntive per esecuzione.",
     "weatherunderground_iconSet_info": "A–K usano le stesse icone SVG v4 con l’API attuale. Selezionare Personalizzato per le proprie icone.",
