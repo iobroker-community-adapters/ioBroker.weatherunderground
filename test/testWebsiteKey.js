@@ -171,17 +171,6 @@ describe('website key discovery', () => {
         assert.equal(errors.length, 0);
     });
 
-    it('retains location-only requests when the website provides valid product URLs', async () => {
-        const urls = [
-            'https://api.weather.com/v2/pws/observations/current?stationId=TEST1',
-            'https://api.weather.com/v3/wx/forecast/daily/5day?geocode=51.4,6.7',
-            'https://api.weather.com/v3/wx/forecast/hourly/2day?geocode=51.4,6.7',
-        ];
-        const { requests, errors } = await discover(JSON.stringify({ API_KEY: key, urls }), true, { station: '' });
-        assert.equal(requests.length, 4);
-        assert.equal(errors.length, 0);
-    });
-
     it('extracts the key from inline configuration with whitespace', async () => {
         const { states, logs } = await discover(
             `<script>const data = { "API_KEY" : "${key}", "API_URL":"https://api.weather.com" };</script>`,

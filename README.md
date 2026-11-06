@@ -66,7 +66,7 @@ The adapter also reads the key used by the Weather Underground website:
 
 Key and product availability are controlled by the provider. The retained `useLegacyApi` key has no effect: the runtime always disables the former API.
 
-Without a configured station ID, the adapter uses the station and place ID from the website for the configured location to build the product URLs. Previously embedded product URLs remain supported. If required product URLs are unavailable, it skips data requests and logs one error per scheduled run. Check the configured location or select a PWS station ID.
+Without a configured station ID, the adapter uses the station and place ID from the website for the configured location to build the product URLs. If required product URLs are unavailable, it skips data requests and logs one error per scheduled run. Check the configured location or select a PWS station ID.
 
 ## Data sources and requests
 

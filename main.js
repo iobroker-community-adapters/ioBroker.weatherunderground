@@ -604,12 +604,11 @@ function getWebsiteKey(cb, tryQ) {
                 return url.href;
             };
 
-            const currentObservation =
-                body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/observations\/current[^"]+)"/)?.[1] ||
-                (station &&
-                    productUrl('/v2/pws/observations/current', { stationId: station, numericPrecision: 'decimal' }));
-            if (currentObservation) {
-                currentObservationUrl = currentObservation;
+            if (station) {
+                currentObservationUrl = productUrl('/v2/pws/observations/current', {
+                    stationId: station,
+                    numericPrecision: 'decimal',
+                });
                 adapter.log.debug(`fetched current observations URL from WU weather page`);
                 adapter.setObjectNotExists(
                     'currentObservationUrl',
@@ -624,12 +623,8 @@ function getWebsiteKey(cb, tryQ) {
                 );
             }
 
-            const forecastDaily =
-                body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/daily\/[^"]+)"/)?.[1] ||
-                (placeId && productUrl('/v3/wx/forecast/daily/5day', { placeid: placeId }));
-            //adapter.log.debug('body match forecast: ' + data);
-            if (forecastDaily) {
-                forecastDailyUrl = forecastDaily;
+            if (placeId) {
+                forecastDailyUrl = productUrl('/v3/wx/forecast/daily/5day', { placeid: placeId });
                 adapter.log.debug(`fetched daily forecast URL from WU weather page`);
                 adapter.setObjectNotExists(
                     'forecastDailyUrl',
@@ -644,11 +639,8 @@ function getWebsiteKey(cb, tryQ) {
                 );
             }
 
-            const forecastHourly =
-                body.match(/"(https:\/\/api\.weather\.com\/[^"]+\/forecast\/hourly\/[^"]+)"/)?.[1] ||
-                (placeId && productUrl('/v3/wx/forecast/hourly/2day', { placeid: placeId }));
-            if (forecastHourly) {
-                forecastHourlyUrl = forecastHourly;
+            if (placeId) {
+                forecastHourlyUrl = productUrl('/v3/wx/forecast/hourly/2day', { placeid: placeId });
                 adapter.log.debug(`fetched hourly forecast URL from WU weather page`);
                 adapter.setObjectNotExists(
                     'forecastHourlyUrl',
