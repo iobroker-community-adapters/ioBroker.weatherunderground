@@ -372,7 +372,7 @@ function getKeysAndData(cb) {
             return cb();
         }
     }
-    getApiKey(() => {
+    getApiKey(discoveryError => {
         if (stopInProgress) {
             return;
         }
@@ -392,9 +392,11 @@ function getKeysAndData(cb) {
                 if (
                     requiredUrls.some(url => !URL.canParse(url) || !['http:', 'https:'].includes(new URL(url).protocol))
                 ) {
-                    adapter.log.error(
-                        'Unable to resolve the required Weather Underground data URLs. Check the configured location or configure a PWS station ID. Skipping data requests for this run.',
-                    );
+                    if (!discoveryError) {
+                        adapter.log.error(
+                            'Unable to resolve the required Weather Underground data URLs. Check the configured location or configure a PWS station ID. Skipping data requests for this run.',
+                        );
+                    }
                     return cb();
                 }
             }
@@ -672,13 +674,13 @@ function getWebsiteKey(cb, tryQ) {
                 adapter.log.error(
                     'The given Location can not be found. Please check on https://wunderground.com or try geo coordinates (lat,lon) or nearby cities!',
                 );
-                return cb && cb();
+                return cb && cb(error);
             } else {
                 // ERROR
                 adapter.log.error(
                     `Unable to get WU weather page: ${error.response ? error.response.status : error.code || '--'}`,
                 );
-                return cb && cb();
+                return cb && cb(error);
             }
         });
 }

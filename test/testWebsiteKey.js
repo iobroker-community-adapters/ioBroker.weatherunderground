@@ -11,7 +11,7 @@ const key = '0123456789abcdef0123456789abcdef';
 const placeId = 'abcdef0123456789'.repeat(4);
 
 /**
- * @param {string} body Synthetic website HTML.
+ * @param {string | Error} body Synthetic website HTML or request failure.
  * @param {boolean} [products] Fetch station and forecast products after discovery.
  * @param {object} [config] Configuration overrides.
  * @param {string} [cachedObservationUrl] Previously stored observations URL.
@@ -26,6 +26,7 @@ function discover(body, products = false, config = {}, cachedObservationUrl) {
             `${source}
             adapter = testAdapter;
             lang = 'de-DE';
+            officialApiKey = adapter.config.apiKey;
             currentObservationUrl = testObservationUrl;
             parseNewResult = (_data, cb) => cb();
             if (testProducts) { getKeysAndData(testDone); }
@@ -41,6 +42,9 @@ function discover(body, products = false, config = {}, cachedObservationUrl) {
                                 requests.push(requested);
                                 const url = new URL(requested);
                                 if (url.hostname === 'www.wunderground.com') {
+                                    if (body instanceof Error) {
+                                        throw body;
+                                    }
                                     return { data: body };
                                 }
                                 if (url.pathname === '/v2/pws/observations/current') {
@@ -85,6 +89,29 @@ function discover(body, products = false, config = {}, cachedObservationUrl) {
 }
 
 describe('website key discovery', () => {
+    for (const status of [404, 503]) {
+        it(`reports a website HTTP ${status} once without cascading URL or data errors`, async () => {
+            const failure = Object.assign(new Error('Synthetic website failure'), { response: { status } });
+            const { requests, errors } = await discover(failure, true, { station: '' });
+            assert.equal(requests.length, status === 404 ? 2 : 1);
+            assert.equal(errors.length, 1);
+            assert.ok(!errors[0].includes('Skipping data requests'));
+        });
+    }
+
+    it('retains owner-key station requests when website discovery fails', async () => {
+        const failure = Object.assign(new Error('Synthetic website failure'), { response: { status: 503 } });
+        const { requests, errors } = await discover(failure, true, {
+            apiKey: 'synthetic-owner-key',
+            forecast_hourly: false,
+        });
+        assert.equal(requests.length, 3);
+        for (const url of requests.slice(1)) {
+            assert.equal(new URL(url).searchParams.get('apiKey'), 'synthetic-owner-key');
+        }
+        assert.equal(errors.length, 1);
+    });
+
     for (const url of [undefined, '', '/relative', 'https://', 'file:///tmp/weather']) {
         it(`stops with one actionable error without a station and with observations URL ${JSON.stringify(url)}`, async () => {
             const { requests, logs, errors } = await discover(`{"API_KEY":"${key}"}`, true, { station: '' }, url);
