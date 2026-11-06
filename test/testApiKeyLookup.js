@@ -10,12 +10,11 @@ const adapterRequire = createRequire(main);
 
 describe('API key lookup', () => {
     for (const station of [' pws:TEST1 ', ' TEST1 ']) {
-        it(`normalizes ${JSON.stringify(station)} without a dashboard request`, () => {
+        it(`normalizes ${JSON.stringify(station)}`, () => {
             const calls = [];
             vm.runInNewContext(
                 `${source}
-                adapter = { config: { useLegacyApi: false, station: testStation } };
-                getStationKey = () => { throw new Error('unexpected dashboard request'); };
+                adapter = { config: { station: testStation } };
                 getWebsiteKey = callback => { testCalls.push(adapter.config.station); callback(); };
                 getApiKey(() => testCalls.push('done'));
             `,
@@ -27,27 +26,6 @@ describe('API key lookup', () => {
                 },
             );
             assert.deepEqual(calls, ['TEST1', 'done']);
-        });
-    }
-
-    for (const previousApi of [false, true]) {
-        it(`fetches ${previousApi ? 'dashboard and website' : 'only website'} keys in ${previousApi ? 'previous' : 'new'} API mode`, () => {
-            const calls = [];
-            vm.runInNewContext(
-                `${source}
-                adapter = { config: { useLegacyApi: testPreviousApi } };
-                getStationKey = callback => { testCalls.push('dashboard'); callback(); };
-                getWebsiteKey = callback => { testCalls.push('website'); callback(); };
-                getApiKey(() => testCalls.push('done'));
-            `,
-                {
-                    require: name => (name === '@iobroker/adapter-core' ? {} : adapterRequire(name)),
-                    module: { parent: true, exports: {} },
-                    testPreviousApi: previousApi,
-                    testCalls: calls,
-                },
-            );
-            assert.deepEqual(calls, previousApi ? ['dashboard', 'website', 'done'] : ['website', 'done']);
         });
     }
 });

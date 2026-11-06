@@ -2,22 +2,7 @@
 /* jshint strict: false */
 /* jslint node: true */
 
-/**
- *
- * weatherunderground adapter
- *
- * Adapter loading the json forecast of weatherunderground
- *
- * note: you need an account and an api key to get the forecast. This is free for non excess usage: 500 requests/d
- * see: http://www.wunderground.com/weather/api/d/pricing
- *
- * register for a key:
- * http://www.wunderground.com/weather/api/d/questionnaire.html?plan=a&level=0&history=undefined
- *
- * see http://www.wunderground.com/weather/api/d/docs?d=data/hourly
- * for reference of the possible values from hourly WU forecast
- *
- */
+/** Weather Underground observations and forecasts adapter. */
 
 'use strict';
 
@@ -32,7 +17,6 @@ const airQualityPollutants = { CO: 'CO', NO2: 'NO2', O3: 'O3', PM10: 'PM10', PM2
 const adapterName = require('./package.json').name.split('.').pop();
 let adapter;
 
-const dictionary = require('./lib/words');
 let lang = 'en';
 let nonMetric = false;
 const windDirections = [
@@ -56,7 +40,6 @@ const windDirections = [
 ];
 
 let officialApiKey;
-let pwsStationKey;
 let newWebKey;
 let currentObservationUrl;
 let forecastDailyUrl;
@@ -72,25 +55,6 @@ const requestHeaders = {
     Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'de-DE,de;q=0.8,en-US;q=0.5,en;q=0.3',
 };
-
-function _(text) {
-    if (!text) {
-        return '';
-    }
-
-    if (dictionary[text]) {
-        let newText = dictionary[text][lang];
-        if (newText) {
-            return newText;
-        } else if (lang !== 'en') {
-            newText = dictionary[text].en;
-            if (newText) {
-                return newText;
-            }
-        }
-    }
-    return text;
-}
 
 function time2date(date) {
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date
@@ -190,11 +154,6 @@ function startAdapter(options) {
             adapter.config.country = 'DE';
         }
 
-        if (adapter.config.useLegacyApi === undefined) {
-            adapter.config.useLegacyApi = true;
-        }
-
-        adapter.config.useLegacyApi = false;
         if (typeof adapter.config.forecast_periods_txt === 'undefined') {
             adapter.log.info('forecast_periods_txt not defined. now enabled. check settings and save');
             adapter.config.forecast_periods_txt = true;
@@ -258,97 +217,88 @@ function startAdapter(options) {
             return;
         }
 
-        adapter.getState('currentStationKey', (err, state) => {
+        adapter.getState('currentWebKey', (err, state) => {
             if (!err && state && state.val) {
                 if (typeof state.val !== 'string') {
                     state.val = state.val.toString();
                 }
-                pwsStationKey = state.val;
-                adapter.log.debug(`initialize PWS station key`);
+                newWebKey = state.val;
+                adapter.log.debug(`initialize web key`);
             }
-            adapter.getState('currentWebKey', (err, state) => {
+
+            adapter.getState('currentObservationUrl', (err, state) => {
                 if (!err && state && state.val) {
                     if (typeof state.val !== 'string') {
                         state.val = state.val.toString();
                     }
-                    newWebKey = state.val;
-                    adapter.log.debug(`initialize web key`);
+                    currentObservationUrl = state.val;
+                    adapter.log.debug(`initialize current observation URL`);
                 }
 
-                adapter.getState('currentObservationUrl', (err, state) => {
+                adapter.getState('forecastDailyUrl', (err, state) => {
                     if (!err && state && state.val) {
                         if (typeof state.val !== 'string') {
                             state.val = state.val.toString();
                         }
-                        currentObservationUrl = state.val;
-                        adapter.log.debug(`initialize current observation URL`);
+                        forecastDailyUrl = state.val;
+                        adapter.log.debug(`initialize daily forecast URL`);
+                        if (forecastDailyUrl.includes('/v1/')) {
+                            adapter.log.debug('    Daily Forecast Url incompatible ... refetch');
+                            forecastDailyUrl = '';
+                        }
                     }
 
-                    adapter.getState('forecastDailyUrl', (err, state) => {
+                    adapter.getState('forecastHourlyUrl', (err, state) => {
                         if (!err && state && state.val) {
                             if (typeof state.val !== 'string') {
                                 state.val = state.val.toString();
                             }
-                            forecastDailyUrl = state.val;
-                            adapter.log.debug(`initialize daily forecast URL`);
-                            if (forecastDailyUrl.includes('/v1/')) {
+                            forecastHourlyUrl = state.val;
+                            adapter.log.debug(`initialize hourly forecast URL`);
+                            if (forecastHourlyUrl.includes('/v1/')) {
                                 adapter.log.debug('    Daily Forecast Url incompatible ... refetch');
-                                forecastDailyUrl = '';
+                                forecastHourlyUrl = '';
                             }
                         }
 
-                        adapter.getState('forecastHourlyUrl', (err, state) => {
-                            if (!err && state && state.val) {
-                                if (typeof state.val !== 'string') {
-                                    state.val = state.val.toString();
-                                }
-                                forecastHourlyUrl = state.val;
-                                adapter.log.debug(`initialize hourly forecast URL`);
-                                if (forecastHourlyUrl.includes('/v1/')) {
-                                    adapter.log.debug('    Daily Forecast Url incompatible ... refetch');
-                                    forecastHourlyUrl = '';
-                                }
+                        adapter.getState('locationChecksum', (err, state) => {
+                            const locationHash = crypto
+                                .createHash('md5')
+                                .update(adapter.config.location + adapter.config.station)
+                                .digest('hex');
+                            let locationChange = true;
+                            if (!err && state && state.val && locationHash === state.val) {
+                                adapter.log.debug('location has not changed, reuse extracted URLs');
+                                locationChange = false;
+                            }
+                            if (locationChange) {
+                                adapter.log.debug('location change detected, extract URLs');
+                                currentObservationUrl = null;
+                                forecastDailyUrl = null;
+                                forecastHourlyUrl = null;
+
+                                adapter.setObjectNotExists(
+                                    'locationChecksum',
+                                    {
+                                        type: 'state',
+                                        common: {
+                                            type: 'string',
+                                            role: 'text',
+                                            name: 'Helper state to detect location changes',
+                                            def: '',
+                                        },
+                                        native: { id: 'locationChecksum' },
+                                    },
+                                    () => adapter.setState('locationChecksum', { val: locationHash, ack: true }),
+                                );
                             }
 
-                            adapter.getState('locationChecksum', (err, state) => {
-                                const locationHash = crypto
-                                    .createHash('md5')
-                                    .update(adapter.config.location + adapter.config.station)
-                                    .digest('hex');
-                                let locationChange = true;
-                                if (!err && state && state.val && locationHash === state.val) {
-                                    adapter.log.debug('location has not changed, reuse extracted URLs');
-                                    locationChange = false;
+                            getKeysAndData(() => {
+                                if (stopInProgress) {
+                                    return;
                                 }
-                                if (locationChange) {
-                                    adapter.log.debug('location change detected, extract URLs');
-                                    currentObservationUrl = null;
-                                    forecastDailyUrl = null;
-                                    forecastHourlyUrl = null;
-
-                                    adapter.setObjectNotExists(
-                                        'locationChecksum',
-                                        {
-                                            type: 'state',
-                                            common: {
-                                                type: 'string',
-                                                role: 'text',
-                                                name: 'Helper state to detect location changes',
-                                                def: '',
-                                            },
-                                            native: { id: 'locationChecksum' },
-                                        },
-                                        () => adapter.setState('locationChecksum', { val: locationHash, ack: true }),
-                                    );
-                                }
-
-                                getKeysAndData(() => {
-                                    if (stopInProgress) {
-                                        return;
-                                    }
-                                    forceTimeout && adapter.clearTimeout(forceTimeout);
-                                    forceTimeout = adapter.setTimeout(() => adapter.stop(), 2000);
-                                });
+                                forceTimeout && adapter.clearTimeout(forceTimeout);
+                                forceTimeout = adapter.setTimeout(() => adapter.stop(), 2000);
                             });
                         });
                     });
@@ -365,54 +315,42 @@ function getKeysAndData(cb) {
         return;
     }
     if (errorCounter > 2) {
-        if (adapter.config.useLegacyApi) {
-            adapter.config.useLegacyApi = false;
-            errorCounter = 0;
-        } else {
-            return cb();
-        }
+        return cb();
     }
     getApiKey(discoveryError => {
         if (stopInProgress) {
             return;
         }
-        if (adapter.config.useLegacyApi) {
-            adapter.log.debug('Use Legacy API');
-            getLegacyWuData(cb);
-        } else {
-            adapter.log.debug('Use New API');
-            if (!adapter.config.station) {
-                const requiredUrls = [currentObservationUrl];
-                if (adapter.config.forecast_periods || adapter.config.forecast_periods_txt) {
-                    requiredUrls.push(forecastDailyUrl);
-                }
-                if (adapter.config.forecast_hourly) {
-                    requiredUrls.push(forecastHourlyUrl);
-                }
-                if (
-                    requiredUrls.some(url => !URL.canParse(url) || !['http:', 'https:'].includes(new URL(url).protocol))
-                ) {
-                    if (!discoveryError) {
-                        adapter.log.error(
-                            'Unable to resolve the required Weather Underground data URLs. Check the configured location or configure a PWS station ID. Skipping data requests for this run.',
-                        );
-                    }
-                    return cb();
-                }
+        adapter.log.debug('Use New API');
+        if (!adapter.config.station) {
+            const requiredUrls = [currentObservationUrl];
+            if (adapter.config.forecast_periods || adapter.config.forecast_periods_txt) {
+                requiredUrls.push(forecastDailyUrl);
             }
-            getNewWuDataCurrentObservations(data => {
-                const currentConditions = getNewWuDataCurrentConditions(data);
-                getNewWuDataDailyForecast(data, data =>
-                    getNewWuDataHourlyForecast(data, data => {
-                        currentConditions.then(() => {
-                            if (!stopInProgress) {
-                                parseNewResult(data, cb);
-                            }
-                        });
-                    }),
-                );
-            });
+            if (adapter.config.forecast_hourly) {
+                requiredUrls.push(forecastHourlyUrl);
+            }
+            if (requiredUrls.some(url => !URL.canParse(url) || !['http:', 'https:'].includes(new URL(url).protocol))) {
+                if (!discoveryError) {
+                    adapter.log.error(
+                        'Unable to resolve the required Weather Underground data URLs. Check the configured location or configure a PWS station ID. Skipping data requests for this run.',
+                    );
+                }
+                return cb();
+            }
         }
+        getNewWuDataCurrentObservations(data => {
+            const currentConditions = getNewWuDataCurrentConditions(data);
+            getNewWuDataDailyForecast(data, data =>
+                getNewWuDataHourlyForecast(data, data => {
+                    currentConditions.then(() => {
+                        if (!stopInProgress) {
+                            parseNewResult(data, cb);
+                        }
+                    });
+                }),
+            );
+        });
     });
 }
 
@@ -424,117 +362,7 @@ function getApiKey(cb) {
     if (adapter.config.station) {
         adapter.config.station = adapter.config.station.trim().replace(/^pws:/, '').trim();
     }
-    if (!adapter.config.useLegacyApi) {
-        return getWebsiteKey(cb);
-    }
-    getStationKey(() => getWebsiteKey(cb));
-}
-
-function getStationKey(cb) {
-    if (pwsStationKey && pwsStationKey.length) {
-        return cb && cb();
-    }
-
-    let url = 'https://www.wunderground.com/dashboard/pws/IBERLIN1658';
-
-    if (adapter.config.station) {
-        if (/[^A-Z0-9]/.test(adapter.config.station)) {
-            adapter.log.info(
-                `Please check the configured station-id "${adapter.config.station}" if it do not work because usually station ids consist of capital letters and numbers only!`,
-            );
-        }
-        url = `https://www.wunderground.com/dashboard/pws/${encodeURIComponent(adapter.config.station)}`;
-    } else {
-        adapter.log.info('using fallback station ID to get key because no PWS station ID provided.');
-    }
-
-    adapter.log.debug(`get PWS dashboard page: ${url}`);
-
-    axios
-        .get(url, {
-            headers: requestHeaders,
-            signal: requestAbortController?.signal,
-            timeout: 15000,
-            validateStatus: status => status === 200,
-        })
-        .then(response => {
-            if (stopInProgress) {
-                return;
-            }
-            const body = response.data;
-            const scriptFile = body.match(/<script src="(.*\/wui-pwsdashboard\/.*wui.pwsdashboard.min.js)"><\/script>/);
-            if (!scriptFile || !scriptFile[1]) {
-                const pwsApiKey = body.match(/WU_LEGACY_API_KEY&q;:&q;([^&]+)&q/);
-                if (!pwsApiKey || !pwsApiKey[1]) {
-                    return cb && cb();
-                }
-                pwsStationKey = pwsApiKey[1];
-                adapter.log.debug(`fetched station key from WU dashboard page`);
-                adapter.setObjectNotExists(
-                    'currentStationKey',
-                    {
-                        type: 'state',
-                        common: { type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: '' },
-                        native: { id: 'currentStationKey' },
-                    },
-                    () => {
-                        adapter.setState('currentStationKey', { val: pwsStationKey, ack: true });
-                    },
-                );
-
-                return cb && cb();
-            }
-            if (scriptFile[1].startsWith('//')) {
-                scriptFile[1] = `https:${scriptFile[1]}`;
-            }
-
-            adapter.log.debug(`get PWS dashboard script`);
-            return axios.get(scriptFile[1], {
-                headers: requestHeaders,
-                signal: requestAbortController?.signal,
-                timeout: 15000,
-                validateStatus: status => status === 200,
-            });
-        })
-        .then(response => {
-            if (!response) {
-                // no request done
-                return;
-            }
-            const body = response.data;
-            if (stopInProgress) {
-                return;
-            }
-            const pwsApiKey = body.match(/https:\/\/api.wunderground.com\/api\/([^/]+)\/conditions\//);
-            if (!pwsApiKey || !pwsApiKey[1]) {
-                return cb && cb();
-            }
-            pwsStationKey = pwsApiKey[1];
-            adapter.log.debug(`fetched station key from WU dashboard script`);
-            adapter.setObjectNotExists(
-                'currentStationKey',
-                {
-                    type: 'state',
-                    common: { type: 'string', role: 'text', name: 'Current Station API Key from webpage', def: '' },
-                    native: { id: 'currentStationKey' },
-                },
-                () => {
-                    adapter.setState('currentStationKey', { val: pwsStationKey, ack: true });
-                },
-            );
-
-            return cb && cb();
-        })
-        .catch(error => {
-            if (stopInProgress) {
-                return;
-            }
-            // ERROR
-            adapter.log.error(
-                `Unable to get PWS dashboard script: ${error.response ? error.response.status : error.code || '--'}`,
-            );
-            return cb && cb();
-        });
+    return getWebsiteKey(cb);
 }
 
 function getWebsiteKey(cb, tryQ) {
@@ -675,541 +503,6 @@ function getWebsiteKey(cb, tryQ) {
                 return cb && cb(error);
             }
         });
-}
-
-async function parseLegacyResult(body, cb) {
-    let qpfMax = 0;
-    let popMax = 0;
-    let uviSum = 0;
-
-    adapter.log.debug(`Process legacy results`);
-
-    if (adapter.config.current) {
-        if (body.current_observation) {
-            try {
-                await adapter.setStateAsync('forecast.current.displayLocationFull', {
-                    ack: true,
-                    val: body.current_observation.display_location.full,
-                });
-                await adapter.setStateAsync('forecast.current.displayLocationLatitude', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.display_location.latitude),
-                });
-                await adapter.setStateAsync('forecast.current.displayLocationLongitude', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.display_location.longitude),
-                });
-                await adapter.setStateAsync('forecast.current.displayLocationElevation', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.display_location.elevation),
-                });
-
-                await adapter.setStateAsync('forecast.current.observationLocationFull', {
-                    ack: true,
-                    val: body.current_observation.observation_location.full,
-                });
-                await adapter.setStateAsync('forecast.current.observationLocationLatitude', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.observation_location.latitude),
-                });
-                await adapter.setStateAsync('forecast.current.observationLocationLongitude', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.observation_location.longitude),
-                });
-                if (nonMetric) {
-                    await adapter.setStateAsync('forecast.current.observationLocationElevation', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.observation_location.elevation),
-                    }); // ft
-                } else {
-                    await adapter.setStateAsync('forecast.current.observationLocationElevation', {
-                        ack: true,
-                        val:
-                            (Math.round(parseFloat(body.current_observation.observation_location.elevation) * 0.3048) *
-                                100) /
-                            100,
-                    }); // convert ft to m
-                }
-
-                await adapter.setStateAsync('forecast.current.observationLocationStationID', {
-                    ack: true,
-                    val: body.current_observation.station_id,
-                });
-                await adapter.setStateAsync('forecast.current.localTimeRFC822', {
-                    ack: true,
-                    val: body.current_observation.local_time_rfc822,
-                });
-                await adapter.setStateAsync('forecast.current.observationTimeRFC822', {
-                    ack: true,
-                    val: body.current_observation.observation_time_rfc822,
-                }); // PDE
-                await adapter.setStateAsync('forecast.current.observationTime', {
-                    ack: true,
-                    val: new Date(parseInt(body.current_observation.epoch, 10) * 1000).toLocaleString(),
-                }); // PDE
-
-                await adapter.setStateAsync('forecast.current.weather', {
-                    ack: true,
-                    val: body.current_observation.weather,
-                });
-                if (nonMetric) {
-                    await adapter.setStateAsync('forecast.current.temp', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.temp_f),
-                    });
-                } else {
-                    await adapter.setStateAsync('forecast.current.temp', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.temp_c),
-                    });
-                }
-                await adapter.setStateAsync('forecast.current.relativeHumidity', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.relative_humidity.replace('%', '')),
-                });
-                await adapter.setStateAsync('forecast.current.windDegrees', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.wind_degrees),
-                });
-                await adapter.setStateAsync('forecast.current.windDirection', {
-                    ack: true,
-                    val: windDirections[Math.floor((body.current_observation.wind_degrees + 11.25) / 22.5)],
-                });
-                if (nonMetric) {
-                    await adapter.setStateAsync('forecast.current.wind', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.wind_mph),
-                    });
-                    await adapter.setStateAsync('forecast.current.windGust', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.wind_gust_mph),
-                    });
-                } else {
-                    await adapter.setStateAsync('forecast.current.wind', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.wind_kph),
-                    });
-                    await adapter.setStateAsync('forecast.current.windGust', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.wind_gust_kph),
-                    });
-                }
-
-                await adapter.setStateAsync('forecast.current.pressure', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.pressure_mb),
-                }); //PDE
-                if (nonMetric) {
-                    await adapter.setStateAsync('forecast.current.dewPoint', {
-                        ack: true,
-                        val:
-                            body.current_observation.dewpoint_f === 'NA'
-                                ? null
-                                : parseFloat(body.current_observation.dewpoint_f),
-                    });
-                    await adapter.setStateAsync('forecast.current.windChill', {
-                        ack: true,
-                        val:
-                            body.current_observation.windchill_f === 'NA'
-                                ? null
-                                : parseFloat(body.current_observation.windchill_f),
-                    });
-                    await adapter.setStateAsync('forecast.current.feelsLike', {
-                        ack: true,
-                        val:
-                            body.current_observation.feelslike_f === 'NA'
-                                ? null
-                                : parseFloat(body.current_observation.feelslike_f),
-                    });
-                    await adapter.setStateAsync('forecast.current.visibility', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.visibility_mi),
-                    });
-                } else {
-                    await adapter.setStateAsync('forecast.current.dewPoint', {
-                        ack: true,
-                        val:
-                            body.current_observation.dewpoint_c === 'NA'
-                                ? null
-                                : parseFloat(body.current_observation.dewpoint_c),
-                    });
-                    await adapter.setStateAsync('forecast.current.windChill', {
-                        ack: true,
-                        val:
-                            body.current_observation.windchill_c === 'NA'
-                                ? null
-                                : parseFloat(body.current_observation.windchill_c),
-                    });
-                    await adapter.setStateAsync('forecast.current.feelsLike', {
-                        ack: true,
-                        val:
-                            body.current_observation.feelslike_c === 'NA'
-                                ? null
-                                : parseFloat(body.current_observation.feelslike_c),
-                    });
-                    await adapter.setStateAsync('forecast.current.visibility', {
-                        ack: true,
-                        val: parseFloat(body.current_observation.visibility_km),
-                    });
-                }
-                await adapter.setStateAsync('forecast.current.solarRadiation', {
-                    ack: true,
-                    val: body.current_observation.solarradiation,
-                });
-                await adapter.setStateAsync('forecast.current.UV', {
-                    ack: true,
-                    val: parseFloat(body.current_observation.UV),
-                });
-                if (nonMetric) {
-                    if (!isNaN(parseInt(body.current_observation.precip_1hr_in, 10))) {
-                        await adapter.setStateAsync('forecast.current.precipitationHour', {
-                            ack: true,
-                            val: parseInt(body.current_observation.precip_1hr_in, 10),
-                        });
-                    }
-                    if (!isNaN(parseInt(body.current_observation.precip_today_in, 10))) {
-                        await adapter.setStateAsync('forecast.current.precipitationDay', {
-                            ack: true,
-                            val: parseInt(body.current_observation.precip_today_in, 10),
-                        });
-                    }
-                } else {
-                    if (!isNaN(parseInt(body.current_observation.precip_1hr_metric, 10))) {
-                        await adapter.setStateAsync('forecast.current.precipitationHour', {
-                            ack: true,
-                            val: parseInt(body.current_observation.precip_1hr_metric, 10),
-                        });
-                    }
-                    if (!isNaN(parseInt(body.current_observation.precip_today_metric, 10))) {
-                        await adapter.setStateAsync('forecast.current.precipitationDay', {
-                            ack: true,
-                            val: parseInt(body.current_observation.precip_today_metric, 10),
-                        });
-                    }
-                }
-
-                await adapter.setStateAsync('forecast.current.iconURL', {
-                    ack: true,
-                    val: handleIconUrl(body.current_observation.icon_url),
-                });
-                await adapter.setStateAsync('forecast.current.forecastURL', {
-                    ack: true,
-                    val: body.current_observation.forecast_url,
-                });
-                await adapter.setStateAsync('forecast.current.historyURL', {
-                    ack: true,
-                    val: body.current_observation.history_url,
-                });
-                adapter.log.debug('all current conditions values set');
-            } catch (error) {
-                adapter.log.error(`Could not parse Conditions-Data: ${error}`);
-            }
-        } else {
-            adapter.log.error('No current observation data found in response');
-        }
-    }
-
-    //next 12 periods (day and night) -> text and icon forecast
-    if (adapter.config.forecast_periods_txt) {
-        if (body.forecast && body.forecast.txt_forecast && body.forecast.txt_forecast.forecastday) {
-            for (let i = 0; i < 12; i++) {
-                if (!body.forecast.txt_forecast.forecastday[i]) {
-                    continue;
-                }
-                try {
-                    const now = new Date();
-                    now.setHours(now.getHours() + body.forecast.txt_forecast.forecastday[i].period * 12);
-
-                    await adapter.setStateAsync(`forecastPeriod.${i}p.date`, {
-                        ack: true,
-                        val: time2date(now),
-                    });
-                    let iconId = parseInt(body.forecast.txt_forecast.forecastday[i].icon, 10);
-                    if (isNaN(iconId)) {
-                        // accept that for the case it is not only numbers to get feedback
-                        iconId = body.forecast.txt_forecast.forecastday[i].icon;
-                    }
-                    await adapter.setStateAsync(`forecastPeriod.${i}p.icon`, {
-                        ack: true,
-                        val: iconId,
-                    });
-                    await adapter.setStateAsync(`forecastPeriod.${i}p.iconURL`, {
-                        ack: true,
-                        val: handleIconUrl(body.forecast.txt_forecast.forecastday[i].icon_url),
-                    });
-                    await adapter.setStateAsync(`forecastPeriod.${i}p.title`, {
-                        ack: true,
-                        val: body.forecast.txt_forecast.forecastday[i].title,
-                    });
-                    if (nonMetric) {
-                        await adapter.setStateAsync(`forecastPeriod.${i}p.state`, {
-                            ack: true,
-                            val: body.forecast.txt_forecast.forecastday[i].fcttext,
-                        });
-                    } else {
-                        await adapter.setStateAsync(`forecastPeriod.${i}p.state`, {
-                            ack: true,
-                            val: body.forecast.txt_forecast.forecastday[i].fcttext_metric,
-                        });
-                    }
-                    await adapter.setStateAsync(`forecastPeriod.${i}p.precipitationChance`, {
-                        ack: true,
-                        val: body.forecast.txt_forecast.forecastday[i].pop,
-                    });
-                } catch (error) {
-                    adapter.log.error(`exception in : body.txt_forecast${error}`);
-                }
-            }
-        }
-    }
-
-    if (adapter.config.forecast_periods) {
-        //next 6 days
-        if (body.forecast && body.forecast.simpleforecast && body.forecast.simpleforecast.forecastday) {
-            for (let i = 0; i < 6; i++) {
-                if (!body.forecast.simpleforecast.forecastday[i]) {
-                    continue;
-                }
-                try {
-                    await adapter.setStateAsync(`forecast.${i}d.date`, {
-                        ack: true,
-                        val: time2date(
-                            new Date(parseInt(body.forecast.simpleforecast.forecastday[i].date.epoch, 10) * 1000),
-                        ),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.tempMax`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].high.fahrenheit)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].high.celsius),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.tempMin`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].low.fahrenheit)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].low.celsius),
-                    });
-                    let iconId = parseInt(body.forecast.simpleforecast.forecastday[i].icon, 10);
-                    if (isNaN(iconId)) {
-                        // accept that for the case it is not only numbers to get feedback
-                        iconId = body.forecast.simpleforecast.forecastday[i].icon;
-                    }
-                    await adapter.setStateAsync(`forecast.${i}d.icon`, {
-                        ack: true,
-                        val: iconId,
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.state`, {
-                        ack: true,
-                        val: _(`state_${body.forecast.simpleforecast.forecastday[i].icon}`),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.stateShort`, { ack: true, val: null });
-                    await adapter.setStateAsync(`forecast.${i}d.iconURL`, {
-                        ack: true,
-                        val: handleIconUrl(body.forecast.simpleforecast.forecastday[i].icon_url),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.precipitationChance`, {
-                        ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].pop,
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.precipitationAllDay`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_allday.in)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_allday.mm),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.precipitationDay`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_day.in)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_day.mm),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.precipitationNight`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_night.in)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].qpf_night.mm),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.snowAllDay`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_allday.in)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_allday.cm),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.snowDay`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_day.in)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_day.cm),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.snowNight`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].snow_night.in)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].snow_night.cm),
-                    });
-
-                    await adapter.setStateAsync(`forecast.${i}d.windSpeedMax`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.mph)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.kph),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.windDirectionMax`, {
-                        ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].maxwind.dir,
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.windDegreesMax`, {
-                        ack: true,
-                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].maxwind.degrees),
-                    });
-
-                    await adapter.setStateAsync(`forecast.${i}d.windSpeed`, {
-                        ack: true,
-                        val: nonMetric
-                            ? parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.mph)
-                            : parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.kph),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.windDirection`, {
-                        ack: true,
-                        val: body.forecast.simpleforecast.forecastday[i].avewind.dir,
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.windDegrees`, {
-                        ack: true,
-                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].avewind.degrees),
-                    });
-
-                    await adapter.setStateAsync(`forecast.${i}d.humidity`, {
-                        ack: true,
-                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].avehumidity),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.humidityMax`, {
-                        ack: true,
-                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].maxhumidity),
-                    });
-                    await adapter.setStateAsync(`forecast.${i}d.humidityMin`, {
-                        ack: true,
-                        val: parseFloat(body.forecast.simpleforecast.forecastday[i].minhumidity),
-                    });
-                } catch (error) {
-                    adapter.log.error(`exception in : body.simpleforecast${error}`);
-                }
-            }
-        }
-    }
-
-    // next 36 hours
-    if (adapter.config.forecast_hourly) {
-        if (body.hourly_forecast) {
-            for (let i = 0; i < 36; i++) {
-                //if (!body.hourly_forecast[i]) continue;
-                try {
-                    // see http://www.wunderground.com/weather/api/d/docs?d=resources/phrase-glossary for infos about properties and codes
-                    await adapter.setStateAsync(`forecastHourly.${i}h.time`, {
-                        ack: true,
-                        val: new Date(parseInt(body.hourly_forecast.validTimeUtc[i], 10) * 1000).toString(),
-                    });
-                    await adapter.setStateAsync(`forecastHourly.${i}h.temp`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.temperature[i]),
-                    });
-                    await adapter.setStateAsync(`forecastHourly.${i}h.fctcode`, {
-                        ack: true,
-                        val: body.hourly_forecast.iconCode[i],
-                    }); //forecast description number -> see link above
-                    await adapter.setStateAsync(`forecastHourly.${i}h.sky`, {
-                        ack: true,
-                        val: body.hourly_forecast.cloudCover[i],
-                    }); //?
-                    await adapter.setStateAsync(`forecastHourly.${i}h.windSpeed`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.windSpeed[i]),
-                    }); // windspeed in kmh
-                    await adapter.setStateAsync(`forecastHourly.${i}h.windDirection`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.windDirection[i]),
-                    }); //wind dir in degrees
-                    await adapter.setStateAsync(`forecastHourly.${i}h.uv`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.uvIndex[i]),
-                    }); //UV Index -> wikipedia
-                    await adapter.setStateAsync(`forecastHourly.${i}h.humidity`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.relativeHumidity[i]),
-                    });
-                    await adapter.setStateAsync(`forecastHourly.${i}h.heatIndex`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.temperatureHeatIndex[i]),
-                    }); // -> wikipedia
-                    await adapter.setStateAsync(`forecastHourly.${i}h.feelsLike`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.temperatureFeelsLike[i]),
-                    }); // -> wikipedia
-                    await adapter.setStateAsync(`forecastHourly.${i}h.precipitation`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.qpf[i]),
-                    }); // Quantitative precipitation forecast
-                    await adapter.setStateAsync(`forecastHourly.${i}h.snow`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.qpfSnow[i]),
-                    });
-                    await adapter.setStateAsync(`forecastHourly.${i}h.precipitationChance`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.precipChance[i]),
-                    }); // probability of Precipitation
-                    await adapter.setStateAsync(`forecastHourly.${i}h.mslp`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.pressureMeanSeaLevel[i]),
-                    }); // mean sea level pressure
-                    await adapter.setStateAsync(`forecastHourly.${i}h.visibility`, {
-                        ack: true,
-                        val: parseFloat(body.hourly_forecast.visibility[i]),
-                    });
-
-                    qpfMax += Number(body.hourly_forecast.qpf[i]);
-                    uviSum += Number(body.hourly_forecast.uvIndex[i]);
-                    if (Number(body.hourly_forecast.precipChance[i]) > popMax) {
-                        popMax = Number(body.hourly_forecast.precipChance[i]);
-                    }
-
-                    // 6h
-                    if (i === 5) {
-                        await adapter.setStateAsync('forecastHourly.6h.sum.precipitation', { ack: true, val: qpfMax });
-                        await adapter.setStateAsync('forecastHourly.6h.sum.precipitationChance', {
-                            ack: true,
-                            val: popMax,
-                        });
-                        await adapter.setStateAsync('forecastHourly.6h.sum.uv', { ack: true, val: uviSum / 6 });
-                    }
-                    // 12h
-                    if (i === 11) {
-                        await adapter.setStateAsync('forecastHourly.12h.sum.precipitation', { ack: true, val: qpfMax });
-                        await adapter.setStateAsync('forecastHourly.12h.sum.precipitationChance', {
-                            ack: true,
-                            val: popMax,
-                        });
-                        await adapter.setStateAsync('forecastHourly.12h.sum.uv', { ack: true, val: uviSum / 12 });
-                    }
-                    // 24h
-                    if (i === 23) {
-                        await adapter.setStateAsync('forecastHourly.24h.sum.precipitation', { ack: true, val: qpfMax });
-                        await adapter.setStateAsync('forecastHourly.24h.sum.precipitationChance', {
-                            ack: true,
-                            val: popMax,
-                        });
-                        await adapter.setStateAsync('forecastHourly.24h.sum.uv', { ack: true, val: uviSum / 24 });
-                    }
-                } catch (error) {
-                    adapter.log.error(`Could not parse Forecast-Data: ${error}`);
-                }
-            }
-
-            adapter.log.debug('all forecast values set');
-        } else {
-            adapter.log.error('No forecast data found in response');
-        }
-    }
-
-    cb && cb();
 }
 
 async function parseNewResult(body, cb) {
@@ -1977,88 +1270,6 @@ async function parseNewResult(body, cb) {
     }
 
     cb && cb();
-}
-
-function getLegacyWuData(cb) {
-    adapter.log.debug(`Use legacy API`);
-    let url = `http://api.wunderground.com/api/${encodeURIComponent(pwsStationKey)}`;
-
-    if (adapter.config.forecast_periods_txt || adapter.config.forecast_periods) {
-        url += '/forecast';
-    }
-
-    if (adapter.config.forecast_hourly) {
-        url += '/hourly';
-    }
-
-    if (adapter.config.current) {
-        url += '/conditions';
-    }
-
-    url += `/units:${nonMetric ? 'e' : 'm'}`;
-
-    url += `/lang:${encodeURIComponent(adapter.config.language)}`;
-
-    if (adapter.config.station.length > 2) {
-        url += `/q/pws:${encodeURIComponent(adapter.config.station)}`;
-    } else {
-        url += `/q/${encodeURIComponent(adapter.config.location)}`;
-    }
-    url += '.json';
-
-    if (adapter.config.location.match(/^file:/)) {
-        adapter.log.debug(`read local WU file: ${adapter.config.location}`);
-        return parseLegacyResult(
-            JSON.parse(require('node:fs').readFileSync(adapter.config.location.substring(7)).toString('utf8')),
-            cb,
-        );
-    }
-    adapter.log.debug(`get WU legacy data`);
-
-    axios
-        .get(url, {
-            headers: requestHeaders,
-            signal: requestAbortController?.signal,
-            timeout: 15000,
-            validateStatus: status => status === 200,
-        })
-        .then(response => {
-            if (stopInProgress) {
-                return;
-            }
-            let body = response.data;
-            if (body && body.response && body.response.error) {
-                adapter.log.error(`WU legacy API reported an error, resetting station key`);
-                pwsStationKey = '';
-                errorCounter++;
-                setImmediate(() => getKeysAndData(cb));
-            } else {
-                parseLegacyResult(body, cb);
-            }
-        })
-        .catch(error => {
-            if (stopInProgress) {
-                return;
-            }
-            if (error.response && error.response.status === 401) {
-                adapter.log.info('Key rejected, resetting legacy key and trying again ...');
-                pwsStationKey = '';
-
-                errorCounter++;
-                setImmediate(() => getKeysAndData(cb));
-            } else if (error.response && error.response.status === 204) {
-                adapter.log.info(
-                    'WUnderground API returned 204, no data available. The configured station might be offline',
-                );
-                return cb && cb();
-            } else {
-                // ERROR
-                adapter.log.error(
-                    `Unable to get PWS legacy data: ${error.response ? error.response.status : error.code || '--'}`,
-                );
-                return cb && cb();
-            }
-        });
 }
 
 function modifyExtractedUrl(url) {

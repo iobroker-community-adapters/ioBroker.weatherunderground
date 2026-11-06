@@ -9,7 +9,6 @@ const adapterRequire = createRequire(main);
 const source = fs.readFileSync(main, 'utf8');
 const ownerKey = '0123456789abcdefFEDCBA9876543210';
 const webKey = '0123456789abcdef0123456789abcdef';
-const stationKey = 'syntheticLegacyKey';
 
 async function exercise(action, outcome) {
     const logs = [];
@@ -39,9 +38,6 @@ async function exercise(action, outcome) {
                                 data: `{"API_KEY":"${webKey}","API_URL":"https://api.weather.com"}`,
                             });
                         }
-                        if (outcome === 'station') {
-                            return Promise.resolve({ data: `WU_LEGACY_API_KEY&q;:&q;${stationKey}&q` });
-                        }
                         return Promise.resolve({
                             data: { response: { error: { description: reflectedUrl } }, echo: reflectedUrl },
                         });
@@ -55,7 +51,6 @@ async function exercise(action, outcome) {
         capturedLog: message => logs.push(message),
         ownerKey,
         webKey,
-        stationKey,
         reflectedUrl,
     };
     await vm.runInNewContext(
@@ -68,7 +63,6 @@ async function exercise(action, outcome) {
         };
         officialApiKey = ownerKey;
         newWebKey = webKey;
-        pwsStationKey = stationKey;
         currentObservationUrl = reflectedUrl;
         forecastDailyUrl = reflectedUrl;
         forecastHourlyUrl = reflectedUrl;
@@ -79,7 +73,6 @@ async function exercise(action, outcome) {
     );
     assert.equal(logs.join('\n').includes(ownerKey), false, 'owner key leaked to logs');
     assert.equal(logs.join('\n').includes(webKey), false, 'web key leaked to logs');
-    assert.equal(logs.join('\n').includes(stationKey), false, 'legacy key leaked to logs');
     return { logs, requests };
 }
 
@@ -89,7 +82,6 @@ describe('credential-safe provider logging', () => {
             ['current', 'getNewWuDataCurrentObservations(resolve)', ownerKey],
             ['daily', 'getNewWuDataDailyForecast({current_observation:{lat:50,lon:8}}, resolve)', ownerKey],
             ['hourly', 'getNewWuDataHourlyForecast({current_observation:{lat:50,lon:8}}, resolve)', webKey],
-            ['legacy', 'getLegacyWuData(resolve)', stationKey],
         ]) {
             it(`keeps credentials in ${endpoint} requests but out of ${outcome} logs`, async () => {
                 const result = await exercise(action, outcome);
@@ -103,33 +95,17 @@ describe('credential-safe provider logging', () => {
         }
     }
 
-    for (const [endpoint, action] of [
-        ['station', "pwsStationKey = ''; getStationKey(resolve)"],
-        ['website', "newWebKey = ''; getWebsiteKey(resolve)"],
-    ]) {
-        for (const outcome of ['http-error', 'network-error', endpoint]) {
-            it(`does not log scraped keys or reflected errors during ${endpoint} ${outcome}`, async () => {
-                await exercise(action, outcome);
-            });
-        }
+    for (const outcome of ['http-error', 'network-error', 'website']) {
+        it(`does not log scraped keys or reflected errors during website ${outcome}`, async () => {
+            await exercise("newWebKey = ''; getWebsiteKey(resolve)", outcome);
+        });
     }
 
-    it('does not echo provider error fields when legacy parsing fails', async () => {
+    it('does not dump credential-bearing provider bodies in parseNewResult', async () => {
         await exercise(
-            `adapter.config.forecast_periods = false;
-            adapter.config.forecast_hourly = false;
-            parseLegacyResult({ current_observation: {}, response: { error: { type: ownerKey } } }, resolve)`,
+            `adapter.config.current = false; adapter.config.forecast_periods = false;
+            adapter.config.forecast_hourly = false; parseNewResult({ echo: reflectedUrl }, resolve)`,
             'empty',
         );
     });
-
-    for (const parser of ['parseLegacyResult', 'parseNewResult']) {
-        it(`does not dump credential-bearing provider bodies in ${parser}`, async () => {
-            await exercise(
-                `adapter.config.current = false; adapter.config.forecast_periods = false;
-                adapter.config.forecast_hourly = false; ${parser}({ echo: reflectedUrl }, resolve)`,
-                'empty',
-            );
-        });
-    }
 });
