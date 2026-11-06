@@ -145,14 +145,11 @@ Admin sources live in `admin/src/`. Generated `admin/custom/` files are ignored 
 
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22.19.0 now
+- (reloxx13) Fix location-based website URL discovery and avoid cascading errors when required URLs are unavailable (#509)
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
-- (reloxx13) Build observations and forecast URLs from the current website location data when no station ID is configured
-- (reloxx13) Skip data requests with one actionable error when no station ID is configured and required website URLs are unavailable
-
 ### 4.0.1 (2026-10-26)
 - (reloxx13) Use the controller-managed startup delay instead of a custom wait function
 
