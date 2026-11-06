@@ -30,7 +30,7 @@ function harness(config = {}, get = async (_url, _options) => ({ data: { wxPhras
         AbortController,
         URL,
         testAdapter: {
-            config: { current: true, regionalCurrent: true, ...config },
+            config: { station: 'TEST1', current: true, regionalCurrent: true, ...config },
             log: Object.fromEntries(
                 ['debug', 'info', 'warn', 'error'].map(level => [level, message => logs.push(message)]),
             ),

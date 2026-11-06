@@ -8,26 +8,28 @@ const main = path.join(__dirname, '..', 'main.js');
 const source = fs.readFileSync(main, 'utf8');
 const adapterRequire = createRequire(main);
 const key = '0123456789abcdef0123456789abcdef';
+const placeId = 'abcdef0123456789'.repeat(4);
 
 /**
  * @param {string} body Synthetic website HTML.
  * @param {boolean} [products] Fetch station and forecast products after discovery.
+ * @param {object} [config] Configuration overrides.
+ * @param {string} [cachedObservationUrl] Previously stored observations URL.
  */
-function discover(body, products = false) {
+function discover(body, products = false, config = {}, cachedObservationUrl) {
     const requests = [];
     const states = {};
     const logs = [];
+    const errors = [];
     return new Promise(resolve => {
         vm.runInNewContext(
             `${source}
             adapter = testAdapter;
             lang = 'de-DE';
-            getWebsiteKey(() => {
-                if (!testProducts) { testDone(); return; }
-                getNewWuDataCurrentObservations(data =>
-                    getNewWuDataDailyForecast(data, data =>
-                        getNewWuDataHourlyForecast(data, testDone)));
-            });`,
+            currentObservationUrl = testObservationUrl;
+            parseNewResult = (_data, cb) => cb();
+            if (testProducts) { getKeysAndData(testDone); }
+            else { getWebsiteKey(testDone); }`,
             {
                 require: name => {
                     if (name === '@iobroker/adapter-core') {
@@ -59,11 +61,15 @@ function discover(body, products = false) {
                         current: true,
                         forecast_periods: true,
                         forecast_hourly: true,
+                        ...config,
                     },
                     log: {
                         debug: message => logs.push(message),
                         info: message => logs.push(message),
-                        error: message => logs.push(message),
+                        error: message => {
+                            logs.push(message);
+                            errors.push(message);
+                        },
                     },
                     setObjectNotExists: (id, object, callback) => callback(),
                     setState: (id, state) => {
@@ -71,13 +77,89 @@ function discover(body, products = false) {
                     },
                 },
                 testProducts: products,
-                testDone: () => resolve({ requests, states, logs }),
+                testObservationUrl: cachedObservationUrl,
+                testDone: () => resolve({ requests, states, logs, errors }),
             },
         );
     });
 }
 
 describe('website key discovery', () => {
+    for (const url of [undefined, '', '/relative', 'https://', 'file:///tmp/weather']) {
+        it(`stops with one actionable error without a station and with observations URL ${JSON.stringify(url)}`, async () => {
+            const { requests, logs, errors } = await discover(`{"API_KEY":"${key}"}`, true, { station: '' }, url);
+            assert.equal(requests.length, 1);
+            assert.equal(errors.length, 1);
+            assert.ok(errors[0].includes('PWS station ID'));
+            assert.ok(
+                logs.every(message => !message.includes('request failed') && !message.includes('No data received')),
+            );
+        });
+    }
+
+    it('builds station and place forecasts from the current website location element', async () => {
+        const body = `<script>{"API_KEY":"${key}"}</script>
+            <location-fav-button-view data-placeid="${placeId}" data-coordinate="51.4,6.7" data-pwsid="TEST1"></location-fav-button-view>`;
+        const { requests, errors, states, logs } = await discover(body, true, { station: '' });
+        assert.equal(requests.length, 4);
+        assert.equal(errors.length, 0);
+        const products = requests.slice(1).map(url => new URL(url));
+        assert.equal(products[0].pathname, '/v2/pws/observations/current');
+        assert.equal(products[0].searchParams.get('stationId'), 'TEST1');
+        assert.equal(products[0].searchParams.get('numericPrecision'), 'decimal');
+        assert.equal(products[1].pathname, '/v3/wx/forecast/daily/5day');
+        assert.equal(products[2].pathname, '/v3/wx/forecast/hourly/2day');
+        for (const product of products.slice(1)) {
+            assert.equal(product.searchParams.get('placeid'), placeId);
+        }
+        for (const product of products) {
+            assert.equal(product.searchParams.get('apiKey'), key);
+            assert.equal(product.searchParams.get('units'), 'm');
+            assert.equal(product.searchParams.get('language'), 'de-DE');
+        }
+        assert.equal(states.currentObservationUrl, requests[1]);
+        assert.equal(states.forecastDailyUrl, requests[2]);
+        assert.equal(states.forecastHourlyUrl, requests[3]);
+        assert.ok(logs.every(message => !message.includes(key)));
+    });
+
+    for (const attributes of [
+        `data-pwsid="bad/id" data-placeid="${placeId}"`,
+        `data-pwsid="" data-placeid="${placeId}"`,
+        'data-pwsid="TEST1" data-placeid="invalid"',
+    ]) {
+        it(`rejects malformed website station metadata ${attributes}`, async () => {
+            const { requests, errors } = await discover(
+                `{"API_KEY":"${key}"}<location-fav-button-view ${attributes}>`,
+                true,
+                { station: '' },
+            );
+            assert.equal(requests.length, 1);
+            assert.equal(errors.length, 1);
+        });
+    }
+
+    it('does not require forecast URLs when all forecasts are disabled', async () => {
+        const { requests, errors } = await discover(
+            `{"API_KEY":"${key}"}<location-fav-button-view data-pwsid="TEST1">`,
+            true,
+            { station: '', forecast_periods: false, forecast_periods_txt: false, forecast_hourly: false },
+        );
+        assert.equal(requests.length, 2);
+        assert.equal(errors.length, 0);
+    });
+
+    it('retains location-only requests when the website provides valid product URLs', async () => {
+        const urls = [
+            'https://api.weather.com/v2/pws/observations/current?stationId=TEST1',
+            'https://api.weather.com/v3/wx/forecast/daily/5day?geocode=51.4,6.7',
+            'https://api.weather.com/v3/wx/forecast/hourly/2day?geocode=51.4,6.7',
+        ];
+        const { requests, errors } = await discover(JSON.stringify({ API_KEY: key, urls }), true, { station: '' });
+        assert.equal(requests.length, 4);
+        assert.equal(errors.length, 0);
+    });
+
     it('extracts the key from inline configuration with whitespace', async () => {
         const { states, logs } = await discover(
             `<script>const data = { "API_KEY" : "${key}", "API_URL":"https://api.weather.com" };</script>`,
