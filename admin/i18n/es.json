@@ -39,7 +39,6 @@
     "state_tstorms": "Tormentas",
     "weatherunderground_station": "Emisora",
     "weatherunderground_station_info": "Si deja la estación vacía, entonces la estación más cercana según la ubicación de entrega se selecciona automáticamente. Si no está satisfecho con esta opción, puede insertar aquí el código de estación de su estación preferida (por ejemplo, \"IAARGAUB5\"). Puede encontrar estos códigos, p. en el <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\"> Wundermap </a> - haga clic en una estación y busque la \"ID de la estación\"",
-    "weatherunderground_useLegacyApi": "Usar las API de WU heredadas",
     "weatherunderground_regionalCurrent": "Datos adicionales del tiempo y de la calidad del aire",
     "weatherunderground_regionalCurrent_info": "Complementa los datos de la estación con una descripción del tiempo, un icono, la visibilidad y la calidad del aire de la zona. Weather Company proporciona estos datos. Hasta 3 solicitudes adicionales por ejecución.",
     "weatherunderground_iconSet_info": "A–K usan los mismos iconos SVG v4 con la API actual. Seleccione Personalizado para sus propios iconos.",

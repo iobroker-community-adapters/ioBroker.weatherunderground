@@ -118,7 +118,7 @@ describe('website key discovery', () => {
     it('builds station and place forecasts from the current website location element', async () => {
         const body = `<script>{ "API_KEY" : "${key}" }</script>
             <location-fav-button-view data-placeid="${placeId}" data-coordinate="51.4,6.7" data-pwsid="TEST1"></location-fav-button-view>`;
-        const { requests, errors, states, logs } = await discover(body, true, { station: '', useLegacyApi: true });
+        const { requests, errors, states, logs } = await discover(body, true, { station: '' });
         assert.equal(requests.length, 4);
         assert.equal(errors.length, 0);
         const products = requests.slice(1).map(url => new URL(url));

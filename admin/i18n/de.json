@@ -39,7 +39,6 @@
     "state_tstorms": "Stürme",
     "weatherunderground_station": "Wetterstation",
     "weatherunderground_station_info": "Leer lassen, um automatisch die nächstgelegene Station für den angegebenen Standort auszuwählen. Für eine andere Station deren Stations-ID (z. B. \"IAARGAUB5\") eingeben. Die IDs stehen auf der <a target=\"_blank\" rel=\"noopener noreferrer\" href=\"https://www.wunderground.com/wundermap\">Wundermap</a>: eine Station auswählen und nach \"Station ID\" suchen.",
-    "weatherunderground_useLegacyApi": "Ältere WU-APIs nutzen",
     "weatherunderground_regionalCurrent": "Zusätzliche Wetter- und Luftqualitätsdaten",
     "weatherunderground_regionalCurrent_info": "Ergänzt die Stationsdaten um Wetterbeschreibung, Symbol, Sichtweite und Luftqualität für die Umgebung. Die Daten liefert Weather Company. Bis zu 3 zusätzliche Anfragen pro Lauf.",
     "weatherunderground_iconSet_info": "A–K verwenden mit der aktuellen API dieselben v4-SVG-Symbole. Für eigene Symbole Benutzerdefiniert wählen.",

@@ -39,7 +39,6 @@
     "state_tstorms": "Бурі",
     "weatherunderground_station": "Станція",
     "weatherunderground_station_info": "Якщо залишити станцію порожньою, найближча станція відповідно до вказаного місця вибирається автоматично. Якщо ви не задоволені цим вибором, ви можете вставити тут код вашої бажаної станції (наприклад, \"IAARGAUB5\"). Ви можете знайти ці коди, напр. на <a target=\"blank\" href=\"http://www.wunderground.com/wundermap\">карті Wundermap</a> клацніть станцію та знайдіть «Ідентифікатор станції».",
-    "weatherunderground_useLegacyApi": "Використовуйте застарілі API WU",
     "weatherunderground_regionalCurrent": "Додаткові дані про погоду та якість повітря",
     "weatherunderground_regionalCurrent_info": "Доповнює дані станції описом погоди, піктограмою, видимістю та якістю повітря в околицях. Ці дані надає Weather Company. До 3 додаткових запитів за запуск.",
     "weatherunderground_iconSet_info": "A–K використовують однакові значки SVG v4 з поточним API. Виберіть власний набір для своїх значків.",

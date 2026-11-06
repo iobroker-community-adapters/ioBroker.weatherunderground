@@ -20,7 +20,7 @@ export function initialSettings(data, system) {
         settings.apiKey = settings.apikey;
         settings.apikey = '';
     }
-    for (const [key, value] of Object.entries({ iconSet: 'i', nonMetric: false, country: 'DE', useLegacyApi: true })) {
+    for (const [key, value] of Object.entries({ iconSet: 'i', nonMetric: false, country: 'DE' })) {
         if (settings[key] === undefined) {
             settings[key] = value;
         }
@@ -47,7 +47,6 @@ export function initialSettings(data, system) {
  * @returns {object[]} icon names and preview URLs
  */
 export function previewUrls(data) {
-    // Runtime always uses the new API, even if a saved useLegacyApi flag is true.
     const base = (data.custom_icon_base_url || '').trim().replace(/\/+$/, '');
     const extension = base ? data.custom_icon_format || 'gif' : 'svg';
     return icons.map(icon => ({
