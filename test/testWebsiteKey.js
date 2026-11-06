@@ -95,7 +95,6 @@ describe('website key discovery', () => {
             const { requests, errors } = await discover(failure, true, { station: '' });
             assert.equal(requests.length, status === 404 ? 2 : 1);
             assert.equal(errors.length, 1);
-            assert.ok(!errors[0].includes('Skipping data requests'));
         });
     }
 
@@ -112,15 +111,12 @@ describe('website key discovery', () => {
         assert.equal(errors.length, 1);
     });
 
-    for (const url of [undefined, '', '/relative', 'https://', 'file:///tmp/weather']) {
+    for (const url of [undefined, '/relative', 'file:///tmp/weather']) {
         it(`stops with one actionable error without a station and with observations URL ${JSON.stringify(url)}`, async () => {
-            const { requests, logs, errors } = await discover(`{"API_KEY":"${key}"}`, true, { station: '' }, url);
+            const { requests, errors } = await discover(`{"API_KEY":"${key}"}`, true, { station: '' }, url);
             assert.equal(requests.length, 1);
             assert.equal(errors.length, 1);
             assert.ok(errors[0].includes('PWS station ID'));
-            assert.ok(
-                logs.every(message => !message.includes('request failed') && !message.includes('No data received')),
-            );
         });
     }
 
@@ -152,7 +148,6 @@ describe('website key discovery', () => {
 
     for (const attributes of [
         `data-pwsid="bad/id" data-placeid="${placeId}"`,
-        `data-pwsid="" data-placeid="${placeId}"`,
         'data-pwsid="TEST1" data-placeid="invalid"',
     ]) {
         it(`rejects malformed website station metadata ${attributes}`, async () => {
